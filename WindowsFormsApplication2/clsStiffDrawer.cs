@@ -54,17 +54,20 @@ namespace WindowsFormsApplication2
             int numTicks = 10;
             float tickSpacing = axisHalfLength / numTicks;
 
+            g.DrawLine(axisPen, xOrigin, yOrigin - 5, xOrigin, yOrigin + 5);
+            g.DrawString((0).ToString(), labelFont, Brushes.Black, xOrigin - 5, yOrigin + 8);
+
             for (int i = 1; i <= numTicks; i++)
             {
                 float offset = i * tickSpacing;
 
                 // Right side (positive)
                 g.DrawLine(axisPen, xOrigin + offset, yOrigin - 5, xOrigin + offset, yOrigin + 5);
-                g.DrawString(i.ToString(), labelFont, Brushes.Black, xOrigin + offset - 5, yOrigin + 8);
+                g.DrawString((i*10).ToString(), labelFont, Brushes.Black, xOrigin + offset - 5, yOrigin + 8);
 
                 // Left side (negative)
                 g.DrawLine(axisPen, xOrigin - offset, yOrigin - 5, xOrigin - offset, yOrigin + 5);
-                g.DrawString(i.ToString(), labelFont, Brushes.Black, xOrigin - offset - 10, yOrigin + 8);
+                g.DrawString((i * 10).ToString(), labelFont, Brushes.Black, xOrigin - offset - 10, yOrigin + 8);
             }
 
 
@@ -144,11 +147,11 @@ namespace WindowsFormsApplication2
             {
                 g.DrawString("W" + (i + 1).ToString(), labelFont, Brushes.Black, maxPoint+10,Points[i].Y);
             }
-            g.DrawString("meq/L", titleFont, Brushes.Black, xOrigin - 0.01f*diagramWidth, yOrigin + diagramHeight + 30);
-            g.DrawString("Cations", titleFont, Brushes.Black, xOrigin - 0.25f * diagramWidth, yOrigin + diagramHeight + 30);
-            g.DrawString("Anions", titleFont, Brushes.Black, xOrigin + 0.25f*diagramWidth, yOrigin + diagramHeight + 30);
+            g.DrawString("meq/L", new Font("Times New Roman", 15, FontStyle.Bold), Brushes.Black, xOrigin - 0.01f*diagramWidth, yOrigin + 30);
+            g.DrawString("Cations", new Font("Times New Roman", 15, FontStyle.Bold), Brushes.Black, xOrigin - 0.25f * diagramWidth, yOrigin + 30);
+            g.DrawString("Anions", new Font("Times New Roman", 15, FontStyle.Bold), Brushes.Black, xOrigin + 0.25f*diagramWidth, yOrigin + 30);
             string subtitle = "STIFF diagram displaying concentration ratios (meq/L) for individual samples.";
-            g.DrawString(subtitle, labelFont, Brushes.Black, xOrigin - 200, yOrigin + 60);
+            g.DrawString(subtitle, labelFont, Brushes.Black, 0.2f * frmMainForm.mainChartPlotting.Width, 0.9f * frmMainForm.mainChartPlotting.Height);
             #region Draw Legend
 
             if (frmImportSamples.WaterData.Count > 0)

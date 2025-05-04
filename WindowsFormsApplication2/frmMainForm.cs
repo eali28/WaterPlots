@@ -224,6 +224,12 @@ namespace WindowsFormsApplication2
         }
     }
 
+        private void Form1_SizeChanged(object sender, EventArgs e)
+        {
+            // Example: adjust picturebox size to match form
+            mainChartPlotting.Width = this.ClientSize.Width;
+            mainChartPlotting.Height = this.ClientSize.Height;
+        }
 
 
 

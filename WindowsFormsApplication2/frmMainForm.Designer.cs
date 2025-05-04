@@ -64,6 +64,10 @@ namespace WindowsFormsApplication2
             this.buttonDelete = new System.Windows.Forms.Button();
             mainChartPlotting = new System.Windows.Forms.PictureBox();
             legendPictureBox = new System.Windows.Forms.PictureBox();
+            this.FormBorderStyle = FormBorderStyle.Sizable;
+            this.SizeChanged += Form1_SizeChanged;
+
+
             this.toolStrip1.SuspendLayout();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(mainChartPlotting)).BeginInit();
@@ -245,12 +249,13 @@ namespace WindowsFormsApplication2
             mainChartPlotting.TabIndex = 0;
             mainChartPlotting.TabStop = false;
             mainChartPlotting.Text = "chart1";
-            mainChartPlotting.Click += new System.EventHandler(this.chart2_Click);
+            mainChartPlotting.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+
             // 
             // pic
             // 
             legendPictureBox.Location = new System.Drawing.Point(0, 0);
-            legendPictureBox.Name = "pic";
+            legendPictureBox.Name = "legendPictureBox";
             legendPictureBox.Size = new System.Drawing.Size(100, 50);
             legendPictureBox.TabIndex = 0;
             legendPictureBox.TabStop = false;
@@ -281,11 +286,6 @@ namespace WindowsFormsApplication2
             ((System.ComponentModel.ISupportInitialize)(legendPictureBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
-
-        }
-
-        private void chart2_Click(object sender, EventArgs e)
-        {
 
         }
 

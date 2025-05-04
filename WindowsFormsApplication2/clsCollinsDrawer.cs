@@ -124,7 +124,7 @@ namespace WindowsFormsApplication2
             {
                 int y = yOrigin + diagramHeight - (int)(fy * i);
                 g.DrawLine(borderPen, xOrigin - 10, y, xOrigin, y); // Tick marks
-                g.DrawString(i.ToString(), new Font("Times New Roman", fontSize), Brushes.Black, xOrigin - 3*leftMargin, y - 10);
+                g.DrawString(i.ToString(), new Font("Times New Roman", fontSize), Brushes.Black, xOrigin - 40, y - 10);
             }
 
 
@@ -232,9 +232,10 @@ namespace WindowsFormsApplication2
                     }
                 }
                 Bitmap metaBitmap = new Bitmap(metaWidth, (int)metaHeight);
-                //Form1.pic.Visible = true;
+
                 PictureBox metaPictureBox = new PictureBox();
                 metaPictureBox.Size = new Size(metaWidth, (int)metaHeight);
+
                 metaPictureBox.Image = metaBitmap;
 
                 frmMainForm.metaPanel.Controls.Add(metaPictureBox);
@@ -243,7 +244,9 @@ namespace WindowsFormsApplication2
                 frmMainForm.metaPanel.BringToFront();
 
                 g = Graphics.FromImage(metaBitmap);
+
                 g.Clear(Color.White);
+
                 g.DrawRectangle(new Pen(Color.Blue), metaX - 15.0f, metaY - 10.0f, metaWidth + 15.0f, (int)metaHeight + 30.0f);
                 int ysample = metaY;
                 //legendGraphics.Clear(Color.White);  // Fill background
@@ -339,7 +342,8 @@ namespace WindowsFormsApplication2
                 frmMainForm.legendPictureBox.MouseDoubleClick += frmMainForm.pictureBoxCollins_Click;
                 frmMainForm.legendPanel.Controls.Add(frmMainForm.legendPictureBox);
 
-
+                Bitmap resized = new Bitmap(metaBitmap, metaPictureBox.Width, metaPictureBox.Height);
+                metaPictureBox.Image = resized;
                 frmMainForm.legendPanel.Visible = true;
 
                 frmMainForm.mainChartPlotting.Controls.Add(frmMainForm.legendPanel);
@@ -348,6 +352,7 @@ namespace WindowsFormsApplication2
             {
                 frmMainForm.legendPanel.AutoScroll = false;
             }
+
             frmMainForm.legendPanel.Show();
             frmMainForm.mainChartPlotting.Invalidate();
             #endregion

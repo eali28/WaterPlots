@@ -29,7 +29,7 @@ namespace WindowsFormsApplication2
             int yOrigin = topMargin + (frmMainForm.mainChartPlotting.Height - diagramHeight) / 2 - (int)(0.02 * frmMainForm.mainChartPlotting.Height);
 
             // Set the title of the diagram
-            float fontSize = 12;
+            float fontSize = clsConstants.legendTextSize;
             Font titleFont = new Font("Times New Roman", 25, FontStyle.Bold);
             Brush titleBrush = Brushes.Black;
             g.DrawString("Bubble Diagram", titleFont, titleBrush, new PointF((int)(0.4 * frmMainForm.mainChartPlotting.Width), (float)(0.1*topMargin)));
@@ -143,9 +143,6 @@ namespace WindowsFormsApplication2
                     Pen bubbleBorderPen = new Pen(Color.Black, 1);
                     g.DrawEllipse(bubbleBorderPen, scaledX - bubbleSize/2, scaledY - bubbleSize/2, bubbleSize, bubbleSize);
 
-                    //// Draw the label
-                    //string label = "W" + (i + 1).ToString();
-                    //graphics.DrawString(label, axisFont, titleBrush, new PointF(scaledX + bubbleSize/2 + 5, scaledY - 10));
                 }
                 for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
                 {
@@ -226,16 +223,6 @@ namespace WindowsFormsApplication2
             {
                 int metaX = (int)(0.69f * frmMainForm.mainChartPlotting.Width);
                 int metaY = (int)(0.13f * frmMainForm.mainChartPlotting.Height);
-                int size = 0;
-                for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
-                {
-                    if (frmImportSamples.WaterData[i].Well_Name.Length + frmImportSamples.WaterData[i].ClientID.Length + frmImportSamples.WaterData[i].Depth.Length > size)
-                    {
-                        size = frmImportSamples.WaterData[i].Well_Name.Length + frmImportSamples.WaterData[i].ClientID.Length + frmImportSamples.WaterData[i].Depth.Length;
-                    }
-                }
-
-
                 double metaHeight = 0;
                 int legendtextSize = clsConstants.legendTextSize;
                 int metaWidth = 0;
@@ -269,7 +256,6 @@ namespace WindowsFormsApplication2
                 g.Clear(Color.White);
                 g.DrawRectangle(new Pen(Color.Blue), metaX - 15.0f, metaY - 10.0f, metaWidth + 15.0f, (int)metaHeight + 30.0f);
                 int ysample = metaY;
-                //legendGraphics.Clear(Color.White);  // Fill background
                 g.FillRectangle(Brushes.White, 0, 0, metaWidth - 1, (int)metaHeight - 1);
                 g.DrawRectangle(new Pen(Color.Blue, 2), 0, 0, metaWidth - 1, (int)metaHeight - 1);
                 ysample = 0;
