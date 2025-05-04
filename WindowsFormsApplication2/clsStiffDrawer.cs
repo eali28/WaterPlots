@@ -54,18 +54,17 @@ namespace WindowsFormsApplication2
             int numTicks = 10;
             float tickSpacing = axisHalfLength / numTicks;
 
-            for (int i = 0; i <= numTicks; i++)
-            {
-                float xTick = xOrigin + i * tickSpacing;
-                g.DrawLine(Pens.Black, xTick, yOrigin+diagramHeight, xTick, yOrigin + diagramHeight + 7);
-                g.DrawString((i * 10).ToString(), labelFont, Brushes.Black, xTick - 5, yOrigin + diagramHeight + 12);
-            }
-
             for (int i = 1; i <= numTicks; i++)
             {
-                float xTick = xOrigin - i * tickSpacing;
-                g.DrawLine(Pens.Black, xTick, yOrigin+diagramHeight, xTick, yOrigin + diagramHeight + 7);
-                g.DrawString((i * 10).ToString(), labelFont, Brushes.Black, xTick - 15, yOrigin + diagramHeight + 12);
+                float offset = i * tickSpacing;
+
+                // Right side (positive)
+                g.DrawLine(axisPen, xOrigin + offset, yOrigin - 5, xOrigin + offset, yOrigin + 5);
+                g.DrawString(i.ToString(), labelFont, Brushes.Black, xOrigin + offset - 5, yOrigin + 8);
+
+                // Left side (negative)
+                g.DrawLine(axisPen, xOrigin - offset, yOrigin - 5, xOrigin - offset, yOrigin + 5);
+                g.DrawString(i.ToString(), labelFont, Brushes.Black, xOrigin - offset - 10, yOrigin + 8);
             }
 
 

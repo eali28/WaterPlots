@@ -274,9 +274,10 @@ namespace WindowsFormsApplication2
                 int screenWidth = Screen.PrimaryScreen.WorkingArea.Width;
                 int screenHeight = Screen.PrimaryScreen.WorkingArea.Height;
 
-                mainChartPlotting.Size = new Size((int)(Screen.PrimaryScreen.Bounds.Width*0.9), (int)(Screen.PrimaryScreen.Bounds.Height*0.7));
+                mainChartPlotting.Size = new Size((int)(this.Width*0.9), (int)(this.Height*0.7));
                 mainChartPlotting.BackColor = Color.White;
-                Bitmap chartBitmap = new Bitmap(mainChartPlotting.Width, mainChartPlotting.Height);
+                //Bitmap chartBitmap = new Bitmap(mainChartPlotting.Width, mainChartPlotting.Height);
+                Bitmap chartBitmap = new Bitmap(1728, 756);
                 Graphics graphics = Graphics.FromImage(chartBitmap);
 
                 // Clear the bitmap before drawing the new chart
@@ -359,7 +360,8 @@ namespace WindowsFormsApplication2
                     Rectangle bounds = new Rectangle((int)(0.01f * mainChartPlotting.Width), (int)(0.02f * mainChartPlotting.Height), (int)(0.9 * mainChartPlotting.Width), (int)(0.9 * mainChartPlotting.Height));
                     clsRadarDrawer.DrawRadarChart3(graphics, bounds, flag);
                 }
-                mainChartPlotting.Image = chartBitmap;
+                Bitmap resized = new Bitmap(chartBitmap, mainChartPlotting.Width, mainChartPlotting.Height);
+                mainChartPlotting.Image = resized;
                 listBoxCharts.Refresh();
                 listBoxSelected.Refresh();
             }
