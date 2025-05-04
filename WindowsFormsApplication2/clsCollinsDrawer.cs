@@ -133,93 +133,58 @@ namespace WindowsFormsApplication2
             // Draw stacked bars
             for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
             {
-                int j = 0;
+                int z = 0;
                 double NaK = Na[i] + K[i], HCO3CO3 = HCO3[i] + CO3[i];
                 int x = xOrigin + (int)(fx * (i + 1)) - (int)(0.01 * diagramWidth);
                 double currentY = yOrigin + diagramHeight;
-                
-                
+                List<double> Items = new List<double>();
+                Items.Add(NaK * fy_F);
+                Items.Add(Ca[i] * fy_F);
+                Items.Add(Mg[i] * fy_F);
+                Items.Add(Cl[i] * fy_F);
+                Items.Add(SO4[i] * fy_F);
+                Items.Add(HCO3CO3 * fy_F);
                 // First bar: Na+K, Ca, Mg
-                double heightPart = NaK * fy_F;
-                g.DrawRectangle(axisPen, x, (float)(currentY - heightPart), clsConstants.collinscol, (float)heightPart);
-                if (!frmCollinsLegend.IsUpdateClicked)
+                for (int j = 0; j < Items.Count/2; j++)
                 {
-                    g.FillRectangle(new SolidBrush(legendColors[j]), x, (float)(currentY - heightPart), clsConstants.collinscol, (float)heightPart);
-                }
-                else
-                {
-                    g.FillRectangle(new SolidBrush(frmCollinsLegend.CollinsColor[j]), x, (float)(currentY - heightPart), clsConstants.collinscol, (float)heightPart);
-                }
-                currentY -= heightPart;
+                    g.DrawRectangle(axisPen, x, (float)(currentY - Items[j]), (int)(0.02 * diagramWidth), (float)Items[j]);
+                    if (!frmCollinsLegend.IsUpdateClicked)
+                    {
+                        g.FillRectangle(new SolidBrush(legendColors[z]), x, (float)(currentY - Items[j]), (int)(0.02 * diagramWidth), (float)Items[j]);
+                    }
+                    else
+                    {
+                        g.FillRectangle(new SolidBrush(frmCollinsLegend.CollinsColor[z]), x, (float)(currentY - Items[j]), (int)(0.02 * diagramWidth), (float)Items[j]);
+                    }
+                    currentY -= Items[j];
+                    z++;
 
-                j++;
-                heightPart = Ca[i] * fy_F;
-                g.DrawRectangle(axisPen, x, (float)(currentY - heightPart), clsConstants.collinscol, (float)heightPart);
-                if (!frmCollinsLegend.IsUpdateClicked)
-                {
-                    g.FillRectangle(new SolidBrush(legendColors[j]), x, (float)(currentY - heightPart), clsConstants.collinscol, (float)heightPart);
                 }
-                else
-                {
-                    g.FillRectangle(new SolidBrush(frmCollinsLegend.CollinsColor[j]), x, (float)(currentY - heightPart), clsConstants.collinscol, (float)heightPart);
-                }
-                currentY -= heightPart;
-                j++;
-                
 
-                heightPart = Mg[i] * fy_F;
-                g.DrawRectangle(axisPen, x, (float)(currentY - heightPart), clsConstants.collinscol, (float)heightPart);
-                if (!frmCollinsLegend.IsUpdateClicked)
-                {
-                    g.FillRectangle(new SolidBrush(legendColors[j]), x, (float)(currentY - heightPart), clsConstants.collinscol, (float)heightPart);
-                }
-                else
-                {
-                    g.FillRectangle(new SolidBrush(frmCollinsLegend.CollinsColor[j]), x, (float)(currentY - heightPart), clsConstants.collinscol, (float)heightPart);
-                }
-                j++;
+
 
                 // Second bar: Cl, SO4, HCO3
-                x += (int)(clsConstants.collinscol); // Shift for second bar
-                currentY = yOrigin + diagramHeight;
+                x += (int)(0.02 * diagramWidth); // Shift for second bar
+
                 
+                currentY = yOrigin + diagramHeight;
+                for (int j = 3; j < Items.Count; j++)
+                {
+                    g.DrawRectangle(axisPen, x, (float)(currentY - Items[j]), (int)(0.02 * diagramWidth), (float)Items[j]);
+                    if (!frmCollinsLegend.IsUpdateClicked)
+                    {
+                        g.FillRectangle(new SolidBrush(legendColors[z]), x, (float)(currentY - Items[j]), (int)(0.02 * diagramWidth), (float)Items[j]);
+                    }
+                    else
+                    {
+                        g.FillRectangle(new SolidBrush(frmCollinsLegend.CollinsColor[z]), x, (float)(currentY - Items[j]), (int)(0.01 * diagramWidth), (float)Items[j]);
+                    }
+                    currentY -= Items[j];
+                    z++;
 
-                heightPart = Cl[i] * fy_F;
-                g.DrawRectangle(axisPen, x, (float)(currentY - heightPart), clsConstants.collinscol, (float)heightPart);
-                if (!frmCollinsLegend.IsUpdateClicked)
-                {
-                    g.FillRectangle(new SolidBrush(legendColors[j]), x, (float)(currentY - heightPart), clsConstants.collinscol, (float)heightPart);
                 }
-                else
-                {
-                    g.FillRectangle(new SolidBrush(frmCollinsLegend.CollinsColor[j]), x, (float)(currentY - heightPart), clsConstants.collinscol, (float)heightPart);
-                }
-                currentY -= heightPart;
 
-                j++;
-                heightPart = HCO3CO3 * fy_F;
-                g.DrawRectangle(axisPen, x, (float)(currentY - heightPart), clsConstants.collinscol, (float)heightPart);
-                if (!frmCollinsLegend.IsUpdateClicked)
-                {
-                    g.FillRectangle(new SolidBrush(legendColors[j]), x, (float)(currentY - heightPart), clsConstants.collinscol, (float)heightPart);
-                }
-                else
-                {
-                    g.FillRectangle(new SolidBrush(frmCollinsLegend.CollinsColor[j]), x, (float)(currentY - heightPart), clsConstants.collinscol, (float)heightPart);
-                }
-                currentY -= heightPart;
-
-                j++;
-                heightPart = SO4[i] * fy_F;
-                g.DrawRectangle(axisPen, x, (float)(currentY - heightPart), clsConstants.collinscol, (float)heightPart);
-                if (!frmCollinsLegend.IsUpdateClicked)
-                {
-                    g.FillRectangle(new SolidBrush(legendColors[j]), x, (float)(currentY - heightPart), clsConstants.collinscol, (float)heightPart);
-                }
-                else
-                {
-                    g.FillRectangle(new SolidBrush(frmCollinsLegend.CollinsColor[j]), x, (float)(currentY - heightPart), clsConstants.collinscol, (float)heightPart);
-                }
+                
             }
             fontSize = chartHeight * 0.01f;
             // Draw the legend
@@ -236,7 +201,7 @@ namespace WindowsFormsApplication2
 
             if (frmImportSamples.WaterData.Count > 0)
             {
-                int metaX = (int)(0.69f * frmMainForm.mainChartPlotting.Width);
+                int metaX = (int)(xOrigin+diagramWidth+0.02*frmMainForm.mainChartPlotting.Width);
                 int metaY = (int)(0.13f * frmMainForm.mainChartPlotting.Height);
                 int size = 0;
                 for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
