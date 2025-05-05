@@ -505,15 +505,15 @@ namespace WindowsFormsApplication2
                 }
                 else if (listBoxSelected.Items[i].ToString() == "log Na Vs log Cl")
                 {
-                    clsLogsDrawer.ExportLogNaVsLogClChartToPowerPoint(slide, (int)(0.7f*presentation.PageSetup.SlideWidth), presentation.PageSetup.SlideHeight,(int)(0.1f*slideWidth),(int)(0.15f*slideHeight));
+                    clsLogsDrawer.ExportLogNaVsLogClChartToPowerPoint(slide, (int)(presentation.PageSetup.SlideWidth), presentation.PageSetup.SlideHeight,(int)(0.1f*slideWidth),(int)(0.15f*slideHeight));
                 }
                 else if (listBoxSelected.Items[i].ToString() == "log Mg Vs log Cl")
                 {
-                    clsLogsDrawer.ExportlogMgVslogCltoPowerpoint(slide, (int)(0.7f * presentation.PageSetup.SlideWidth), presentation.PageSetup.SlideHeight, (int)(0.1f * slideWidth), (int)(0.15f * slideHeight));
+                    clsLogsDrawer.ExportlogMgVslogCltoPowerpoint(slide, (int)( presentation.PageSetup.SlideWidth), presentation.PageSetup.SlideHeight, (int)(0.1f * slideWidth), (int)(0.15f * slideHeight));
                 }
                 else if (listBoxSelected.Items[i].ToString() == "log Ca Vs log Cl")
                 {
-                    clsLogsDrawer.ExportlogCaVslogCltoPowerPoint(slide, (int)(0.7f * presentation.PageSetup.SlideWidth), presentation.PageSetup.SlideHeight, (int)(0.1f * slideWidth), (int)(0.15f * slideHeight));
+                    clsLogsDrawer.ExportlogCaVslogCltoPowerPoint(slide, (int)(presentation.PageSetup.SlideWidth), presentation.PageSetup.SlideHeight, (int)(0.1f * slideWidth), (int)(0.15f * slideHeight));
                 }
                 else if (listBoxSelected.Items[i].ToString() == "Schoeller Diagram")
                 {

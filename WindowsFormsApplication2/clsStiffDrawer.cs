@@ -305,36 +305,45 @@ namespace WindowsFormsApplication2
         {
 
             // Define Diagram Position
-            int chartWidth = 700;
-            int chartHeight = (int)(frmMainForm.mainChartPlotting.Height / 1.3f);
-            int xOrigin = 620;
-            int yOrigin = 100;
-            float axisHalfLength = chartWidth / 1.5f;
+            int diagramWidth = 420;
+            int diagramHeight = (int)(0.6*(int)presentation.PageSetup.SlideHeight);
+            int xOrigin = (int)(0.6f * diagramWidth);
+            int yOrigin = 150;
+            float axisHalfLength = diagramWidth / 2f;
 
             // Add Title
             PowerPoint.Shape title = slide.Shapes.AddTextbox(
                 Office.MsoTextOrientation.msoTextOrientationHorizontal,
-                450, 20, 600, 50);
+                100, 20, 600, 50);
             title.TextFrame.TextRange.Text = "Stiff Diagram";
-            title.TextFrame.TextRange.Font.Size = 55;
+            title.TextFrame.TextRange.Font.Size = 25;
             title.TextFrame.TextRange.Font.Bold = Office.MsoTriState.msoTrue;
             title.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
             title.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
             title.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
 
             // Draw Axes
-            PowerPoint.Shape verticalLine = slide.Shapes.AddLine(xOrigin, yOrigin, xOrigin, yOrigin + chartHeight);
-            verticalLine.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Black);
-
+            PowerPoint.Shape CenterVerticalLine = slide.Shapes.AddLine(xOrigin, yOrigin, xOrigin, yOrigin + diagramHeight);
+            CenterVerticalLine.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Black);
+            PowerPoint.Shape RightVerticalLine = slide.Shapes.AddLine(xOrigin+axisHalfLength, yOrigin, xOrigin+axisHalfLength, yOrigin + diagramHeight);
+            RightVerticalLine.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Black);
+            PowerPoint.Shape LeftVerticalLine = slide.Shapes.AddLine(xOrigin-axisHalfLength, yOrigin, xOrigin-axisHalfLength, yOrigin + diagramHeight);
+            LeftVerticalLine.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Black);
             // Draw Horizontal Axis
-            PowerPoint.Shape horizontalLine = slide.Shapes.AddLine(
+            PowerPoint.Shape bottomHorizontalLine = slide.Shapes.AddLine(
                 xOrigin - axisHalfLength,
-                yOrigin + chartHeight,
+                yOrigin + diagramHeight,
                 xOrigin + axisHalfLength,
-                yOrigin + chartHeight
+                yOrigin + diagramHeight
             );
-            horizontalLine.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Black); // Set color to black
-
+            bottomHorizontalLine.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Black); // Set color to black
+            PowerPoint.Shape topHorizontalLine = slide.Shapes.AddLine(
+                xOrigin - axisHalfLength,
+                yOrigin,
+                xOrigin + axisHalfLength,
+                yOrigin
+            );
+            topHorizontalLine.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Black); // Set color to black
 
             // Draw X-axis Ticks
             int numTicks = 10;
@@ -342,25 +351,37 @@ namespace WindowsFormsApplication2
             double fx = axisHalfLength / numTicks; // X-axis scale
             for (int i = 0; i <= numTicks; i++)
             {
-                float x = xOrigin + (float)(fx * (i));
-                slide.Shapes.AddLine(x, yOrigin + (int)chartHeight, x, yOrigin + (int)chartHeight + 10);
-                slide.Shapes.AddTextbox(Microsoft.Office.Core.MsoTextOrientation.msoTextOrientationHorizontal,
-                                        x - 10, yOrigin + (int)chartHeight + 15, 50, 15)
-                            .TextFrame.TextRange.Text = (i * 10).ToString();
+                float x = xOrigin + (float)(fx * i);
+
+                slide.Shapes.AddLine(x, yOrigin + (int)diagramHeight, x, yOrigin + (int)diagramHeight + 10).Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Black);
+
+                var textBox = slide.Shapes.AddTextbox(
+                    Microsoft.Office.Core.MsoTextOrientation.msoTextOrientationHorizontal,
+                    x - 10, yOrigin + (int)diagramHeight + 15, 50, 15);
+
+                textBox.TextFrame.TextRange.Text = (i * 10).ToString();
+                textBox.TextFrame.TextRange.Font.Size = 8;
             }
+
             for (int i = 1; i <= numTicks; i++)
             {
                 float x = xOrigin - i * tickSpacing;
-                slide.Shapes.AddLine(x, yOrigin + (int)chartHeight, x, yOrigin + (int)chartHeight + 10);
-                slide.Shapes.AddTextbox(Microsoft.Office.Core.MsoTextOrientation.msoTextOrientationHorizontal,
-                                        x - 10, yOrigin + (int)chartHeight + 15, 50, 15)
-                            .TextFrame.TextRange.Text = (i * 10).ToString();
+
+                slide.Shapes.AddLine(x, yOrigin + (int)diagramHeight, x, yOrigin + (int)diagramHeight + 10).Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Black);
+
+                var textBox = slide.Shapes.AddTextbox(
+                    Microsoft.Office.Core.MsoTextOrientation.msoTextOrientationHorizontal,
+                    x - 10, yOrigin + (int)diagramHeight + 15, 50, 15);
+
+                textBox.TextFrame.TextRange.Text = (i * 10).ToString();
+                textBox.TextFrame.TextRange.Font.Size = 8;
             }
+
 
             // Sample Plotting
             int totalSamples = frmImportSamples.WaterData.Count;
-            int sampleSpacing = totalSamples > 0 ? (chartHeight - 20) / totalSamples : 0;
-            int offsetY = yOrigin + chartHeight - sampleSpacing;
+            int sampleSpacing = totalSamples > 0 ? (diagramHeight - 20) / totalSamples : 0;
+            int offsetY = yOrigin + diagramHeight - sampleSpacing;
             Color[] ionColors = { Color.Cyan, Color.Orange, Color.Purple, Color.Blue, Color.Gray, Color.Green };
             double Nafac = 22.99, Kfac = 39.0983, Cafac = 20.039, Mgfac = 12.1525, Clfac = 35.453, HCO3fac = 61.01684, CO3fac = 30.004, SO4fac = 48.0313;
             List<PointF> Points = new List<PointF>();
@@ -431,7 +452,7 @@ namespace WindowsFormsApplication2
 
             #region Draw Legend
             // Define legend position
-            int legendX = (int)(xOrigin + chartWidth / 2 + 50);
+            int legendX = (int)(xOrigin + diagramWidth / 2 + 50);
             int legendY = (int)yOrigin;
             // Define labels and colors for ions
             string[] ionLabels = { "Na+K", "Mg", "Ca", "Cl", "SO4", "HCO3+CO3" };
@@ -509,30 +530,30 @@ namespace WindowsFormsApplication2
             string cation = "Cations";
             PowerPoint.Shape cationShape = slide.Shapes.AddTextbox(
                 Microsoft.Office.Core.MsoTextOrientation.msoTextOrientationHorizontal,
-                xOrigin - 200, yOrigin + chartHeight + 50, 600, 20
+                xOrigin - axisHalfLength/2-10, yOrigin + diagramHeight + 30, 600, 20
             );
             cationShape.TextFrame.TextRange.Text = cation;
-            cationShape.TextFrame.TextRange.Font.Size = 20;
+            cationShape.TextFrame.TextRange.Font.Size = 15;
             cationShape.TextFrame.TextRange.Font.Name = "Times New Roman";
             cationShape.TextFrame.TextRange.Font.Color.RGB = ColorTranslator.ToOle(Color.Black); // Black text
             cationShape.TextFrame.TextRange.Font.Bold = Microsoft.Office.Core.MsoTriState.msoTrue;
             string meqL = "meq/L";
             PowerPoint.Shape meqLShape = slide.Shapes.AddTextbox(
                 Microsoft.Office.Core.MsoTextOrientation.msoTextOrientationHorizontal,
-                xOrigin, yOrigin + chartHeight + 50, 600, 20
+                xOrigin-10, yOrigin + diagramHeight + 30, 600, 20
             );
             meqLShape.TextFrame.TextRange.Text = meqL;
-            meqLShape.TextFrame.TextRange.Font.Size = 20;
+            meqLShape.TextFrame.TextRange.Font.Size = 15;
             meqLShape.TextFrame.TextRange.Font.Name = "Times New Roman";
             meqLShape.TextFrame.TextRange.Font.Color.RGB = ColorTranslator.ToOle(Color.Black); // Black text
             meqLShape.TextFrame.TextRange.Font.Bold = Microsoft.Office.Core.MsoTriState.msoTrue;
             string anions = "Anions";
             PowerPoint.Shape anionsShape = slide.Shapes.AddTextbox(
                 Microsoft.Office.Core.MsoTextOrientation.msoTextOrientationHorizontal,
-                xOrigin + 200, yOrigin + chartHeight + 50, 600, 20
+                xOrigin + axisHalfLength/2+10, yOrigin + diagramHeight + 30, 600, 20
             );
             anionsShape.TextFrame.TextRange.Text = anions;
-            anionsShape.TextFrame.TextRange.Font.Size = 20;
+            anionsShape.TextFrame.TextRange.Font.Size = 15;
             anionsShape.TextFrame.TextRange.Font.Name = "Times New Roman";
             anionsShape.TextFrame.TextRange.Font.Color.RGB = ColorTranslator.ToOle(Color.Black); // Black text
             anionsShape.TextFrame.TextRange.Font.Bold = Microsoft.Office.Core.MsoTriState.msoTrue;
@@ -541,10 +562,10 @@ namespace WindowsFormsApplication2
 
             PowerPoint.Shape subtitleShape = slide.Shapes.AddTextbox(
                 Microsoft.Office.Core.MsoTextOrientation.msoTextOrientationHorizontal,
-                xOrigin - 200, yOrigin + chartHeight + 80, 600, 20
+                xOrigin - 200, yOrigin + diagramHeight + 80, 600, 20
             );
             subtitleShape.TextFrame.TextRange.Text = subtitle;
-            subtitleShape.TextFrame.TextRange.Font.Size = 15;
+            subtitleShape.TextFrame.TextRange.Font.Size = 8;
             subtitleShape.TextFrame.TextRange.Font.Name = "Times New Roman";
             subtitleShape.TextFrame.TextRange.Font.Color.RGB = ColorTranslator.ToOle(Color.Black); // Black text
         }
