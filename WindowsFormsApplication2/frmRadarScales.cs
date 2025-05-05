@@ -89,15 +89,15 @@ namespace WindowsFormsApplication2
                         // Update the appropriate scale array based on the row index
                         if (frmMainForm.listBoxCharts.SelectedItem == "Radar Diagram 1") // Radar1 scales
                         {
-                            clsRadarDrawer.Radar1Scales[e.RowIndex] = scaleValue;
+                            clsRadarDrawer.Radar1Scales[e.RowIndex] = scaleValue.ToString();
                         }
                         else if (frmMainForm.listBoxCharts.SelectedItem == "Radar Diagram 2")// Radar2 scales
                         {
-                            clsRadarDrawer.Radar2Scales[e.RowIndex] = scaleValue;
+                            clsRadarDrawer.Radar2Scales[e.RowIndex] = scaleValue.ToString();
                         }
                         else
                         {
-                            clsRadarDrawer.Radar3Scales[e.RowIndex] = scaleValue;
+                            clsRadarDrawer.Radar3Scales[e.RowIndex] = scaleValue.ToString();
                         }
 
                         // Refresh the radar chart
@@ -125,21 +125,21 @@ namespace WindowsFormsApplication2
             {
                 for (int i = 0; i < labelsRadar1.Length; i++)
                 {
-                    ScalesDatagridView.Rows.Add(labelsRadar1[i], clsRadarDrawer.Radar1Scales[i].ToString("F5"));
+                    ScalesDatagridView.Rows.Add(labelsRadar1[i], clsRadarDrawer.Radar1Scales[i]);
                 }
             }
             else if (frmMainForm.listBoxCharts.SelectedItem == "Radar Diagram 2")
             {
                 for (int i = 0; i < labelsRadar2.Length; i++)
                 {
-                    ScalesDatagridView.Rows.Add(labelsRadar2[i], clsRadarDrawer.Radar2Scales[i].ToString("F5"));
+                    ScalesDatagridView.Rows.Add(labelsRadar2[i], clsRadarDrawer.Radar2Scales[i]);
                 }
             }
             else
             {
                 for (int i = 0; i < labelsRadar3.Length; i++)
                 {
-                    ScalesDatagridView.Rows.Add(labelsRadar3[i], clsRadarDrawer.Radar3Scales[i].ToString("F5"));
+                    ScalesDatagridView.Rows.Add(labelsRadar3[i], clsRadarDrawer.Radar3Scales[i]);
                 }
             }
             int rowHeight = ScalesDatagridView.RowTemplate.Height;

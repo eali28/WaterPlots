@@ -22,9 +22,9 @@ namespace WindowsFormsApplication2
         public static double maxAl = 0, maxCo = 0, maxCu = 0, maxMn = 0, maxNi = 0, maxZn = 0, maxPb = 0, maxFe = 0, maxCd = 0, maxCr = 0, maxTl = 0, maxBe = 0, maxSe = 0, maxLi=0,maxB=0;
         public static double Bm = 35453, Bn = 22989.7, Bo = 39098.3, Bp = 40078, Bq = 24305, Br = 137327, Bs = 87620;
         public static TextBox txt;
-        public static double[] Radar1Scales=new double[7];
-        public static double[] Radar2Scales = new double[16];
-        public static double[] Radar3Scales = new double[21];
+        public static string[] Radar1Scales=new string[7];
+        public static string[] Radar2Scales = new string[16];
+        public static string[] Radar3Scales = new string[21];
         /// <summary>
         /// Draw Radar legend
         /// </summary>
@@ -139,18 +139,51 @@ namespace WindowsFormsApplication2
 
             float fontSize = 12; // Make font size relative
             PrecomputeMaxValues(flag);
+            Radar1Scales = new string[] { maxCl.ToString("F5"), maxNa.ToString("F5"), maxK.ToString("F5"), maxCa.ToString("F5"), maxMg.ToString("F5"), maxBa.ToString("F5"), maxSr.ToString("F5") };
             Font AxisFont = new Font("Times New Roman", fontSize, FontStyle.Bold);
+            List<string> scales = new List<string>();
+            for (int i = 0; i < Radar1Scales.Count(); i++)
+            {
+                string s = Radar1Scales[i];
+                string temp = "";
+                bool checking = false;
+                bool found = false;
+                for (int j = 0; j < s.Length; j++)
+                {
+                    if (s[j] == '.')
+                    {
+                        checking = true;
+                    }
+                    else if (s[j] != '0' && checking)
+                    {
+                        found = true;
+                        temp += s[j];
+                        break;
+                    }
+                    temp += s[j];
+                }
+                if (!found)
+                {
+                    int dotIndex = temp.IndexOf('.');
+                    if (dotIndex != -1)
+                    {
+                        temp = temp.Substring(0, dotIndex);
+                    }
+                }
+                scales.Add(temp);
+                Radar1Scales[i] =temp;
+            }
             string[] labels =
             {
-                "K (mol/L)\n"+ (maxK).ToString("F5"),
-                "Ca (mol/L)\n"+ (maxCa).ToString("F5"),
-                "Mg (mol/L)\n"+ (maxMg).ToString("F5"),
-                "Ba (mol/L)\n"+ (maxBa).ToString("F5"),
-                "Sr (mol/L)\n"+ (maxSr).ToString("F5"),
-                "Cl (mol/L)\n"+ (maxCl).ToString("F5"),
-                "Na (mol/L)\n"+ (maxNa).ToString("F5")
+                "K (mol/L)\n"+ scales[2],
+                "Ca (mol/L)\n"+ scales[3],
+                "Mg (mol/L)\n"+ scales[4],
+                "Ba (mol/L)\n"+ scales[5],
+                "Sr (mol/L)\n"+ scales[6],
+                "Cl (mol/L)\n"+ scales[0],
+                "Na (mol/L)\n"+ scales[1]
             };
-            Radar1Scales=new double[] {maxCl,maxNa,maxK,maxCa,maxMg,maxBa,maxSr};
+            
             for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
             {
                 sampleData[i] = new clsRadarScale[]
@@ -262,14 +295,12 @@ namespace WindowsFormsApplication2
         }
         public static void ExportRadar1ToPowerpoint(Rectangle bounds, PowerPoint.Slide slide, PowerPoint.Presentation presentation,bool flag)
         {
-            
-
-
 
             // Data labels and values
             clsRadarScale[][] sampleData = new clsRadarScale[frmImportSamples.WaterData.Count][];
             double Bm = 35453, Bn = 22989.7, Bo = 39098.3, Bp = 40078, Bq = 24305, Br = 137327, Bs = 87620;
             PrecomputeMaxValues(flag);
+
             string[] labels =
             {
                 "K (mol/L)"+ (maxK).ToString("F5"),
@@ -444,26 +475,57 @@ namespace WindowsFormsApplication2
             clsRadarScale[][] sampleData = new clsRadarScale[frmImportSamples.WaterData.Count][];
             PrecomputeMaxValues(flag);
 
-            Radar2Scales = new double[] { maxNaCl, maxClCa, maxHCO3Cl, maxClSr,maxNaCa, maxKNa, maxSrMg, maxMgCl, maxSrCl, maxSrK, maxMgK, maxCaK, maxtK, maxBCl, maxBNa, maxBMg };
-            
+            Radar2Scales = new string[] { maxNaCl.ToString("F5"), maxClCa.ToString("F5"), maxHCO3Cl.ToString("F5"), maxClSr.ToString("F5"), maxNaCa.ToString("F5"), maxKNa.ToString("F5"), maxSrMg.ToString("F5"), maxMgCl.ToString("F5"), maxSrCl.ToString("F5"), maxSrK.ToString("F5"), maxMgK.ToString("F5"), maxCaK.ToString("F5"), maxtK.ToString("F5"), maxBCl.ToString("F5"), maxBNa.ToString("F5"), maxBMg.ToString("F5") };
+            List<string> scales = new List<string>();
+            for (int i = 0; i < Radar2Scales.Count(); i++)
+            {
+                string s = Radar2Scales[i];
+                string temp = "";
+                bool checking = false;
+                bool found = false;
+                for (int j = 0; j < s.Length; j++)
+                {
+                    if (s[j] == '.')
+                    {
+                        checking = true;
+                    }
+                    else if (s[j] != '0' && checking)
+                    {
+                        found = true;
+                        temp += s[j];
+                        break;
+                    }
+                    temp += s[j];
+                }
+                if (!found)
+                {
+                    int dotIndex = temp.IndexOf('.');
+                    if (dotIndex != -1)
+                    {
+                        temp = temp.Substring(0, dotIndex);
+                    }
+                }
+                scales.Add(temp);
+                Radar2Scales[i] = temp;
+            }
             string[] labels =
             {
-            "EV_Na-Ca \n"+(maxNaCa).ToString("F5"),
-            "GT_K-Na \n"+ (maxKNa).ToString("F5"),
-            "SS_Sr-Mg \n"+(maxSrMg).ToString("F5"),
-            "SS_Mg-Cl \n"+(maxMgCl).ToString("F5"),
-            "SS_Sr-Cl \n"+ (maxSrCl).ToString("F5"),
-            "Lith_Sr-K \n"+ (maxSrK).ToString("F5"),
-            "Lith_Mg-K \n"+ (maxMgK).ToString("F5"),
-            "Lith_Ca-K \n"+ (maxCaK).ToString("F5"),
-            "Wt%K \n"+ (maxtK).ToString("F5"),
-            "OM_B-Cl \n"+ (maxBCl).ToString("F5"),
-            "OM_B-Na \n"+ (maxBNa).ToString("F5"),
-            "OM_B-Mg \n"+ (maxBMg).ToString("F5"),
-            "EV_Na-Cl \n"+ (maxNaCl).ToString("F5"),
-            "EV_Cl-Ca \n"+ (maxClCa).ToString("F5"),
-            "EV_HCO3-Cl \n"+(maxHCO3Cl).ToString("F5"),
-            "EV_Cl-Sr \n"+ (maxClSr).ToString("F5")
+            "EV_Na-Ca \n"+scales[4],
+            "GT_K-Na \n"+ scales[5],
+            "SS_Sr-Mg \n"+scales[6],
+            "SS_Mg-Cl \n"+scales[7],
+            "SS_Sr-Cl \n"+ scales[8],
+            "Lith_Sr-K \n"+ scales[9],
+            "Lith_Mg-K \n"+ scales[10],
+            "Lith_Ca-K \n"+ scales[11],
+            "Wt%K \n"+ scales[12],
+            "OM_B-Cl \n"+ scales[13],
+            "OM_B-Na \n"+ scales[14],
+            "OM_B-Mg \n"+ scales[15],
+            "EV_Na-Cl \n"+ scales[0],
+            "EV_Cl-Ca \n"+ scales[1],
+            "EV_HCO3-Cl \n"+scales[2],
+            "EV_Cl-Sr \n"+ scales[3]
 
         };
             // Initialize jagged array
@@ -808,32 +870,32 @@ namespace WindowsFormsApplication2
             // Data labels and values
             PrecomputeMaxValues(flag);
 
-            Radar3Scales = new double[] { 
-            maxNa,
-            maxK,
-            maxCa,
-            maxMg,
-            maxAl,
-            maxCo,
-            maxCu,
-            maxMn,
-            maxNi,
-            maxSr,
-            maxZn,
-            maxBa,
-            maxPb,
-            maxFe,
-            maxCd,
-            maxCr,
-            maxTl,
-            maxBe,
-            maxSe,
-            maxB,
-            maxLi };
+            Radar3Scales = new string[] { 
+            maxNa.ToString("F5"),
+            maxK.ToString("F5"),
+            maxCa.ToString("F5"),
+            maxMg.ToString("F5"),
+            maxAl.ToString("F5"),
+            maxCo.ToString("F5"),
+            maxCu.ToString("F5"),
+            maxMn.ToString("F5"),
+            maxNi.ToString("F5"),
+            maxSr.ToString("F5"),
+            maxZn.ToString("F5"),
+            maxBa.ToString("F5"),
+            maxPb.ToString("F5"),
+            maxFe.ToString("F5"),
+            maxCd.ToString("F5"),
+            maxCr.ToString("F5"),
+            maxTl.ToString("F5"),
+            maxBe.ToString("F5"),
+            maxSe.ToString("F5"),
+            maxB.ToString("F5"),
+            maxLi.ToString("F5") };
             List<string> scales = new List<string>();
             for (int i = 0; i < Radar3Scales.Count(); i++)
             {
-                string s = Radar3Scales[i].ToString("F5");
+                string s = Radar3Scales[i];
                 string temp="";
                 bool checking=false;
                 bool found = false;
@@ -860,6 +922,7 @@ namespace WindowsFormsApplication2
                     }
                 }
                 scales.Add(temp);
+                Radar3Scales[i] = temp;
             }
 
             string[] labels =
@@ -975,9 +1038,6 @@ namespace WindowsFormsApplication2
             g.DrawPolygon(axisPen, thirdQuarterList);
 
             g.DrawString("ICP Reproducibility", new Font("Times New Roman", fontSize, FontStyle.Bold), Brushes.Black, 0.2f * frmMainForm.mainChartPlotting.Width, 0.9f * frmMainForm.mainChartPlotting.Height);
-            //Pen testPen = new Pen(Color.Red, 2f);
-            //testPen.DashStyle = DashStyle.Dot;
-            //g.DrawLine(testPen, 10, 10, 200, 10);
             
             g.SmoothingMode = SmoothingMode.AntiAlias;
             for (int s = 0; s < sampleData.Length; s++)
@@ -1002,20 +1062,8 @@ namespace WindowsFormsApplication2
                 Pen polygonPen = new Pen(colors[s], 2f);
                 polygonPen.Width = frmImportSamples.WaterData[s].lineWidth;
                 polygonPen.DashStyle = frmImportSamples.WaterData[s].selectedStyle;
-                //polygonPen.DashPattern = new float[] { 50, 10 };
                 g.DrawPolygon(polygonPen, points);
-                //Pen testPen = new Pen(Color.Red, 2f);
-                //testPen.DashStyle = DashStyle.Dot;
-                //g.DrawLine(testPen, 10, 10, 200, 10);
-                // Draw the polygon by connecting points
-                //using (Pen polygonPen = new Pen(colors[s], 2))
-                //{
-                //    polygonPen.Color = frmImportSamples.WaterData[s].color;
-                //    polygonPen.DashStyle = DashStyle.Dot;
-                //    //MessageBox.Show("the dashstyle is " + polygonPen.DashStyle.ToString());
-                //    polygonPen.Width = frmImportSamples.WaterData[s].lineWidth;
-                //    g.DrawPolygon(polygonPen, points);
-                //}
+                
 
 
             }
@@ -1032,7 +1080,7 @@ namespace WindowsFormsApplication2
             List<string> scales = new List<string>();
             foreach (var value in Radar3Scales)
             {
-                string s = value.ToString("F5");
+                string s = value;
                 string temp = "";
                 bool checking = false, found = false;
 

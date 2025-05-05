@@ -28,7 +28,6 @@ namespace WindowsFormsApplication2
         public static Bitmap bmbpic;
         public static Panel legendPanel;
         public static Panel metaPanel;
-        private bool isLoaded = false;
 
         public frmMainForm()
         {
@@ -94,11 +93,6 @@ namespace WindowsFormsApplication2
         {
             listBoxCharts.Refresh();
             listBoxSelected.Refresh();
-            if (isLoaded)
-                return;
-
-            // Initialization logic here
-            isLoaded = true;
             if (frmImportSamples.WaterData != null && frmImportSamples.WaterData.Count > 0)
             {
                 saveIcon.Image = Properties.Resources.saveActivated;
@@ -511,15 +505,15 @@ namespace WindowsFormsApplication2
                 }
                 else if (listBoxSelected.Items[i].ToString() == "log Na Vs log Cl")
                 {
-                    clsLogsDrawer.ExportLogNaVsLogClChartToPowerPoint(slide, presentation.PageSetup.SlideWidth, presentation.PageSetup.SlideHeight,(int)(0.1f*slideWidth),(int)(0.1f*slideHeight));
+                    clsLogsDrawer.ExportLogNaVsLogClChartToPowerPoint(slide, (int)(0.7f*presentation.PageSetup.SlideWidth), presentation.PageSetup.SlideHeight,(int)(0.1f*slideWidth),(int)(0.15f*slideHeight));
                 }
                 else if (listBoxSelected.Items[i].ToString() == "log Mg Vs log Cl")
                 {
-                    clsLogsDrawer.ExportlogMgVslogCltoPowerpoint(slide, presentation.PageSetup.SlideWidth, presentation.PageSetup.SlideHeight, (int)(0.1f * slideWidth), (int)(0.1f * slideHeight));
+                    clsLogsDrawer.ExportlogMgVslogCltoPowerpoint(slide, (int)(0.7f * presentation.PageSetup.SlideWidth), presentation.PageSetup.SlideHeight, (int)(0.1f * slideWidth), (int)(0.15f * slideHeight));
                 }
                 else if (listBoxSelected.Items[i].ToString() == "log Ca Vs log Cl")
                 {
-                    clsLogsDrawer.ExportlogCaVslogCltoPowerPoint(slide, presentation.PageSetup.SlideWidth, presentation.PageSetup.SlideHeight, (int)(0.1f * slideWidth), (int)(0.1f * slideHeight));
+                    clsLogsDrawer.ExportlogCaVslogCltoPowerPoint(slide, (int)(0.7f * presentation.PageSetup.SlideWidth), presentation.PageSetup.SlideHeight, (int)(0.1f * slideWidth), (int)(0.15f * slideHeight));
                 }
                 else if (listBoxSelected.Items[i].ToString() == "Schoeller Diagram")
                 {
@@ -528,7 +522,7 @@ namespace WindowsFormsApplication2
                 }
                 else if (listBoxSelected.Items[i].ToString() == "Radar Diagram 1")
                 {
-                    Rectangle bounds = new Rectangle((int)(0.01f * mainChartPlotting.Width), (int)(0.08f * mainChartPlotting.Height), (int)(0.9 * mainChartPlotting.Width), (int)(0.9 * mainChartPlotting.Height));
+                    Rectangle bounds = new Rectangle((int)(0.5f * slideWidth), (int)(0.08f * slideHeight), (int)(0.6 * slideWidth), (int)(0.9 * slideHeight));
                     clsRadarDrawer.ExportRadar1ToPowerpoint(bounds, slide, presentation,flag);
                 }
                 else if (listBoxSelected.Items[i].ToString() == "Radar Diagram 2")
@@ -575,25 +569,25 @@ namespace WindowsFormsApplication2
                     switch (i)
                     {
                         case 0:
-                            clsRadarDrawer.maxCl = clsRadarDrawer.Radar1Scales[i];
+                            clsRadarDrawer.maxCl = double.Parse(clsRadarDrawer.Radar1Scales[i]);
                                 break;
                         case 1:
-                                clsRadarDrawer.maxNa = clsRadarDrawer.Radar1Scales[i];
+                                clsRadarDrawer.maxNa = double.Parse(clsRadarDrawer.Radar1Scales[i]);
                                 break;
                         case 2:
-                                clsRadarDrawer.maxK = clsRadarDrawer.Radar1Scales[i];
+                                clsRadarDrawer.maxK = double.Parse(clsRadarDrawer.Radar1Scales[i]);
                                 break;
                         case 3:
-                                clsRadarDrawer.maxCa = clsRadarDrawer.Radar1Scales[i];
+                                clsRadarDrawer.maxCa = double.Parse(clsRadarDrawer.Radar1Scales[i]);
                                 break;
                         case 4:
-                                clsRadarDrawer.maxMg = clsRadarDrawer.Radar1Scales[i];
+                                clsRadarDrawer.maxMg = double.Parse(clsRadarDrawer.Radar1Scales[i]);
                                 break;
                         case 5:
-                                clsRadarDrawer.maxBa = clsRadarDrawer.Radar1Scales[i];
+                                clsRadarDrawer.maxBa = double.Parse(clsRadarDrawer.Radar1Scales[i]);
                                 break;
                         case 6:
-                                clsRadarDrawer.maxSr = clsRadarDrawer.Radar1Scales[i];
+                                clsRadarDrawer.maxSr = double.Parse(clsRadarDrawer.Radar1Scales[i]);
                                 break;
 
                     }
@@ -612,52 +606,52 @@ namespace WindowsFormsApplication2
                     switch (i)
                     {
                         case 0:
-                            clsRadarDrawer.maxNaCl = clsRadarDrawer.Radar2Scales[i];
+                            clsRadarDrawer.maxNaCl = double.Parse(clsRadarDrawer.Radar2Scales[i]);
                             break;
                         case 1:
-                            clsRadarDrawer.maxClCa = clsRadarDrawer.Radar2Scales[i];
+                            clsRadarDrawer.maxClCa = double.Parse(clsRadarDrawer.Radar2Scales[i]);
                             break;
                         case 2:
-                            clsRadarDrawer.maxHCO3Cl = clsRadarDrawer.Radar2Scales[i];
+                            clsRadarDrawer.maxHCO3Cl = double.Parse(clsRadarDrawer.Radar2Scales[i]);
                             break;
                         case 3:
-                            clsRadarDrawer.maxClSr = clsRadarDrawer.Radar2Scales[i];
+                            clsRadarDrawer.maxClSr = double.Parse(clsRadarDrawer.Radar2Scales[i]);
                             break;
                         case 4:
-                            clsRadarDrawer.maxNaCa = clsRadarDrawer.Radar2Scales[i];
+                            clsRadarDrawer.maxNaCa = double.Parse(clsRadarDrawer.Radar2Scales[i]);
                             break;
                         case 5:
-                            clsRadarDrawer.maxKNa = clsRadarDrawer.Radar2Scales[i];
+                            clsRadarDrawer.maxKNa = double.Parse(clsRadarDrawer.Radar2Scales[i]);
                             break;
                         case 6:
-                            clsRadarDrawer.maxSrMg = clsRadarDrawer.Radar2Scales[i];
+                            clsRadarDrawer.maxSrMg = double.Parse(clsRadarDrawer.Radar2Scales[i]);
                             break;
                         case 7:
-                            clsRadarDrawer.maxMgCl = clsRadarDrawer.Radar2Scales[i];
+                            clsRadarDrawer.maxMgCl = double.Parse(clsRadarDrawer.Radar2Scales[i]);
                             break;
                         case 8:
-                            clsRadarDrawer.maxSrCl = clsRadarDrawer.Radar2Scales[i];
+                            clsRadarDrawer.maxSrCl = double.Parse(clsRadarDrawer.Radar2Scales[i]);
                             break;
                         case 9:
-                            clsRadarDrawer.maxSrK = clsRadarDrawer.Radar2Scales[i];
+                            clsRadarDrawer.maxSrK = double.Parse(clsRadarDrawer.Radar2Scales[i]);
                             break;
                         case 10:
-                            clsRadarDrawer.maxMgK = clsRadarDrawer.Radar2Scales[i];
+                            clsRadarDrawer.maxMgK = double.Parse(clsRadarDrawer.Radar2Scales[i]);
                             break;
                         case 11:
-                            clsRadarDrawer.maxCaK = clsRadarDrawer.Radar2Scales[i];
+                            clsRadarDrawer.maxCaK = double.Parse(clsRadarDrawer.Radar2Scales[i]);
                             break;
                         case 12:
-                            clsRadarDrawer.maxtK = clsRadarDrawer.Radar2Scales[i];
+                            clsRadarDrawer.maxtK = double.Parse(clsRadarDrawer.Radar2Scales[i]);
                             break;
                         case 13:
-                            clsRadarDrawer.maxBCl = clsRadarDrawer.Radar2Scales[i];
+                            clsRadarDrawer.maxBCl = double.Parse(clsRadarDrawer.Radar2Scales[i]);
                             break;
                         case 14:
-                            clsRadarDrawer.maxBNa = clsRadarDrawer.Radar2Scales[i];
+                            clsRadarDrawer.maxBNa = double.Parse(clsRadarDrawer.Radar2Scales[i]);
                             break;
                         case 15:
-                            clsRadarDrawer.maxBMg = clsRadarDrawer.Radar2Scales[i];
+                            clsRadarDrawer.maxBMg = double.Parse(clsRadarDrawer.Radar2Scales[i]);
                             break;
 
                     }
@@ -673,67 +667,67 @@ namespace WindowsFormsApplication2
                     switch (i)
                     {
                         case 0:
-                            clsRadarDrawer.maxNa = clsRadarDrawer.Radar3Scales[i];
+                            clsRadarDrawer.maxNa = double.Parse(clsRadarDrawer.Radar3Scales[i]);
                             break;
                         case 1:
-                            clsRadarDrawer.maxK = clsRadarDrawer.Radar3Scales[i];
+                            clsRadarDrawer.maxK = double.Parse(clsRadarDrawer.Radar3Scales[i]);
                             break;
                         case 2:
-                            clsRadarDrawer.maxCa = clsRadarDrawer.Radar3Scales[i];
+                            clsRadarDrawer.maxCa = double.Parse(clsRadarDrawer.Radar3Scales[i]);
                             break;
                         case 3:
-                            clsRadarDrawer.maxMg = clsRadarDrawer.Radar3Scales[i];
+                            clsRadarDrawer.maxMg = double.Parse(clsRadarDrawer.Radar3Scales[i]);
                             break;
                         case 4:
-                            clsRadarDrawer.maxAl = clsRadarDrawer.Radar3Scales[i];
+                            clsRadarDrawer.maxAl = double.Parse(clsRadarDrawer.Radar3Scales[i]);
                             break;
                         case 5:
-                            clsRadarDrawer.maxCo = clsRadarDrawer.Radar3Scales[i];
+                            clsRadarDrawer.maxCo = double.Parse(clsRadarDrawer.Radar3Scales[i]);
                             break;
                         case 6:
-                            clsRadarDrawer.maxCu = clsRadarDrawer.Radar3Scales[i];
+                            clsRadarDrawer.maxCu = double.Parse(clsRadarDrawer.Radar3Scales[i]);
                             break;
                         case 7:
-                            clsRadarDrawer.maxMn = clsRadarDrawer.Radar3Scales[i];
+                            clsRadarDrawer.maxMn = double.Parse(clsRadarDrawer.Radar3Scales[i]);
                             break;
                         case 8:
-                            clsRadarDrawer.maxNi = clsRadarDrawer.Radar3Scales[i];
+                            clsRadarDrawer.maxNi = double.Parse(clsRadarDrawer.Radar3Scales[i]);
                             break;
                         case 9:
-                            clsRadarDrawer.maxSr = clsRadarDrawer.Radar3Scales[i];
+                            clsRadarDrawer.maxSr = double.Parse(clsRadarDrawer.Radar3Scales[i]);
                             break;
                         case 10:
-                            clsRadarDrawer.maxZn = clsRadarDrawer.Radar3Scales[i];
+                            clsRadarDrawer.maxZn = double.Parse(clsRadarDrawer.Radar3Scales[i]);
                             break;
                         case 11:
-                            clsRadarDrawer.maxBa = clsRadarDrawer.Radar3Scales[i];
+                            clsRadarDrawer.maxBa = double.Parse(clsRadarDrawer.Radar3Scales[i]);
                             break;
                         case 12:
-                            clsRadarDrawer.maxPb = clsRadarDrawer.Radar3Scales[i];
+                            clsRadarDrawer.maxPb = double.Parse(clsRadarDrawer.Radar3Scales[i]);
                             break;
                         case 13:
-                            clsRadarDrawer.maxFe = clsRadarDrawer.Radar3Scales[i];
+                            clsRadarDrawer.maxFe = double.Parse(clsRadarDrawer.Radar3Scales[i]);
                             break;
                         case 14:
-                            clsRadarDrawer.maxCd = clsRadarDrawer.Radar3Scales[i];
+                            clsRadarDrawer.maxCd = double.Parse(clsRadarDrawer.Radar3Scales[i]);
                             break;
                         case 15:
-                            clsRadarDrawer.maxCr = clsRadarDrawer.Radar3Scales[i];
+                            clsRadarDrawer.maxCr = double.Parse(clsRadarDrawer.Radar3Scales[i]);
                             break;
                         case 16:
-                            clsRadarDrawer.maxTl = clsRadarDrawer.Radar3Scales[i];
+                            clsRadarDrawer.maxTl = double.Parse(clsRadarDrawer.Radar3Scales[i]);
                             break;
                         case 17:
-                            clsRadarDrawer.maxBe = clsRadarDrawer.Radar3Scales[i];
+                            clsRadarDrawer.maxBe = double.Parse(clsRadarDrawer.Radar3Scales[i]);
                             break;
                         case 18:
-                            clsRadarDrawer.maxSe = clsRadarDrawer.Radar3Scales[i];
+                            clsRadarDrawer.maxSe = double.Parse(clsRadarDrawer.Radar3Scales[i]);
                             break;
                         case 19:
-                            clsRadarDrawer.maxB = clsRadarDrawer.Radar3Scales[i];
+                            clsRadarDrawer.maxB = double.Parse(clsRadarDrawer.Radar3Scales[i]);
                             break;
                         case 20:
-                            clsRadarDrawer.maxLi = clsRadarDrawer.Radar3Scales[i];
+                            clsRadarDrawer.maxLi = double.Parse(clsRadarDrawer.Radar3Scales[i]);
                             break;
                     }
 

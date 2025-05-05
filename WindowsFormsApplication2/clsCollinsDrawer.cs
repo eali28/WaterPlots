@@ -189,7 +189,7 @@ namespace WindowsFormsApplication2
             fontSize = chartHeight * 0.01f;
             // Draw the legend
 
-            fontSize = 0.01f*chartHeight;
+            fontSize = clsConstants.legendTextSize;
 
 
             // Draw legend background (blue rectangle)
@@ -201,7 +201,7 @@ namespace WindowsFormsApplication2
 
             if (frmImportSamples.WaterData.Count > 0)
             {
-                int metaX = (int)(xOrigin+diagramWidth+0.02*frmMainForm.mainChartPlotting.Width);
+                int metaX = (int)(0.69f * frmMainForm.mainChartPlotting.Width);
                 int metaY = (int)(0.13f * frmMainForm.mainChartPlotting.Height);
                 int size = 0;
                 for (int i = 0; i < frmImportSamples.WaterData.Count; i++)

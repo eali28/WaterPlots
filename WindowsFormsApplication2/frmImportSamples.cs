@@ -19,7 +19,6 @@ namespace WindowsFormsApplication2
         public static string JOBID = "";
         public static string connectionString = "Server=SQL-STRATOCHEM;Database=BRI;Integrated Security=True;";
         public static List<clsSampleData> samplesData = new List<clsSampleData>();
-        public static List<clsWell> wellData = new List<clsWell>();
         public static List<clsWater> WaterData = new List<clsWater>();
         private static frmImportSamples instance;
         private BackgroundWorker backgroundWorker;
@@ -50,10 +49,9 @@ namespace WindowsFormsApplication2
             backgroundWorker = new BackgroundWorker();
             backgroundWorker.DoWork += backgroundWorker_DoWork;
             backgroundWorker.RunWorkerCompleted += backgroundWorker_RunWorkerCompleted;
-            WaterData = new List<clsWater>();
-            samplesData = new List<clsSampleData>();
-            wellData = new List<clsWell>();
-            
+            isCalculateAndPlotClicked = false;
+
+
         }
         public static void InitializeDataGridView()
         {
@@ -320,7 +318,7 @@ namespace WindowsFormsApplication2
             W.Well_ID=ISAMP.Well_ID
         WHERE 
             R.Company = @Company AND R.JOBID = @JOBID";
-            samplesData.Clear();
+            samplesData=new List<clsSampleData>();
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 try

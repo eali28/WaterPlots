@@ -150,7 +150,7 @@ namespace WindowsFormsApplication2
             float chartX = x, chartY = y, chartWidth = 0.7f*slideWidth, chartHeight = 0.7f*slideHeight;
 
             // Add chart title
-            PowerPoint.Shape chartTitle = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, chartX + slideWidth / 4, chartY - 70, 200, 50);
+            PowerPoint.Shape chartTitle = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, slideWidth / 2, chartY - 70, 200, 50);
             chartTitle.TextFrame.TextRange.Text = "Log Na vs. Log Cl";
             chartTitle.TextFrame.TextRange.Font.Size = 25;
             chartTitle.TextFrame.TextRange.Font.Bold = Office.MsoTriState.msoTrue;
@@ -415,7 +415,7 @@ namespace WindowsFormsApplication2
             float chartX = x, chartY = y, chartWidth = 0.7f*slideWidth, chartHeight = 0.7f*slideHeight;
 
             // Add chart title
-            PowerPoint.Shape chartTitle = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, chartX + slideWidth / 4, chartY - 70, 200, 50);
+            PowerPoint.Shape chartTitle = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, slideWidth / 2, chartY - 70, 200, 50);
             chartTitle.TextFrame.TextRange.Text = "Log Mg vs. Log Cl";
             chartTitle.TextFrame.TextRange.Font.Size = 25;
             chartTitle.TextFrame.TextRange.Font.Bold = Office.MsoTriState.msoTrue;
@@ -675,7 +675,7 @@ namespace WindowsFormsApplication2
             float chartX = x, chartY = y, chartWidth = 0.7f*slideWidth, chartHeight = 0.7f*slideHeight;
 
             // Add chart title
-            PowerPoint.Shape chartTitle = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, chartX + slideWidth / 4, chartY - 70, 200, 50);
+            PowerPoint.Shape chartTitle = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, slideWidth / 2, chartY - 70, 200, 50);
             chartTitle.TextFrame.TextRange.Text = "Log Ca vs. Log Cl";
             chartTitle.TextFrame.TextRange.Font.Size = 25;
             chartTitle.TextFrame.TextRange.Font.Bold = Office.MsoTriState.msoTrue;
