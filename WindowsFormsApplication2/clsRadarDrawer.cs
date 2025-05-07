@@ -276,6 +276,14 @@ namespace WindowsFormsApplication2
                     double angle = i * angleIncrement;
                     float x = centerX + (float)(scaledRadius * Math.Cos(angle));
                     float y = centerY + (float)(scaledRadius * Math.Sin(angle));
+                    if (double.IsNaN(x))
+                    {
+                        x = centerX;
+                    }
+                    if (double.IsNaN(y))
+                    {
+                        y = centerY;
+                    }
                     points[i] = new PointF(x, y);
                 }
 
@@ -334,34 +342,145 @@ namespace WindowsFormsApplication2
             }
 
             // Center of the diagram
-            float centerX = bounds.X + bounds.Width / 2 - 300;
+            float centerX = (bounds.Width / 2);
             float centerY = bounds.Y + bounds.Height / 2 - 50;
 
 
             // Radius of the radar diagram
-            float radius = Math.Min(bounds.Width, bounds.Height) / 2 - 60;
+            float radius = Math.Min(bounds.Width, bounds.Height) / 3;
             // Number of axes
             int numAxes = labels.Length;
 
             // Angle between each axis (in radians)
+            PointF[] quarterList = new PointF[numAxes];
+            PointF[] halfList = new PointF[numAxes];
+            PointF[] thirdQuarterList = new PointF[numAxes];
+            PointF[] allList = new PointF[numAxes];
             double angleIncrement = 2 * Math.PI / numAxes;
             for (int i = 0; i < numAxes; i++)
             {
                 double angle = i * angleIncrement;
-                float x = centerX + (float)(radius * Math.Cos(angle));
-                float y = centerY + (float)(radius * Math.Sin(angle));
-                slide.Shapes.AddLine(centerX, centerY, x, y).Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
+                float allX = centerX + (float)(radius * Math.Cos(angle));
+                float allY = centerY + (float)(radius * Math.Sin(angle));
+                float quarterX = centerX + (float)((0.25 * radius) * Math.Cos(angle));
+                float quarterY = centerY + (float)((0.25 * radius) * Math.Sin(angle));
+                float halfX = centerX + (float)((0.5 * radius) * Math.Cos(angle));
+                float halfY = centerY + (float)((0.5 * radius) * Math.Sin(angle));
+                float thirdQuarterX = centerX + (float)((0.75 * radius) * Math.Cos(angle));
+                float thirdQuarterY = centerY + (float)((0.75 * radius) * Math.Sin(angle));
+                allList[i] = new PointF(allX, allY);
+                quarterList[i] = new PointF(quarterX, quarterY);
+                halfList[i] = new PointF(halfX, halfY);
+                thirdQuarterList[i] = new PointF(thirdQuarterX, thirdQuarterY);
+                var radiusLine=slide.Shapes.AddLine(centerX, centerY, allX, allY);
+                radiusLine.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Gray);
+                radiusLine.Line.DashStyle = Office.MsoLineDashStyle.msoLineRoundDot;
                 string label = labels[i];
                 SizeF labelSize = TextRenderer.MeasureText(label, SystemFonts.DefaultFont);
-                float labelX = centerX + (float)((radius+20) * Math.Cos(angle)) - labelSize.Width / 2;
-                float labelY = centerY + (float)((radius +20) * Math.Sin(angle)) - labelSize.Height / 2;
-                slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, labelX, labelY, 200, 30)
-                    .TextFrame.TextRange.Text = label;
+                float labelX = allX + (float)((radius*0.3) * Math.Cos(angle)) - labelSize.Width / 2;
+                float labelY = allY + (float)((radius*0.3) * Math.Sin(angle)) - labelSize.Height / 2;
+                
+                PowerPoint.Shape itemText = slide.Shapes.AddTextbox(
+                    Office.MsoTextOrientation.msoTextOrientationHorizontal, labelX, labelY, 200, 30);
+                itemText.TextFrame.TextRange.Text = label;
+                itemText.TextFrame.TextRange.Font.Size = clsConstants.legendTextSize;
+                itemText.TextFrame.AutoSize = PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
+                itemText.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignLeft;
+                itemText.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+                itemText.TextFrame.MarginLeft = 0;
+                itemText.TextFrame.MarginRight = 0;
+                itemText.TextFrame.MarginTop = 0;
+                itemText.TextFrame.MarginBottom = 0;
+                itemText.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
             }
-            slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, centerX - 350, centerY + radius + 150, 1000, 30)
+
+            for (int i = 0; i < allList.Length - 1; i++)
+            {
+                float[,] points1 = new float[,]
+                {
+                    { allList[i].X, allList[i].Y },
+                    { allList[i + 1].X, allList[i + 1].Y}
+                };
+
+                PowerPoint.Shape allPolygon= slide.Shapes.AddPolyline(points1);
+                allPolygon.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Gray); // Set line color
+                allPolygon.Line.DashStyle = Office.MsoLineDashStyle.msoLineRoundDot;
+                float[,] points2 = new float[,]
+                {
+                    { thirdQuarterList[i].X, thirdQuarterList[i].Y },
+                    { thirdQuarterList[i + 1].X, thirdQuarterList[i + 1].Y}
+                };
+
+                PowerPoint.Shape thirdQuarterPolygon = slide.Shapes.AddPolyline(points2);
+                thirdQuarterPolygon.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Gray); // Set line color
+                thirdQuarterPolygon.Line.DashStyle = Office.MsoLineDashStyle.msoLineRoundDot;
+                float[,] points3 = new float[,]
+                {
+                    { halfList[i].X, halfList[i].Y },
+                    { halfList[i + 1].X, halfList[i + 1].Y}
+                };
+
+                PowerPoint.Shape halfPolygon = slide.Shapes.AddPolyline(points3);
+                halfPolygon.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Gray); // Set line color
+                halfPolygon.Line.DashStyle = Office.MsoLineDashStyle.msoLineRoundDot;
+                float[,] points4 = new float[,]
+                {
+                    { quarterList[i].X, quarterList[i].Y },
+                    { quarterList[i + 1].X, quarterList[i + 1].Y}
+                };
+
+                PowerPoint.Shape quarterPolygon = slide.Shapes.AddPolyline(points4);
+                quarterPolygon.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Gray); // Set line color
+                quarterPolygon.Line.DashStyle = Office.MsoLineDashStyle.msoLineRoundDot;
+            }
+            float[,] allPoints = new float[,]
+                {
+                    { allList[0].X, allList[0].Y },
+                    { allList[6].X, allList[6].Y}
+                };
+
+            PowerPoint.Shape allPolygon2 = slide.Shapes.AddPolyline(allPoints);
+            allPolygon2.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Gray); // Set line color
+            allPolygon2.Line.DashStyle = Office.MsoLineDashStyle.msoLineRoundDot;
+            float[,] thirdQuarterPoints = new float[,]
+                {
+                    { thirdQuarterList[0].X, thirdQuarterList[0].Y },
+                    { thirdQuarterList[6].X, thirdQuarterList[6].Y}
+                };
+
+            PowerPoint.Shape thirdQuarterPolygon2 = slide.Shapes.AddPolyline(thirdQuarterPoints);
+            thirdQuarterPolygon2.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Gray); // Set line color
+            thirdQuarterPolygon2.Line.DashStyle = Office.MsoLineDashStyle.msoLineRoundDot;
+            float[,] halfPoints = new float[,]
+                {
+                    { halfList[0].X, halfList[0].Y },
+                    { halfList[6].X, halfList[6].Y}
+                };
+
+            PowerPoint.Shape halfPolygon2 = slide.Shapes.AddPolyline(halfPoints);
+            halfPolygon2.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Gray); // Set line color
+            halfPolygon2.Line.DashStyle = Office.MsoLineDashStyle.msoLineRoundDot;
+            float[,] quarterPoints = new float[,]
+                {
+                    { quarterList[0].X, quarterList[0].Y },
+                    { quarterList[6].X, quarterList[6].Y}
+                };
+
+            PowerPoint.Shape quarterPolygon2 = slide.Shapes.AddPolyline(quarterPoints);
+            quarterPolygon2.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Gray); // Set line color
+            quarterPolygon2.Line.DashStyle = Office.MsoLineDashStyle.msoLineRoundDot;
+            slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, 5, centerY + radius + 70, 1000, 30)
                 .TextFrame.TextRange.Text = "Radar diagram showing the molar concentrations for major ions";
-            slide.Shapes[slide.Shapes.Count].TextFrame.TextRange.Font.Size = 25;
+            slide.Shapes[slide.Shapes.Count].TextFrame.TextRange.Font.Size = clsConstants.legendTextSize;
             slide.Shapes[slide.Shapes.Count].TextFrame.TextRange.Font.Bold = Microsoft.Office.Core.MsoTriState.msoTrue;
+            slide.Shapes[slide.Shapes.Count].TextFrame.AutoSize = PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
+            slide.Shapes[slide.Shapes.Count].TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignLeft;
+            slide.Shapes[slide.Shapes.Count].TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+            slide.Shapes[slide.Shapes.Count].TextFrame.MarginLeft = 0;
+            slide.Shapes[slide.Shapes.Count].TextFrame.MarginRight = 0;
+            slide.Shapes[slide.Shapes.Count].TextFrame.MarginTop = 0;
+            slide.Shapes[slide.Shapes.Count].TextFrame.MarginBottom = 0;
+            slide.Shapes[slide.Shapes.Count].TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
             for (int i = 0; i < sampleData.Length; i++)
             {
                 PointF[] points = new PointF[numAxes];
@@ -379,6 +498,14 @@ namespace WindowsFormsApplication2
                     double angle = j * angleIncrement;
                     float x = centerX + (float)(scaledRadius * Math.Cos(angle));
                     float y = centerY + (float)(scaledRadius * Math.Sin(angle));
+                    if (double.IsNaN(x))
+                    {
+                        x = centerX;
+                    }
+                    if (double.IsNaN(y))
+                    {
+                        y = centerY;
+                    }
                     points[j] = new PointF(x, y);
                 }
                 // Flatten the points array into a float array for AddPolyline
@@ -390,7 +517,7 @@ namespace WindowsFormsApplication2
                 }
 
                 // Add the polyline to the slide
-                PowerPoint.Shape setLine = slide.Shapes.AddPolyline(new float[,]
+                PowerPoint.Shape samplePolygon = slide.Shapes.AddPolyline(new float[,]
                 {
                     { polylinePoints[0], polylinePoints[1] },
                     { polylinePoints[2], polylinePoints[3] },
@@ -400,62 +527,75 @@ namespace WindowsFormsApplication2
                     { polylinePoints[10],polylinePoints[11]},
                     { polylinePoints[12],polylinePoints[13]},
                 });
-                setLine.Line.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color); // Set line color
-                setLine.Line.Weight = frmImportSamples.WaterData[i].lineWidth; // Set line width
-                setLine.Line.DashStyle = ConvertDashStyle(frmImportSamples.WaterData[i].selectedStyle);
-                PowerPoint.Shape setLine2 = slide.Shapes.AddPolyline(new float[,]
+                samplePolygon.Line.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color); // Set line color
+                samplePolygon.Line.Weight = frmImportSamples.WaterData[i].lineWidth; // Set line width
+                samplePolygon.Line.DashStyle = ConvertDashStyle(frmImportSamples.WaterData[i].selectedStyle);
+                PowerPoint.Shape sampleLastLine = slide.Shapes.AddPolyline(new float[,]
                     {
                       { polylinePoints[0], polylinePoints[1] },
                       { polylinePoints[12],polylinePoints[13]},
                     }
                 );
-                setLine2.Line.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color); // Set line color
-                setLine2.Line.Weight = frmImportSamples.WaterData[i].lineWidth; // Set line width
-                setLine2.Line.DashStyle = ConvertDashStyle(frmImportSamples.WaterData[i].selectedStyle);
+                sampleLastLine.Line.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color); // Set line color
+                sampleLastLine.Line.Weight = frmImportSamples.WaterData[i].lineWidth; // Set line width
+                sampleLastLine.Line.DashStyle = ConvertDashStyle(frmImportSamples.WaterData[i].selectedStyle);
             }
             #region Draw Legend
             if (frmImportSamples.WaterData.Count > 0)
             {
-                int legendWidth = 450;
-                int legendHeight = frmImportSamples.WaterData.Count * 20 + 20;
-                int legendX = bounds.Right - legendWidth - 100; // Place legend on the right side
-                int legendY = bounds.Top + 20;
-                // Draw legend background (blue rectangle)
-                //g.FillRectangle(Brushes.Transparent, legendX - 15, legendY - 20, legendBoxWidth, GetDB.WaterData.Count + 35);
+                int legendY = 50;
+                
+                // Add metadata
+                float metadataX = 500;
+                float metadataY = legendY;
+                int metaWidth = 0;
+                int metaHeight = 0;
 
-                int ysample = legendY;
-                for (int j = 0; j < frmImportSamples.WaterData.Count; j++)
+
+                float ysample = metadataY;
+                //List<PowerPoint.Shape> addedTexts = new List<PowerPoint.Shape>();
+
+                for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
                 {
-                    // Draw the square background
-                    int itemX = legendX + 10;
-                    int itemY = legendY + 10 + j * 20;
+                    var line = slide.Shapes.AddLine(metadataX, ysample + 10, metadataX + 20, ysample + 10);
+                    line.Line.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color);
+                    line.Line.Weight = frmImportSamples.WaterData[i].lineWidth;
+                    line.Line.DashStyle = ConvertDashStyle(frmImportSamples.WaterData[i].selectedStyle);
+                    string fullText = "W" + (i + 1).ToString() + "," +
+                        frmImportSamples.WaterData[i].Well_Name + "," +
+                        frmImportSamples.WaterData[i].ClientID + "," +
+                        frmImportSamples.WaterData[i].Depth;
 
-                    // Loop Through Water Data Samples and Add Text
-                    var line = slide.Shapes.AddLine(itemX, ysample + 10, itemX + 30, ysample + 10);
-                    line.Line.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[j].color);
-                    line.Line.Weight = frmImportSamples.WaterData[j].lineWidth;
-                    line.Line.DashStyle = ConvertDashStyle(frmImportSamples.WaterData[j].selectedStyle);
-                    string sampleText = (frmImportSamples.WaterData[j].Well_Name) + "," + (frmImportSamples.WaterData[j].ClientID) + "," + (frmImportSamples.WaterData[j].Depth);
+                    PowerPoint.Shape metadataText = slide.Shapes.AddTextbox(
+                        Office.MsoTextOrientation.msoTextOrientationHorizontal,
+                        metadataX + 22, ysample, 500, 20);
 
-                    PowerPoint.Shape sampleTextShape = slide.Shapes.AddTextbox(
-                        Microsoft.Office.Core.MsoTextOrientation.msoTextOrientationHorizontal,
-                        legendX + 50, ysample, 700, 20
-                    );
+                    metadataText.TextFrame.TextRange.Text = fullText;
+                    metadataText.TextFrame.TextRange.Font.Size = clsConstants.legendTextSize;
+                    metadataText.TextFrame.AutoSize = PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
+                    metadataText.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignLeft;
+                    metadataText.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+                    metadataText.TextFrame.MarginLeft = 0;
+                    metadataText.TextFrame.MarginRight = 0;
+                    metadataText.TextFrame.MarginTop = 0;
+                    metadataText.TextFrame.MarginBottom = 0;
+                    metadataText.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
 
-                    sampleTextShape.TextFrame.TextRange.Text = sampleText;
-                    sampleTextShape.TextFrame.TextRange.Font.Size = 15;
-                    sampleTextShape.TextFrame.TextRange.Font.Name = "Times New Roman";
-                    sampleTextShape.TextFrame.TextRange.Font.Bold = Microsoft.Office.Core.MsoTriState.msoTrue;
-                    sampleTextShape.TextFrame.TextRange.Font.Color.RGB = ColorTranslator.ToOle(Color.Black);
 
-                    ysample += 30;
+
+                    metaWidth = Math.Max(metaWidth, (int)metadataText.Width+30);
+                    ysample += metadataText.Height;
+                    metaHeight += (int)metadataText.Height + 1;
+                    //addedTexts.Add(metadataText);
                 }
-                // Add border around legend
-                PowerPoint.Shape borderShape = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, legendX - 15, legendY - 10, legendWidth, ysample - 50);
-                borderShape.Fill.Transparency = 1.0f;
-                borderShape.Line.ForeColor.RGB = System.Drawing.Color.Red.ToArgb();
-                borderShape.Line.Weight = 2;
 
+                // Now draw the border box *after*
+                PowerPoint.Shape metaBorder = slide.Shapes.AddShape(
+                    Office.MsoAutoShapeType.msoShapeRectangle,
+                    metadataX, metadataY, metaWidth, metaHeight);
+                metaBorder.Fill.Transparency = 1.0f;
+                metaBorder.Line.ForeColor.RGB = System.Drawing.ColorTranslator.ToOle(Color.Blue);
+                metaBorder.Line.Weight = 2;
                 // Refresh PowerPoint slide
                 //pptApplication.ActiveWindow.View.GotoSlide(presentation.Slides.Count);
             }
@@ -614,6 +754,7 @@ namespace WindowsFormsApplication2
             #endregion
             g.DrawString("Genetic Origin and Alteration Tool Radar Plot for study waters. Ratio categories: \nwater evolution(EV), geothermometers(GT), lithology(Lith), salinity source(SS), and organic matter related(OM) \nare listed in front of each axis label.", new Font("Times New Roman", fontSize, FontStyle.Bold), Brushes.Black, centerX - 350, centerY + radius + 120);
 
+
             #region Draw Radar legend
 
             for (int s = 0; s < sampleData.Length; s++)
@@ -633,6 +774,14 @@ namespace WindowsFormsApplication2
                     double angle = i * angleIncrement;
                     float x = centerX + (float)(scaledRadius * Math.Cos(angle));
                     float y = centerY + (float)(scaledRadius * Math.Sin(angle));
+                    if (double.IsNaN(x))
+                    {
+                        x = centerX;
+                    }
+                    if (double.IsNaN(y))
+                    {
+                        y = centerY;
+                    }
                     points[i] = new PointF(x, y);
                 }
 
@@ -715,34 +864,146 @@ namespace WindowsFormsApplication2
             }
 
             // Center of the diagram
-            float centerX = bounds.X + bounds.Width / 2 - 300;
+            float centerX = (bounds.Width / 2);
             float centerY = bounds.Y + bounds.Height / 2 - 50;
 
 
             // Radius of the radar diagram
-            float radius = Math.Min(bounds.Width, bounds.Height) / 2 - 120;
+            float radius = Math.Min(bounds.Width, bounds.Height) / 3;
             // Number of axes
             int numAxes = labels.Length;
 
             // Angle between each axis (in radians)
             double angleIncrement = 2 * Math.PI / numAxes;
+            // Angle between each axis (in radians)
+            PointF[] quarterList = new PointF[numAxes];
+            PointF[] halfList = new PointF[numAxes];
+            PointF[] thirdQuarterList = new PointF[numAxes];
+            PointF[] allList = new PointF[numAxes];
             for (int i = 0; i < numAxes; i++)
             {
                 double angle = i * angleIncrement;
-                float x = centerX + (float)(radius * Math.Cos(angle));
-                float y = centerY + (float)(radius * Math.Sin(angle));
-                slide.Shapes.AddLine(centerX, centerY, x, y).Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
+                float allX = centerX + (float)(radius * Math.Cos(angle));
+                float allY = centerY + (float)(radius * Math.Sin(angle));
+                float quarterX = centerX + (float)((0.25 * radius) * Math.Cos(angle));
+                float quarterY = centerY + (float)((0.25 * radius) * Math.Sin(angle));
+                float halfX = centerX + (float)((0.5 * radius) * Math.Cos(angle));
+                float halfY = centerY + (float)((0.5 * radius) * Math.Sin(angle));
+                float thirdQuarterX = centerX + (float)((0.75 * radius) * Math.Cos(angle));
+                float thirdQuarterY = centerY + (float)((0.75 * radius) * Math.Sin(angle));
+                allList[i] = new PointF(allX, allY);
+                quarterList[i] = new PointF(quarterX, quarterY);
+                halfList[i] = new PointF(halfX, halfY);
+                thirdQuarterList[i] = new PointF(thirdQuarterX, thirdQuarterY);
+                var radiusLine = slide.Shapes.AddLine(centerX, centerY, allX, allY);
+                radiusLine.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Gray);
+                radiusLine.Line.DashStyle = Office.MsoLineDashStyle.msoLineRoundDot;
                 string label = labels[i];
                 SizeF labelSize = TextRenderer.MeasureText(label, SystemFonts.DefaultFont);
-                float labelX = centerX + (float)((radius*1.3) * Math.Cos(angle)) - labelSize.Width / 4;
-                float labelY = centerY + (float)((radius *1.3) * Math.Sin(angle)) - labelSize.Height / 4;
-                slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, labelX, labelY, 150, 30)
-                    .TextFrame.TextRange.Text = label;
+                float labelX = allX + (float)((radius * 0.3) * Math.Cos(angle)) - labelSize.Width / 2;
+                float labelY = allY + (float)((radius * 0.3) * Math.Sin(angle)) - labelSize.Height / 2;
+
+                PowerPoint.Shape itemText = slide.Shapes.AddTextbox(
+                    Office.MsoTextOrientation.msoTextOrientationHorizontal, labelX, labelY, 200, 30);
+                itemText.TextFrame.TextRange.Text = label;
+                itemText.TextFrame.TextRange.Font.Size = clsConstants.legendTextSize;
+                itemText.TextFrame.AutoSize = PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
+                itemText.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignLeft;
+                itemText.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+                itemText.TextFrame.MarginLeft = 0;
+                itemText.TextFrame.MarginRight = 0;
+                itemText.TextFrame.MarginTop = 0;
+                itemText.TextFrame.MarginBottom = 0;
+                itemText.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
             }
-            slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, centerX - 350, centerY + radius + 150, 1000, 30)
-                .TextFrame.TextRange.Text = "Genetic Origin and Alteration Tool Radar Plot for study waters. Ratio categories: water evolution(EV), geothermometers(GT), lithology(Lith), salinity source(SS), and organic matter related(OM) are listed in front of each axis label.";
-            slide.Shapes[slide.Shapes.Count].TextFrame.TextRange.Font.Size = 25;
+
+            for (int i = 0; i < allList.Length - 1; i++)
+            {
+                float[,] points1 = new float[,]
+                {
+                    { allList[i].X, allList[i].Y },
+                    { allList[i + 1].X, allList[i + 1].Y}
+                };
+
+                PowerPoint.Shape allPolygon = slide.Shapes.AddPolyline(points1);
+                allPolygon.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Gray); // Set line color
+                allPolygon.Line.DashStyle = Office.MsoLineDashStyle.msoLineRoundDot;
+                float[,] points2 = new float[,]
+                {
+                    { thirdQuarterList[i].X, thirdQuarterList[i].Y },
+                    { thirdQuarterList[i + 1].X, thirdQuarterList[i + 1].Y}
+                };
+
+                PowerPoint.Shape thirdQuarterPolygon = slide.Shapes.AddPolyline(points2);
+                thirdQuarterPolygon.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Gray); // Set line color
+                thirdQuarterPolygon.Line.DashStyle = Office.MsoLineDashStyle.msoLineRoundDot;
+                float[,] points3 = new float[,]
+                {
+                    { halfList[i].X, halfList[i].Y },
+                    { halfList[i + 1].X, halfList[i + 1].Y}
+                };
+
+                PowerPoint.Shape halfPolygon = slide.Shapes.AddPolyline(points3);
+                halfPolygon.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Gray); // Set line color
+                halfPolygon.Line.DashStyle = Office.MsoLineDashStyle.msoLineRoundDot;
+                float[,] points4 = new float[,]
+                {
+                    { quarterList[i].X, quarterList[i].Y },
+                    { quarterList[i + 1].X, quarterList[i + 1].Y}
+                };
+
+                PowerPoint.Shape quarterPolygon = slide.Shapes.AddPolyline(points4);
+                quarterPolygon.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Gray); // Set line color
+                quarterPolygon.Line.DashStyle = Office.MsoLineDashStyle.msoLineRoundDot;
+            }
+            float[,] allPoints = new float[,]
+                {
+                    { allList[0].X, allList[0].Y },
+                    { allList[15].X, allList[15].Y}
+                };
+
+            PowerPoint.Shape allPolygon2 = slide.Shapes.AddPolyline(allPoints);
+            allPolygon2.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Gray); // Set line color
+            allPolygon2.Line.DashStyle = Office.MsoLineDashStyle.msoLineRoundDot;
+            float[,] thirdQuarterPoints = new float[,]
+                {
+                    { thirdQuarterList[0].X, thirdQuarterList[0].Y },
+                    { thirdQuarterList[15].X, thirdQuarterList[15].Y}
+                };
+
+            PowerPoint.Shape thirdQuarterPolygon2 = slide.Shapes.AddPolyline(thirdQuarterPoints);
+            thirdQuarterPolygon2.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Gray); // Set line color
+            thirdQuarterPolygon2.Line.DashStyle = Office.MsoLineDashStyle.msoLineRoundDot;
+            float[,] halfPoints = new float[,]
+                {
+                    { halfList[0].X, halfList[0].Y },
+                    { halfList[15].X, halfList[15].Y}
+                };
+
+            PowerPoint.Shape halfPolygon2 = slide.Shapes.AddPolyline(halfPoints);
+            halfPolygon2.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Gray); // Set line color
+            halfPolygon2.Line.DashStyle = Office.MsoLineDashStyle.msoLineRoundDot;
+            float[,] quarterPoints = new float[,]
+                {
+                    { quarterList[0].X, quarterList[0].Y },
+                    { quarterList[15].X, quarterList[15].Y}
+                };
+
+            PowerPoint.Shape quarterPolygon2 = slide.Shapes.AddPolyline(quarterPoints);
+            quarterPolygon2.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Gray); // Set line color
+            quarterPolygon2.Line.DashStyle = Office.MsoLineDashStyle.msoLineRoundDot;
+            slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, 5, centerY + radius + 70, 1000, 30)
+                .TextFrame.TextRange.Text = "Genetic Origin and Alteration Tool Radar Plot for study waters. Ratio categories: \nwater evolution(EV), geothermometers(GT), lithology(Lith), salinity source(SS), and organic matter related(OM) \nare listed in front of each axis label.";
+            slide.Shapes[slide.Shapes.Count].TextFrame.TextRange.Font.Size = clsConstants.legendTextSize;
             slide.Shapes[slide.Shapes.Count].TextFrame.TextRange.Font.Bold = Microsoft.Office.Core.MsoTriState.msoTrue;
+            slide.Shapes[slide.Shapes.Count].TextFrame.AutoSize = PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
+            slide.Shapes[slide.Shapes.Count].TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignLeft;
+            slide.Shapes[slide.Shapes.Count].TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+            slide.Shapes[slide.Shapes.Count].TextFrame.MarginLeft = 0;
+            slide.Shapes[slide.Shapes.Count].TextFrame.MarginRight = 0;
+            slide.Shapes[slide.Shapes.Count].TextFrame.MarginTop = 0;
+            slide.Shapes[slide.Shapes.Count].TextFrame.MarginBottom = 0;
+            slide.Shapes[slide.Shapes.Count].TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
             for (int i = 0; i < sampleData.Length; i++)
             {
                 PointF[] points = new PointF[numAxes];
@@ -760,6 +1021,14 @@ namespace WindowsFormsApplication2
                     double angle = j * angleIncrement;
                     float x = centerX + (float)(scaledRadius * Math.Cos(angle));
                     float y = centerY + (float)(scaledRadius * Math.Sin(angle));
+                    if (double.IsNaN(x))
+                    {
+                        x = centerX;
+                    }
+                    if (double.IsNaN(y))
+                    {
+                        y = centerY;
+                    }
                     points[j] = new PointF(x, y);
                 }
                 // Flatten the points array into a float array for AddPolyline
@@ -807,51 +1076,64 @@ namespace WindowsFormsApplication2
             #region Draw Legend
             if (frmImportSamples.WaterData.Count > 0)
             {
-                int legendWidth = 450;
-                int legendHeight = frmImportSamples.WaterData.Count * 20 + 20;
-                int legendX = bounds.Right - legendWidth - 100; // Place legend on the right side
-                int legendY = bounds.Top + 20;
-                // Draw legend background (blue rectangle)
-                //g.FillRectangle(Brushes.Transparent, legendX - 15, legendY - 20, legendBoxWidth, GetDB.WaterData.Count + 35);
+                int legendY = 50;
 
-                int ysample = legendY;
-                for (int j = 0; j < frmImportSamples.WaterData.Count; j++)
+                // Add metadata
+                float metadataX = 500;
+                float metadataY = legendY;
+                int metaWidth = 0;
+                int metaHeight = 0;
+
+
+                float ysample = metadataY;
+                //List<PowerPoint.Shape> addedTexts = new List<PowerPoint.Shape>();
+
+                for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
                 {
-                    // Draw the square background
-                    int itemX = legendX + 10;
-                    int itemY = legendY + 10 + j * 20;
+                    var line = slide.Shapes.AddLine(metadataX, ysample + 10, metadataX + 20, ysample + 10);
+                    line.Line.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color);
+                    line.Line.Weight = frmImportSamples.WaterData[i].lineWidth;
+                    line.Line.DashStyle = ConvertDashStyle(frmImportSamples.WaterData[i].selectedStyle);
+                    string fullText = "W" + (i + 1).ToString() + "," +
+                        frmImportSamples.WaterData[i].Well_Name + "," +
+                        frmImportSamples.WaterData[i].ClientID + "," +
+                        frmImportSamples.WaterData[i].Depth;
 
-                    // Loop Through Water Data Samples and Add Text
-                    var line = slide.Shapes.AddLine(itemX, ysample + 10, itemX + 30, ysample + 10);
-                    line.Line.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[j].color);
-                    line.Line.Weight = frmImportSamples.WaterData[j].lineWidth;
-                    line.Line.DashStyle = ConvertDashStyle(frmImportSamples.WaterData[j].selectedStyle);
-                    string sampleText = (frmImportSamples.WaterData[j].Well_Name) + "," + (frmImportSamples.WaterData[j].ClientID) + "," + (frmImportSamples.WaterData[j].Depth);
+                    PowerPoint.Shape metadataText = slide.Shapes.AddTextbox(
+                        Office.MsoTextOrientation.msoTextOrientationHorizontal,
+                        metadataX + 22, ysample, 500, 20);
 
-                    PowerPoint.Shape sampleTextShape = slide.Shapes.AddTextbox(
-                        Microsoft.Office.Core.MsoTextOrientation.msoTextOrientationHorizontal,
-                        legendX + 50, ysample, 700, 20
-                    );
+                    metadataText.TextFrame.TextRange.Text = fullText;
+                    metadataText.TextFrame.TextRange.Font.Size = clsConstants.legendTextSize;
+                    metadataText.TextFrame.AutoSize = PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
+                    metadataText.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignLeft;
+                    metadataText.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+                    metadataText.TextFrame.MarginLeft = 0;
+                    metadataText.TextFrame.MarginRight = 0;
+                    metadataText.TextFrame.MarginTop = 0;
+                    metadataText.TextFrame.MarginBottom = 0;
+                    metadataText.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
 
-                    sampleTextShape.TextFrame.TextRange.Text = sampleText;
-                    sampleTextShape.TextFrame.TextRange.Font.Size = 15;
-                    sampleTextShape.TextFrame.TextRange.Font.Name = "Times New Roman";
-                    sampleTextShape.TextFrame.TextRange.Font.Bold = Microsoft.Office.Core.MsoTriState.msoTrue;
-                    sampleTextShape.TextFrame.TextRange.Font.Color.RGB = ColorTranslator.ToOle(Color.Black);
 
-                    ysample += 30;
+
+                    metaWidth = Math.Max(metaWidth, (int)metadataText.Width + 30);
+                    ysample += metadataText.Height;
+                    metaHeight += (int)metadataText.Height + 1;
+                    //addedTexts.Add(metadataText);
                 }
-                // Add border around legend
-                PowerPoint.Shape borderShape = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, legendX - 15, legendY - 10, legendWidth, ysample - 50);
-                borderShape.Fill.Transparency = 1.0f;
-                borderShape.Line.ForeColor.RGB = System.Drawing.Color.Red.ToArgb();
-                borderShape.Line.Weight = 2;
 
+                // Now draw the border box *after*
+                PowerPoint.Shape metaBorder = slide.Shapes.AddShape(
+                    Office.MsoAutoShapeType.msoShapeRectangle,
+                    metadataX, metadataY, metaWidth, metaHeight);
+                metaBorder.Fill.Transparency = 1.0f;
+                metaBorder.Line.ForeColor.RGB = System.Drawing.ColorTranslator.ToOle(Color.Blue);
+                metaBorder.Line.Weight = 2;
                 // Refresh PowerPoint slide
                 //pptApplication.ActiveWindow.View.GotoSlide(presentation.Slides.Count);
             }
             #endregion
-            
+
         }
         public static void DrawRadarChart3(Graphics g, Rectangle bounds, bool flag)
         {
@@ -1057,11 +1339,22 @@ namespace WindowsFormsApplication2
                     double angle = i * angleIncrement;
                     float x = centerX + (float)(scaledRadius * Math.Cos(angle));
                     float y = centerY + (float)(scaledRadius * Math.Sin(angle));
+                    if(double.IsNaN(x))
+                    {
+                        x = centerX;
+                    }
+                    if(double.IsNaN(y))
+                    {
+                        y = centerY;
+                    }
                     points[i] = new PointF(x, y);
+                    
+                    
                 }
                 Pen polygonPen = new Pen(colors[s], 2f);
                 polygonPen.Width = frmImportSamples.WaterData[s].lineWidth;
                 polygonPen.DashStyle = frmImportSamples.WaterData[s].selectedStyle;
+
                 g.DrawPolygon(polygonPen, points);
                 
 
@@ -1108,16 +1401,35 @@ namespace WindowsFormsApplication2
             }
 
             // Axis labels based on elements
-            string[] elements = { "Na", "K", "Ca", "Mg", "Al", "Co", "Cu", "Mn", "Ni", "Sr", "Zn", "Ba", "Pb", "Fe", "Cd", "Cr", "Tl", "Be", "Se", "B", "Li" };
-            string[] labels = elements.Select((el, idx) => "{el} \n{scales[idx]}").ToArray();
+            string[] elements = { 
+            "Co \n"+scales[5],
+            "Cu \n"+ scales[6],
+            "Mn \n"+scales[7],
+            "Ni \n"+scales[8],
+            "Sr \n"+ scales[9],
+            "Zn \n"+ scales[10],
+            "Ba \n"+ scales[11],
+            "Pb \n"+ scales[12],
+            "Fe \n"+ scales[13],
+            "Cd \n"+ scales[14],
+            "Cr \n"+ scales[15],
+            "Tl \n"+ scales[16],
+            "Be \n"+ scales[17],
+            "Se \n"+ scales[18],
+            "B \n"+scales[19],
+            "Li \n"+ scales[20],
+            "Na \n"+scales[0],
+            "K \n"+scales[1],
+            "Ca \n"+scales[2],
+            "Mg \n"+scales[3],
+            "Al \n"+scales[4] };
 
-            int numAxes = labels.Length;
+            int numAxes = elements.Length;
             double angleIncrement = 2 * Math.PI / numAxes;
 
             // Radar center and radius
-            float centerX = bounds.X + bounds.Width / 2;
-            float centerY = bounds.Y + bounds.Height / 2;
-            float radius = Math.Min(bounds.Width, bounds.Height) / 2 - 120;
+            // Center of the diagram
+            
 
             #endregion
 
@@ -1156,113 +1468,253 @@ namespace WindowsFormsApplication2
 
             #endregion
 
-            #region Draw Axes & Labels
+            // Colors for the samples
+            Color[] colors = new Color[frmImportSamples.WaterData.Count];
+            for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
+            {
+                colors[i] = frmImportSamples.WaterData[i].color;
+            }
 
+            // Center of the diagram
+            float centerX = (bounds.Width / 2);
+            float centerY = bounds.Y + bounds.Height / 2 - 50;
+
+
+            // Radius of the radar diagram
+            float radius = Math.Min(bounds.Width, bounds.Height) / 3;
+            // Number of axes
+
+            PointF[] quarterList = new PointF[numAxes];
+            PointF[] halfList = new PointF[numAxes];
+            PointF[] thirdQuarterList = new PointF[numAxes];
+            PointF[] allList = new PointF[numAxes];
             for (int i = 0; i < numAxes; i++)
             {
                 double angle = i * angleIncrement;
-                float x = centerX + (float)(radius * Math.Cos(angle));
-                float y = centerY + (float)(radius * Math.Sin(angle));
+                float allX = centerX + (float)(radius * Math.Cos(angle));
+                float allY = centerY + (float)(radius * Math.Sin(angle));
+                float quarterX = centerX + (float)((0.25 * radius) * Math.Cos(angle));
+                float quarterY = centerY + (float)((0.25 * radius) * Math.Sin(angle));
+                float halfX = centerX + (float)((0.5 * radius) * Math.Cos(angle));
+                float halfY = centerY + (float)((0.5 * radius) * Math.Sin(angle));
+                float thirdQuarterX = centerX + (float)((0.75 * radius) * Math.Cos(angle));
+                float thirdQuarterY = centerY + (float)((0.75 * radius) * Math.Sin(angle));
+                allList[i] = new PointF(allX, allY);
+                quarterList[i] = new PointF(quarterX, quarterY);
+                halfList[i] = new PointF(halfX, halfY);
+                thirdQuarterList[i] = new PointF(thirdQuarterX, thirdQuarterY);
+                var radiusLine = slide.Shapes.AddLine(centerX, centerY, allX, allY);
+                radiusLine.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Gray);
+                radiusLine.Line.DashStyle = Office.MsoLineDashStyle.msoLineRoundDot;
+                string label = elements[i];
+                SizeF labelSize = TextRenderer.MeasureText(label, SystemFonts.DefaultFont);
+                float labelX = allX + (float)((radius * 0.3) * Math.Cos(angle)) - labelSize.Width / 2;
+                float labelY = allY + (float)((radius * 0.3) * Math.Sin(angle)) - labelSize.Height / 2;
 
-                slide.Shapes.AddLine(centerX, centerY, x, y).Line.ForeColor.RGB = Color.Black.ToArgb();
-
-                SizeF labelSize = TextRenderer.MeasureText(labels[i], SystemFonts.DefaultFont);
-                float labelX = centerX + (float)((radius * 1.3) * Math.Cos(angle)) - labelSize.Width / 4;
-                float labelY = centerY + (float)((radius * 1.3) * Math.Sin(angle)) - labelSize.Height / 4;
-
-                var labelShape = slide.Shapes.AddTextbox(
-                    Office.MsoTextOrientation.msoTextOrientationHorizontal,
-                    labelX, labelY, 150, 30);
-
-                labelShape.TextFrame.TextRange.Text = labels[i];
+                PowerPoint.Shape itemText = slide.Shapes.AddTextbox(
+                    Office.MsoTextOrientation.msoTextOrientationHorizontal, labelX, labelY, 200, 30);
+                itemText.TextFrame.TextRange.Text = label;
+                itemText.TextFrame.TextRange.Font.Size = clsConstants.legendTextSize;
+                itemText.TextFrame.AutoSize = PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
+                itemText.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignLeft;
+                itemText.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+                itemText.TextFrame.MarginLeft = 0;
+                itemText.TextFrame.MarginRight = 0;
+                itemText.TextFrame.MarginTop = 0;
+                itemText.TextFrame.MarginBottom = 0;
+                itemText.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
             }
 
-            var title = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal,
-                centerX - 350, centerY + radius + 150, 1000, 30);
+            for (int i = 0; i < allList.Length - 1; i++)
+            {
+                float[,] points1 = new float[,]
+                {
+                    { allList[i].X, allList[i].Y },
+                    { allList[i + 1].X, allList[i + 1].Y}
+                };
 
-            title.TextFrame.TextRange.Text = "ICP Reproducibility";
-            title.TextFrame.TextRange.Font.Size = 25;
-            title.TextFrame.TextRange.Font.Bold = Microsoft.Office.Core.MsoTriState.msoTrue;
+                PowerPoint.Shape allPolygon = slide.Shapes.AddPolyline(points1);
+                allPolygon.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Gray); // Set line color
+                allPolygon.Line.DashStyle = Office.MsoLineDashStyle.msoLineRoundDot;
+                float[,] points2 = new float[,]
+                {
+                    { thirdQuarterList[i].X, thirdQuarterList[i].Y },
+                    { thirdQuarterList[i + 1].X, thirdQuarterList[i + 1].Y}
+                };
 
-            #endregion
+                PowerPoint.Shape thirdQuarterPolygon = slide.Shapes.AddPolyline(points2);
+                thirdQuarterPolygon.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Gray); // Set line color
+                thirdQuarterPolygon.Line.DashStyle = Office.MsoLineDashStyle.msoLineRoundDot;
+                float[,] points3 = new float[,]
+                {
+                    { halfList[i].X, halfList[i].Y },
+                    { halfList[i + 1].X, halfList[i + 1].Y}
+                };
 
-            #region Draw Radar Polygons
+                PowerPoint.Shape halfPolygon = slide.Shapes.AddPolyline(points3);
+                halfPolygon.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Gray); // Set line color
+                halfPolygon.Line.DashStyle = Office.MsoLineDashStyle.msoLineRoundDot;
+                float[,] points4 = new float[,]
+                {
+                    { quarterList[i].X, quarterList[i].Y },
+                    { quarterList[i + 1].X, quarterList[i + 1].Y}
+                };
 
+                PowerPoint.Shape quarterPolygon = slide.Shapes.AddPolyline(points4);
+                quarterPolygon.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Gray); // Set line color
+                quarterPolygon.Line.DashStyle = Office.MsoLineDashStyle.msoLineRoundDot;
+            }
+            float[,] allPoints = new float[,]
+                {
+                    { allList[0].X, allList[0].Y },
+                    { allList[20].X, allList[20].Y}
+                };
+
+            PowerPoint.Shape allPolygon2 = slide.Shapes.AddPolyline(allPoints);
+            allPolygon2.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Gray); // Set line color
+            allPolygon2.Line.DashStyle = Office.MsoLineDashStyle.msoLineRoundDot;
+            float[,] thirdQuarterPoints = new float[,]
+                {
+                    { thirdQuarterList[0].X, thirdQuarterList[0].Y },
+                    { thirdQuarterList[20].X, thirdQuarterList[20].Y}
+                };
+
+            PowerPoint.Shape thirdQuarterPolygon2 = slide.Shapes.AddPolyline(thirdQuarterPoints);
+            thirdQuarterPolygon2.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Gray); // Set line color
+            thirdQuarterPolygon2.Line.DashStyle = Office.MsoLineDashStyle.msoLineRoundDot;
+            float[,] halfPoints = new float[,]
+                {
+                    { halfList[0].X, halfList[0].Y },
+                    { halfList[20].X, halfList[20].Y}
+                };
+
+            PowerPoint.Shape halfPolygon2 = slide.Shapes.AddPolyline(halfPoints);
+            halfPolygon2.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Gray); // Set line color
+            halfPolygon2.Line.DashStyle = Office.MsoLineDashStyle.msoLineRoundDot;
+            float[,] quarterPoints = new float[,]
+                {
+                    { quarterList[0].X, quarterList[0].Y },
+                    { quarterList[20].X, quarterList[20].Y}
+                };
+
+            PowerPoint.Shape quarterPolygon2 = slide.Shapes.AddPolyline(quarterPoints);
+            quarterPolygon2.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Gray); // Set line color
+            quarterPolygon2.Line.DashStyle = Office.MsoLineDashStyle.msoLineRoundDot;
+            slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, 5, centerY + radius + 70, 1000, 30)
+                .TextFrame.TextRange.Text = "ICP Reproducibility";
+            slide.Shapes[slide.Shapes.Count].TextFrame.TextRange.Font.Size = clsConstants.legendTextSize;
+            slide.Shapes[slide.Shapes.Count].TextFrame.TextRange.Font.Bold = Microsoft.Office.Core.MsoTriState.msoTrue;
+            slide.Shapes[slide.Shapes.Count].TextFrame.AutoSize = PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
+            slide.Shapes[slide.Shapes.Count].TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignLeft;
+            slide.Shapes[slide.Shapes.Count].TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+            slide.Shapes[slide.Shapes.Count].TextFrame.MarginLeft = 0;
+            slide.Shapes[slide.Shapes.Count].TextFrame.MarginRight = 0;
+            slide.Shapes[slide.Shapes.Count].TextFrame.MarginTop = 0;
+            slide.Shapes[slide.Shapes.Count].TextFrame.MarginBottom = 0;
+            slide.Shapes[slide.Shapes.Count].TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
             for (int i = 0; i < sampleData.Length; i++)
             {
                 PointF[] points = new PointF[numAxes];
+
                 for (int j = 0; j < numAxes; j++)
                 {
-                    var value = sampleData[i][j];
-                    double norm = Math.Min(value.Item / value.Scale, 1.0);
-                    float scaledRadius = (float)(norm * radius);
+                    clsRadarScale value = sampleData[i][j];
+
+                    // Normalize value to be within 0 and its max scale
+                    double normalizedValue = Math.Min(value.Item / value.Scale, 1.0); // Ensures it doesn't exceed 1
+
+                    // Scale the normalized value according to its axis' maximum
+                    float scaledRadius = (float)(normalizedValue * radius);
 
                     double angle = j * angleIncrement;
-                    points[j] = new PointF(
-                        centerX + (float)(scaledRadius * Math.Cos(angle)),
-                        centerY + (float)(scaledRadius * Math.Sin(angle))
-                    );
+                    float x = centerX + (float)(scaledRadius * Math.Cos(angle));
+                    float y = centerY + (float)(scaledRadius * Math.Sin(angle));
+                    if (double.IsNaN(x))
+                    {
+                        x = centerX;
+                    }
+                    if (double.IsNaN(y))
+                    {
+                        y = centerY;
+                    }
+                    points[j] = new PointF(x, y);
                 }
-
-                var builder = slide.Shapes.BuildFreeform(Microsoft.Office.Core.MsoEditingType.msoEditingCorner,
-                    points[0].X, points[0].Y);
-
-                for (int j = 1; j < points.Length; j++)
+                for(int j=0;j<points.Length-1;j++)
                 {
-                    builder.AddNodes(
-                        Microsoft.Office.Core.MsoSegmentType.msoSegmentLine,
-                        Microsoft.Office.Core.MsoEditingType.msoEditingCorner,
-                        points[j].X, points[j].Y);
+                    
+                    PowerPoint.Shape polygon= slide.Shapes.AddPolyline(new float[,] { { points[j].X, points[j].Y }, { points[j + 1].X, points[j + 1].Y } });
+                    polygon.Line.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color); // Set line color
+                    polygon.Line.Weight = frmImportSamples.WaterData[i].lineWidth; // Set line width
+                    polygon.Line.DashStyle = ConvertDashStyle(frmImportSamples.WaterData[i].selectedStyle);
                 }
-
-                var polygon = builder.ConvertToShape();
-                polygon.Line.ForeColor.RGB = ColorTranslator.ToOle(data[i].color);
-                polygon.Line.Weight = data[i].lineWidth;
-                polygon.Line.DashStyle = ConvertDashStyle(data[i].selectedStyle);
-                polygon.Fill.ForeColor.RGB = ColorTranslator.ToOle(data[i].color);
-                polygon.Fill.Transparency = 0.6f;
+                
+                PowerPoint.Shape polygonLastline = slide.Shapes.AddPolyline(new float[,] { { points[0].X, points[0].Y }, { points[20].X, points[20].Y } });
+                polygonLastline.Line.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color); // Set line color
+                polygonLastline.Line.Weight = frmImportSamples.WaterData[i].lineWidth; // Set line width
+                polygonLastline.Line.DashStyle = ConvertDashStyle(frmImportSamples.WaterData[i].selectedStyle);
+                
+                
+               
             }
-
-            #endregion
-
             #region Draw Legend
-
-            if (data.Count > 0)
+            if (frmImportSamples.WaterData.Count > 0)
             {
-                int legendWidth = 450;
-                int legendX = bounds.Right - legendWidth - 100;
-                int legendY = bounds.Top + 20;
-                int ySample = legendY;
+                int legendY = 50;
 
-                for (int j = 0; j < data.Count; j++)
+                // Add metadata
+                float metadataX = 500;
+                float metadataY = legendY;
+                int metaWidth = 0;
+                int metaHeight = 0;
+
+
+                float ysample = metadataY;
+                //List<PowerPoint.Shape> addedTexts = new List<PowerPoint.Shape>();
+
+                for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
                 {
-                    var line = slide.Shapes.AddLine(legendX + 10, ySample + 10, legendX + 40, ySample + 10);
-                    line.Line.ForeColor.RGB = ColorTranslator.ToOle(data[j].color);
-                    line.Line.Weight = data[j].lineWidth;
-                    line.Line.DashStyle = ConvertDashStyle(data[j].selectedStyle);
+                    var line = slide.Shapes.AddLine(metadataX, ysample + 10, metadataX + 20, ysample + 10);
+                    line.Line.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color);
+                    line.Line.Weight = frmImportSamples.WaterData[i].lineWidth;
+                    line.Line.DashStyle = ConvertDashStyle(frmImportSamples.WaterData[i].selectedStyle);
+                    string fullText = "W" + (i + 1).ToString() + "," +
+                        frmImportSamples.WaterData[i].Well_Name + "," +
+                        frmImportSamples.WaterData[i].ClientID + "," +
+                        frmImportSamples.WaterData[i].Depth;
 
-                    string text = data[j].Well_Name.ToString()+"," +data[j].ClientID.ToString()+"," +data[j].Depth.ToString();
-
-                    var textShape = slide.Shapes.AddTextbox(
+                    PowerPoint.Shape metadataText = slide.Shapes.AddTextbox(
                         Office.MsoTextOrientation.msoTextOrientationHorizontal,
-                        legendX + 50, ySample, 700, 20);
+                        metadataX + 22, ysample, 500, 20);
 
-                    textShape.TextFrame.TextRange.Text = text;
-                    textShape.TextFrame.TextRange.Font.Size = 15;
-                    textShape.TextFrame.TextRange.Font.Name = "Times New Roman";
-                    textShape.TextFrame.TextRange.Font.Bold = Microsoft.Office.Core.MsoTriState.msoTrue;
-                    textShape.TextFrame.TextRange.Font.Color.RGB = ColorTranslator.ToOle(Color.Black);
+                    metadataText.TextFrame.TextRange.Text = fullText;
+                    metadataText.TextFrame.TextRange.Font.Size = clsConstants.legendTextSize;
+                    metadataText.TextFrame.AutoSize = PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
+                    metadataText.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignLeft;
+                    metadataText.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+                    metadataText.TextFrame.MarginLeft = 0;
+                    metadataText.TextFrame.MarginRight = 0;
+                    metadataText.TextFrame.MarginTop = 0;
+                    metadataText.TextFrame.MarginBottom = 0;
+                    metadataText.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
 
-                    ySample += 30;
+
+
+                    metaWidth = Math.Max(metaWidth, (int)metadataText.Width + 30);
+                    ysample += metadataText.Height;
+                    metaHeight += (int)metadataText.Height + 1;
+                    //addedTexts.Add(metadataText);
                 }
 
-                var border = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle,
-                    legendX - 15, legendY - 10, legendWidth, ySample - 50);
-                border.Fill.Transparency = 1.0f;
-                border.Line.ForeColor.RGB = Color.Red.ToArgb();
-                border.Line.Weight = 2;
+                // Now draw the border box *after*
+                PowerPoint.Shape metaBorder = slide.Shapes.AddShape(
+                    Office.MsoAutoShapeType.msoShapeRectangle,
+                    metadataX, metadataY, metaWidth, metaHeight);
+                metaBorder.Fill.Transparency = 1.0f;
+                metaBorder.Line.ForeColor.RGB = System.Drawing.ColorTranslator.ToOle(Color.Blue);
+                metaBorder.Line.Weight = 2;
+                // Refresh PowerPoint slide
+                //pptApplication.ActiveWindow.View.GotoSlide(presentation.Slides.Count);
             }
-
             #endregion
         }
 

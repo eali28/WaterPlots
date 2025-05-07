@@ -505,15 +505,15 @@ namespace WindowsFormsApplication2
                 }
                 else if (listBoxSelected.Items[i].ToString() == "log Na Vs log Cl")
                 {
-                    clsLogsDrawer.ExportLogNaVsLogClChartToPowerPoint(slide, (int)(presentation.PageSetup.SlideWidth), presentation.PageSetup.SlideHeight,(int)(0.1f*slideWidth),(int)(0.15f*slideHeight));
+                    clsLogsDrawer.ExportLogNaVsLogClChartToPowerPoint(slide, (int)(presentation.PageSetup.SlideWidth), presentation.PageSetup.SlideHeight,(int)(0.1f*slideWidth),100);
                 }
                 else if (listBoxSelected.Items[i].ToString() == "log Mg Vs log Cl")
                 {
-                    clsLogsDrawer.ExportlogMgVslogCltoPowerpoint(slide, (int)( presentation.PageSetup.SlideWidth), presentation.PageSetup.SlideHeight, (int)(0.1f * slideWidth), (int)(0.15f * slideHeight));
+                    clsLogsDrawer.ExportlogMgVslogCltoPowerpoint(slide, (int)( presentation.PageSetup.SlideWidth), presentation.PageSetup.SlideHeight, (int)(0.1f * slideWidth), 100);
                 }
                 else if (listBoxSelected.Items[i].ToString() == "log Ca Vs log Cl")
                 {
-                    clsLogsDrawer.ExportlogCaVslogCltoPowerPoint(slide, (int)(presentation.PageSetup.SlideWidth), presentation.PageSetup.SlideHeight, (int)(0.1f * slideWidth), (int)(0.15f * slideHeight));
+                    clsLogsDrawer.ExportlogCaVslogCltoPowerPoint(slide, (int)(presentation.PageSetup.SlideWidth), presentation.PageSetup.SlideHeight, (int)(0.1f * slideWidth), 100);
                 }
                 else if (listBoxSelected.Items[i].ToString() == "Schoeller Diagram")
                 {
@@ -527,7 +527,7 @@ namespace WindowsFormsApplication2
                 }
                 else if (listBoxSelected.Items[i].ToString() == "Radar Diagram 2")
                 {
-                    Rectangle bounds = new Rectangle((int)(0.01f * mainChartPlotting.Width), (int)(0.02f * mainChartPlotting.Height), (int)(0.9 * mainChartPlotting.Width), (int)(0.9 * mainChartPlotting.Height));
+                    Rectangle bounds = new Rectangle((int)(0.5f * slideWidth), (int)(0.08f * slideHeight), (int)(0.6 * slideWidth), (int)(0.9 * slideHeight));
                     clsRadarDrawer.ExportRadar2ToPowerpoint(bounds, slide, presentation,flag);
                 }
                 else if (listBoxSelected.Items[i].ToString() == "Piper Diagram")
@@ -549,7 +549,7 @@ namespace WindowsFormsApplication2
                 }
                 else
                 {
-                    Rectangle bounds = new Rectangle((int)(0.01f * presentation.PageSetup.SlideWidth), (int)(0.02f * presentation.PageSetup.SlideHeight), (int)(0.9 * presentation.PageSetup.SlideWidth), (int)(0.9 * presentation.PageSetup.SlideHeight));
+                    Rectangle bounds = new Rectangle((int)(0.5f * slideWidth), (int)(0.08f * slideHeight), (int)(0.6 * slideWidth), (int)(0.9 * slideHeight));
                     clsRadarDrawer.ExportRadar3ToPowerpoint(bounds, slide, presentation, flag);
                 }
             }
@@ -594,7 +594,7 @@ namespace WindowsFormsApplication2
                     
                 }
 
-
+                flag = true;
 
             }
 
@@ -657,9 +657,9 @@ namespace WindowsFormsApplication2
                     }
 
                 }
-
+                flag = true;
             }
-            else
+            else if(name== "ICP Reproducibility")
             {
                 for (int i = 0; i < clsRadarDrawer.Radar3Scales.Length; i++)
                 {
@@ -732,32 +732,43 @@ namespace WindowsFormsApplication2
                     }
 
                 }
+                flag = true;
             }
 
-            flag = true;
+            
             // After updating the values, refresh the radar chart with the updated scales
 
-            Bitmap chartBitmap = new Bitmap(mainChartPlotting.Width, mainChartPlotting.Height);
-            Graphics graphics = Graphics.FromImage(chartBitmap);
-            graphics.Clear(Color.White);
+            
             if (name == "Radar Diagram 1")
             {
+                Bitmap chartBitmap = new Bitmap(mainChartPlotting.Width, mainChartPlotting.Height);
+                Graphics graphics = Graphics.FromImage(chartBitmap);
+                graphics.Clear(Color.White);
                 Rectangle bounds = new Rectangle(50, 50, (int)(0.9 * mainChartPlotting.Width), (int)(0.9 * mainChartPlotting.Height));
                 clsRadarDrawer.DrawRadarChart1(graphics, bounds, flag);
+                mainChartPlotting.Image = chartBitmap;
 
             }
             else if (name == "Radar Diagram 2")
             {
+                Bitmap chartBitmap = new Bitmap(mainChartPlotting.Width, mainChartPlotting.Height);
+                Graphics graphics = Graphics.FromImage(chartBitmap);
+                graphics.Clear(Color.White);
                 Rectangle bounds = new Rectangle(50, 50, (int)(0.9 * mainChartPlotting.Width), (int)(0.9 * mainChartPlotting.Height));
                 clsRadarDrawer.DrawRadarChart2(graphics, bounds, flag);
+                mainChartPlotting.Image = chartBitmap;
 
             }
             else if(name=="ICP Reproducibility")
             {
+                Bitmap chartBitmap = new Bitmap(mainChartPlotting.Width, mainChartPlotting.Height);
+                Graphics graphics = Graphics.FromImage(chartBitmap);
+                graphics.Clear(Color.White);
                 Rectangle bounds = new Rectangle(50, 50, (int)(0.9 * mainChartPlotting.Width), (int)(0.9 * mainChartPlotting.Height));
                 clsRadarDrawer.DrawRadarChart3(graphics, bounds, flag);
+                mainChartPlotting.Image = chartBitmap;
             }
-            mainChartPlotting.Image = chartBitmap;
+            
         }
 
         private void ButtonUpdateScales_Click(object sender, EventArgs e)
@@ -815,7 +826,7 @@ namespace WindowsFormsApplication2
             itemDetails.ShowDialog();
             itemDetails.BringToFront();
             itemDetails.Activate();
-               
+            
             UpdatePiperDiagram();
         }
 
@@ -832,27 +843,36 @@ namespace WindowsFormsApplication2
         public static void UpdateRadarDiagram()
         {
 
-            Bitmap chartBitmap = new Bitmap(mainChartPlotting.Width, mainChartPlotting.Height);
-            Graphics graphics = Graphics.FromImage(chartBitmap);
-            graphics.Clear(Color.White);
-            Rectangle bounds = new Rectangle(50, 50, (int)(0.9 * mainChartPlotting.Width), (int)(0.9 * mainChartPlotting.Height));
+
             if (listBoxCharts.SelectedItem != null && listBoxCharts.SelectedItem.ToString() == "Radar Diagram 1")
             {
+                Bitmap chartBitmap = new Bitmap(mainChartPlotting.Width, mainChartPlotting.Height);
+                Graphics graphics = Graphics.FromImage(chartBitmap);
+                graphics.Clear(Color.White);
+                Rectangle bounds = new Rectangle(50, 50, (int)(0.9 * mainChartPlotting.Width), (int)(0.9 * mainChartPlotting.Height));
 
-                
                 clsRadarDrawer.DrawRadarChart1(graphics, bounds, flag);
+                mainChartPlotting.Image = chartBitmap;
             }
             else if (listBoxCharts.SelectedItem != null && listBoxCharts.SelectedItem.ToString() == "Radar Diagram 2")
             {
-
+                Bitmap chartBitmap = new Bitmap(mainChartPlotting.Width, mainChartPlotting.Height);
+                Graphics graphics = Graphics.FromImage(chartBitmap);
+                graphics.Clear(Color.White);
+                Rectangle bounds = new Rectangle(50, 50, (int)(0.9 * mainChartPlotting.Width), (int)(0.9 * mainChartPlotting.Height));
                 clsRadarDrawer.DrawRadarChart2(graphics, bounds, flag);
+                mainChartPlotting.Image = chartBitmap;
             }
             else if (listBoxCharts.SelectedItem != null && listBoxCharts.SelectedItem.ToString() == "ICP Reproducibility")
             {
-
+                Bitmap chartBitmap = new Bitmap(mainChartPlotting.Width, mainChartPlotting.Height);
+                Graphics graphics = Graphics.FromImage(chartBitmap);
+                graphics.Clear(Color.White);
+                Rectangle bounds = new Rectangle(50, 50, (int)(0.9 * mainChartPlotting.Width), (int)(0.9 * mainChartPlotting.Height));
                 clsRadarDrawer.DrawRadarChart3(graphics, bounds, flag);
+                mainChartPlotting.Image = chartBitmap;
             }
-            mainChartPlotting.Image = chartBitmap;
+            
 
             
         }
@@ -867,6 +887,7 @@ namespace WindowsFormsApplication2
                 graphics.Clear(Color.White);
                 clsPiperDrawer.DrawPiperDiagram(graphics);
                 mainChartPlotting.Image = chartBitmap;
+                frmMainForm.mainChartPlotting.Invalidate();
             }
         }
         public static void UpdatePieDiagram()
@@ -879,7 +900,7 @@ namespace WindowsFormsApplication2
                 graphics.Clear(Color.White);
                 clsPieDrawer.DrawPieChart(graphics, mainChartPlotting.Width, mainChartPlotting.Height);
                 mainChartPlotting.Image = chartBitmap;
-
+                frmMainForm.mainChartPlotting.Invalidate();
             }
             
         }
@@ -892,6 +913,7 @@ namespace WindowsFormsApplication2
                 graphics.Clear(Color.White);
                 clsSchoellerDrawer.DrawSchoellerDiagram(graphics);
                 mainChartPlotting.Image = chartBitmap;
+                frmMainForm.mainChartPlotting.Invalidate();
             }
         }
         public static void UpdateCollinsDiagram()
@@ -903,6 +925,7 @@ namespace WindowsFormsApplication2
                 graphics.Clear(Color.White);
                 clsCollinsDrawer.DrawCollinsDiagram(graphics, mainChartPlotting.Width, mainChartPlotting.Height);
                 mainChartPlotting.Image = chartBitmap;
+                frmMainForm.mainChartPlotting.Invalidate();
             }
         }
         public static void UpdateBubbleDiagram()
@@ -914,6 +937,7 @@ namespace WindowsFormsApplication2
                 graphics.Clear(Color.White);
                 clsBubbleDrawer.DrawBubbleDiagram(graphics);
                 mainChartPlotting.Image = chartBitmap;
+                frmMainForm.mainChartPlotting.Invalidate();
             }
         }
         public static void UpdateLogsDiagram()
@@ -959,11 +983,12 @@ namespace WindowsFormsApplication2
                 Bitmap chartBitmap = new Bitmap(mainChartPlotting.Width, mainChartPlotting.Height);
                 Graphics graphics = Graphics.FromImage(chartBitmap);
                 graphics.Clear(Color.White);
-                clsLogsDrawer.DrawlogNa_VS_logCl(graphics, (int)(0.2 * mainChartPlotting.Width), (int)(0.3 * mainChartPlotting.Height), (int)(0.02 * mainChartPlotting.Width), (int)(0.05 * mainChartPlotting.Height));
-                clsLogsDrawer.DrawlogMg_VS_logCl(graphics, (int)(0.2 * mainChartPlotting.Width), (int)(0.3 * mainChartPlotting.Height), (int)(0.5 * mainChartPlotting.Width), (int)(0.05 * mainChartPlotting.Height));
-                clsLogsDrawer.DrawlogCa_VS_logCl(graphics, (int)(0.2 * mainChartPlotting.Width), (int)(0.3 * mainChartPlotting.Height), (int)(0.5 * mainChartPlotting.Width), (int)(0.5 * mainChartPlotting.Height));
+                clsLogsDrawer.DrawlogNa_VS_logCl(graphics, (int)(0.2 * mainChartPlotting.Width), (int)(0.3 * mainChartPlotting.Height), (int)(0.04 * mainChartPlotting.Width), (int)(0.05 * mainChartPlotting.Height));
+                clsLogsDrawer.DrawlogMg_VS_logCl(graphics, (int)(0.2 * mainChartPlotting.Width), (int)(0.3 * mainChartPlotting.Height), (int)(0.4 * mainChartPlotting.Width), (int)(0.05 * mainChartPlotting.Height));
+                clsLogsDrawer.DrawlogCa_VS_logCl(graphics, (int)(0.2 * mainChartPlotting.Width), (int)(0.3 * mainChartPlotting.Height), (int)(0.2 * mainChartPlotting.Width), (int)(0.5 * mainChartPlotting.Height));
                 mainChartPlotting.Image = chartBitmap;
             }
+            
         }
         public static void UpdateStiffDiagram()
         {
@@ -974,6 +999,7 @@ namespace WindowsFormsApplication2
                 graphics.Clear(Color.White);
                 clsStiffDrawer.DrawStiffDiagram(graphics);
                 mainChartPlotting.Image = chartBitmap;
+                frmMainForm.mainChartPlotting.Invalidate();
             }
         }
 

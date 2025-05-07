@@ -303,14 +303,14 @@ namespace WindowsFormsApplication2
             // Calculate the position to center the diagram on the slide
 
             int x1 = (int)(0.1f * chartWidth); // Center horizontally
-            int y1 = 150; // Center vertically
+            int y1 = 100; // Center vertically
 
             // Title
             PowerPoint.Shape title = slide.Shapes.AddTextbox(
                 Office.MsoTextOrientation.msoTextOrientationHorizontal,
-                50, 20, 600, 50);
+                (presentation.PageSetup.SlideWidth / 2) - 100, clsConstants.chartYPowerpoint, 200, 50);
             title.TextFrame.TextRange.Text = "PIE CHART";
-            title.TextFrame.TextRange.Font.Size = 40;
+            title.TextFrame.TextRange.Font.Size = 25;
             title.TextFrame.TextRange.Font.Bold = Office.MsoTriState.msoTrue;
             title.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
             title.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
@@ -389,7 +389,7 @@ namespace WindowsFormsApplication2
 
             #region Draw Legend
             int legendX = x1;
-            int legendY = 100;
+            int legendY = 50;
             int xSample = legendX+5;
             int fontSize = clsConstants.legendTextSize;
             int legendBoxWidth = 0;

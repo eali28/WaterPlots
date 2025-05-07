@@ -35,7 +35,7 @@ namespace WindowsFormsApplication2
             Font titleFont = new Font("Times New Roman", 25, FontStyle.Bold);
             // Fonts and Pens
             Font labelFont = new Font("Times New Roman", fontSize, FontStyle.Regular);
-            Pen axisPen = new Pen(Color.Black, 2f);
+            Pen axisPen = new Pen(Color.Black, 1f);
             Pen linePen = new Pen(Color.Black, 1f);
             Brush[] ionColors = { Brushes.Cyan, Brushes.Orange, Brushes.Purple, Brushes.Blue, Brushes.Magenta, Brushes.Green };
 
@@ -46,10 +46,11 @@ namespace WindowsFormsApplication2
             // Draw Axes
             float axisHalfLength = diagramWidth / 2f;
             int xOrigin = (int)(leftMargin + 0.03f * frmMainForm.mainChartPlotting.Width+axisHalfLength);
-            g.DrawLine(axisPen, xOrigin, yOrigin, xOrigin+axisHalfLength, yOrigin);
-            g.DrawLine(axisPen, xOrigin, yOrigin, xOrigin - axisHalfLength, yOrigin);
+            g.DrawLine(axisPen, xOrigin-axisHalfLength, yOrigin, xOrigin+axisHalfLength, yOrigin);
+            g.DrawLine(axisPen, xOrigin - axisHalfLength, yOrigin-diagramHeight, xOrigin + axisHalfLength, yOrigin-diagramHeight);
             g.DrawLine(axisPen, xOrigin, yOrigin, xOrigin, yOrigin - diagramHeight);
-
+            g.DrawLine(axisPen, xOrigin+axisHalfLength, yOrigin, xOrigin+axisHalfLength, yOrigin - diagramHeight);
+            g.DrawLine(axisPen, xOrigin-axisHalfLength, yOrigin, xOrigin-axisHalfLength, yOrigin - diagramHeight);
             // Draw X-axis ticks (10% increments)
             int numTicks = 10;
             float tickSpacing = axisHalfLength / numTicks;
@@ -278,9 +279,7 @@ namespace WindowsFormsApplication2
                 frmMainForm.legendPanel.Location = new Point(legendX - 14, legendY - 9);
                 frmMainForm.legendPanel.Size = new System.Drawing.Size(legendBoxWidth, legendBoxHeight);
                 frmMainForm.legendPictureBox.Image = bit;
-                //Form1.pic.Location = new Point(0, 0);
                 frmMainForm.legendPictureBox.Visible = true;
-                //frmMainForm.legendPictureBox.MouseDoubleClick += frmMainForm.pictureBoxPie_Click;
                 frmMainForm.legendPanel.Controls.Add(frmMainForm.legendPictureBox);
 
 
@@ -308,13 +307,13 @@ namespace WindowsFormsApplication2
             int diagramWidth = 420;
             int diagramHeight = (int)(0.6*(int)presentation.PageSetup.SlideHeight);
             int xOrigin = (int)(0.6f * diagramWidth);
-            int yOrigin = 150;
+            int yOrigin = 100;
             float axisHalfLength = diagramWidth / 2f;
 
             // Add Title
             PowerPoint.Shape title = slide.Shapes.AddTextbox(
                 Office.MsoTextOrientation.msoTextOrientationHorizontal,
-                100, 20, 600, 50);
+                (presentation.PageSetup.SlideWidth / 2) - 100, clsConstants.chartYPowerpoint, 200, 50);
             title.TextFrame.TextRange.Text = "Stiff Diagram";
             title.TextFrame.TextRange.Font.Size = 25;
             title.TextFrame.TextRange.Font.Bold = Office.MsoTriState.msoTrue;
@@ -380,11 +379,12 @@ namespace WindowsFormsApplication2
 
             // Sample Plotting
             int totalSamples = frmImportSamples.WaterData.Count;
-            int sampleSpacing = totalSamples > 0 ? (diagramHeight - 20) / totalSamples : 0;
-            int offsetY = yOrigin + diagramHeight - sampleSpacing;
-            Color[] ionColors = { Color.Cyan, Color.Orange, Color.Purple, Color.Blue, Color.Gray, Color.Green };
+            int sampleSpacing = totalSamples > 0 ? diagramHeight / totalSamples : 0;
+            int offsetY = yOrigin + diagramHeight-10;
+            Color[] ionColors = { Color.Cyan, Color.Orange, Color.Purple, Color.Blue, Color.Magenta, Color.Green };
             double Nafac = 22.99, Kfac = 39.0983, Cafac = 20.039, Mgfac = 12.1525, Clfac = 35.453, HCO3fac = 61.01684, CO3fac = 30.004, SO4fac = 48.0313;
             List<PointF> Points = new List<PointF>();
+            float maxX = 0;
             for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
             {
                 var existingTuple = frmImportSamples.WaterData[i];
@@ -410,11 +410,11 @@ namespace WindowsFormsApplication2
 
                 // Left Points (Cations)
                 float[] leftX = { xOrigin - (float)(NaK * axisHalfLength), xOrigin - (float)(Mg * axisHalfLength), xOrigin - (float)(Ca * axisHalfLength) };
-                float[] leftY = { offsetY - 20, offsetY, offsetY + 20 };
+                float[] leftY = { offsetY - 10, offsetY, offsetY + 10 };
 
                 // Right Points (Anions)
                 float[] rightX = { xOrigin + (float)(Cl * axisHalfLength), xOrigin + (float)(So4 * axisHalfLength), xOrigin + (float)(HCO3CO3 * axisHalfLength) };
-                float[] rightY = { offsetY - 20, offsetY, offsetY + 20 };
+                float[] rightY = { offsetY - 10, offsetY, offsetY + 10 };
 
                 // Connect Cations and Anions with Black Lines
                 PowerPoint.Shape line1 = slide.Shapes.AddLine(leftX[0], leftY[0], rightX[0], rightY[0]);
@@ -445,69 +445,131 @@ namespace WindowsFormsApplication2
                 slide.Shapes.AddShape(Microsoft.Office.Core.MsoAutoShapeType.msoShapeOval, rightX[1] - 4, rightY[1] - 4, 8, 8).Fill.ForeColor.RGB = ColorTranslator.ToOle(ionColors[4]);
                 slide.Shapes.AddShape(Microsoft.Office.Core.MsoAutoShapeType.msoShapeOval, rightX[2] - 4, rightY[2] - 4, 8, 8).Fill.ForeColor.RGB = ColorTranslator.ToOle(ionColors[5]);
                 Points.Add(new PointF(rightX[0], rightY[0]));
+                maxX = Math.Max(maxX, rightX[0]);
                 offsetY -= sampleSpacing; // Move Down for Next Sample
             }
 
 
 
             #region Draw Legend
-            // Define legend position
-            int legendX = (int)(xOrigin + diagramWidth / 2 + 50);
-            int legendY = (int)yOrigin;
-            // Define labels and colors for ions
-            string[] ionLabels = { "Na+K", "Mg", "Ca", "Cl", "SO4", "HCO3+CO3" };
+            int legendX = (int)(0.1f * presentation.PageSetup.SlideWidth);
+            int legendY = 50;
+            int xSample = legendX + 5;
+            int fontSize = clsConstants.legendTextSize;
+            int legendBoxWidth = 0;
+            int legendBoxHeight = 0;
+            // Add legend border
 
-            // Loop to create legend items
-            for (int i = 0; i < ionLabels.Length; i++)
+
+            for (int i = 0; i < labels.Length; i++)
             {
-                // Add Circle for Legend
-                PowerPoint.Shape legendCircle = slide.Shapes.AddShape(
-                    Microsoft.Office.Core.MsoAutoShapeType.msoShapeOval,
-                    legendX, legendY, 20, 20
-                );
-                legendCircle.Fill.ForeColor.RGB = ColorTranslator.ToOle(ionColors[i]); // Set circle color
-                legendCircle.Line.Visible = Microsoft.Office.Core.MsoTriState.msoFalse; // Remove border
+                // Create a temp shape just to measure
+                var temp = slide.Shapes.AddTextbox(
+                    Office.MsoTextOrientation.msoTextOrientationHorizontal,
+                    xSample + 50, legendY + 10, 100, 20);
+                temp.TextFrame.TextRange.Text = labels[i];
+                temp.TextFrame.TextRange.Font.Size = fontSize;
+                temp.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
+                temp.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
+                temp.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
 
-                // Add Text Label next to the Circle
-                PowerPoint.Shape legendText = slide.Shapes.AddTextbox(
-                    Microsoft.Office.Core.MsoTextOrientation.msoTextOrientationHorizontal,
-                    legendX + 20, legendY - 2, 70, 15
-                );
-                legendText.TextFrame.TextRange.Text = ionLabels[i];
-                legendText.TextFrame.TextRange.Font.Size = 15;
-                legendText.TextFrame.TextRange.Font.Name = "Times New Roman";
-                legendText.TextFrame.TextRange.Font.Color.RGB = ColorTranslator.ToOle(Color.Black); // Set text color
+                temp.TextFrame.TextRange.Text = labels[i];
+                temp.TextFrame.TextRange.Font.Size = fontSize;
+                temp.TextFrame.AutoSize = PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
+                int charCount = labels[i].Length;
+                float approxWidth = fontSize * charCount * 0.9f;
+                temp.Width = approxWidth;
+                legendBoxWidth += (int)temp.Width + 10;
+                legendBoxHeight = Math.Max(legendBoxHeight, (int)temp.Height);
+                temp.Delete(); // clean up
 
-                // Move to next legend item
-                legendY += 27;
             }
-            int legendBoxX = legendX - 15;
-            int legendBoxY = legendY - 170;
-            int legendBoxWidth = 150;
-            int legendBoxHeight = 200;
+            PowerPoint.Shape legendBorder = slide.Shapes.AddShape(
+            Office.MsoAutoShapeType.msoShapeRectangle,
+            legendX, legendY, legendBoxWidth, legendBoxHeight);
+            legendBorder.Fill.Transparency = 1.0f;
+            legendBorder.Line.ForeColor.RGB = System.Drawing.ColorTranslator.ToOle(Color.Blue);
+            legendBorder.Line.Weight = 2;
+            for (int i = 0; i < labels.Length; i++)
+            {
+                
+                    PowerPoint.Shape legendBox = slide.Shapes.AddShape(
+                        Office.MsoAutoShapeType.msoShapeOval,
+                        xSample, legendY + 5, 10, 10);
+                    legendBox.Fill.ForeColor.RGB = System.Drawing.ColorTranslator.ToOle(ionColors[i]);
+                
 
-            // Draw Transparent Legend Box with Blue Border
-            PowerPoint.Shape legendBox = slide.Shapes.AddShape(
-                Microsoft.Office.Core.MsoAutoShapeType.msoShapeRectangle,
-                legendBoxX, legendBoxY, legendBoxWidth, legendBoxHeight
-            );
-            legendBox.Fill.Visible = Microsoft.Office.Core.MsoTriState.msoFalse; // Make it transparent
-            legendBox.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Blue); // Blue border
+                PowerPoint.Shape legendText = slide.Shapes.AddTextbox(
+                    Office.MsoTextOrientation.msoTextOrientationHorizontal,
+                    xSample + 10, legendY, 100, 20);
+                legendText.TextFrame.TextRange.Text = labels[i];
+                legendText.TextFrame.TextRange.Font.Size = fontSize;
+                legendText.TextFrame.AutoSize = PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
+                legendText.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
+                legendText.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+                legendText.TextFrame.MarginLeft = 0;
+                legendText.TextFrame.MarginRight = 0;
+                legendText.TextFrame.MarginTop = 0;
+                legendText.TextFrame.MarginBottom = 0;
+                int charCount = labels[i].Length;
+                float approxWidth = fontSize * charCount * 0.9f; // 0.6 is a rough factor
+
+                legendText.Width = approxWidth;
+
+                xSample += (int)legendText.Width + 10;
+            }
+
+
+
             // Add metadata
-            float metadataX = legendX - 20;
-            float metadataY = legendY + 50;
+            float metadataX = 500;
+            float metadataY = legendY;
+            int metaWidth = 0;
+            int metaHeight = 0;
+
+
+            float ySample = metadataY;
+            //List<PowerPoint.Shape> addedTexts = new List<PowerPoint.Shape>();
 
             for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
             {
+                string fullText = "W" + (i + 1).ToString() + "," +
+                    frmImportSamples.WaterData[i].Well_Name + "," +
+                    frmImportSamples.WaterData[i].ClientID + "," +
+                    frmImportSamples.WaterData[i].Depth;
+
                 PowerPoint.Shape metadataText = slide.Shapes.AddTextbox(
                     Office.MsoTextOrientation.msoTextOrientationHorizontal,
-                    metadataX, metadataY + (i * 20), 500, 20);
-                metadataText.TextFrame.TextRange.Text = "W" + (i + 1).ToString() + "," + (frmImportSamples.WaterData[i].Well_Name) + "," + (frmImportSamples.WaterData[i].ClientID) + "," + (frmImportSamples.WaterData[i].Depth);
-                metadataText.TextFrame.TextRange.Font.Size = 15;
+                    metadataX + 2, ySample, 500, 20);
+
+                metadataText.TextFrame.TextRange.Text = fullText;
+                metadataText.TextFrame.TextRange.Font.Size = fontSize;
+                metadataText.TextFrame.AutoSize = PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
+                metadataText.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignLeft;
+                metadataText.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+                metadataText.TextFrame.MarginLeft = 0;
+                metadataText.TextFrame.MarginRight = 0;
+                metadataText.TextFrame.MarginTop = 0;
+                metadataText.TextFrame.MarginBottom = 0;
+                metadataText.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
+
+
+
+                metaWidth = Math.Max(metaWidth, (int)metadataText.Width);
+                ySample += metadataText.Height;
+                metaHeight += (int)metadataText.Height + 1;
+                //addedTexts.Add(metadataText);
             }
+
+            // Now draw the border box *after*
+            PowerPoint.Shape metaBorder = slide.Shapes.AddShape(
+                Office.MsoAutoShapeType.msoShapeRectangle,
+                metadataX, metadataY, metaWidth, metaHeight);
+            metaBorder.Fill.Transparency = 1.0f;
+            metaBorder.Line.ForeColor.RGB = System.Drawing.ColorTranslator.ToOle(Color.Blue);
+            metaBorder.Line.Weight = 2;
             #endregion
             // Position for Water Sample List
-            int ysample = legendY + 50;
 
             // Loop Through Water Data Samples and Add Text
             for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
@@ -516,16 +578,26 @@ namespace WindowsFormsApplication2
 
                 PowerPoint.Shape sampleTextShape = slide.Shapes.AddTextbox(
                     Microsoft.Office.Core.MsoTextOrientation.msoTextOrientationHorizontal,
-                    Points[i].X + 15, Points[i].Y - 10, 700, 20
+                    maxX + 15, Points[i].Y - 10, 200, 20
                 );
 
                 sampleTextShape.TextFrame.TextRange.Text = sampleText;
-                sampleTextShape.TextFrame.TextRange.Font.Size = 15;
+                sampleTextShape.TextFrame.TextRange.Font.Size = 8;
                 sampleTextShape.TextFrame.TextRange.Font.Name = "Times New Roman";
                 sampleTextShape.TextFrame.TextRange.Font.Bold = Microsoft.Office.Core.MsoTriState.msoTrue;
                 sampleTextShape.TextFrame.TextRange.Font.Color.RGB = ColorTranslator.ToOle(Color.Black); // Set text color to black
+                sampleTextShape.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
+                sampleTextShape.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
+                sampleTextShape.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+                sampleTextShape.TextFrame.MarginLeft = 0;
+                sampleTextShape.TextFrame.MarginRight = 0;
+                sampleTextShape.TextFrame.MarginTop = 0;
+                sampleTextShape.TextFrame.MarginBottom = 0;
+                int charCount = sampleText.Length;
+                float approxWidth = fontSize * charCount * 0.6f; // 0.6 is a rough factor
 
-                ysample += 30; // Move down for the next sample
+                sampleTextShape.Width = approxWidth;
+
             }
             string cation = "Cations";
             PowerPoint.Shape cationShape = slide.Shapes.AddTextbox(
