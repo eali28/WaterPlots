@@ -30,9 +30,8 @@ namespace WindowsFormsApplication2
         /// </summary>
         /// <param name="g">graphics</param>
         /// <param name="bounds">bounds of the radar</param>
-        public static void Radar_legend(Graphics g, Rectangle bounds)
+        public static void RadarLegend(Graphics g, Rectangle bounds)
         {
-
             #region Draw Legend
 
             if (frmImportSamples.WaterData.Count > 0)
@@ -42,84 +41,143 @@ namespace WindowsFormsApplication2
                 int legendX = xsample;
                 int legendY = ysample;
 
-
                 int legendBoxHeight = 0;
                 int legendtextSize = clsConstants.legendTextSize;
-
-                int legendBoxWidth = 0;
+                int legendBoxWidth = 300; // Set fixed width for wrapping area
 
                 using (Font font = new Font("Times New Roman", legendtextSize, FontStyle.Bold))
                 {
                     foreach (var data in frmImportSamples.WaterData)
                     {
                         string fullText = data.Well_Name + ", " + data.ClientID + ", " + data.Depth;
-                        SizeF textSize = g.MeasureString(fullText, font);
-                        if (textSize.Width + 30 > legendBoxWidth)
-                        {
-                            legendBoxWidth = (int)Math.Round(textSize.Width, 0) + 30;
-                        }
-                        legendBoxHeight += (int)Math.Round(textSize.Height, 0);
+                        SizeF textSize = g.MeasureString(fullText, font, legendBoxWidth - 30); // limit width for wrapping
+                        legendBoxWidth = (int)Math.Max(legendBoxWidth, textSize.Width);
+                        legendBoxHeight += (int)Math.Ceiling(textSize.Height + 10); // add spacing between lines
                     }
                 }
 
-                //Form1.pic.Visible = true;
                 frmMainForm.legendPictureBox.Size = new Size(legendBoxWidth, legendBoxHeight);
                 Bitmap bit = new Bitmap(legendBoxWidth, legendBoxHeight);
                 g = Graphics.FromImage(bit);
+
                 g.DrawRectangle(new Pen(Color.Black), legendX - 15, legendY - 10, legendBoxWidth + 15, legendBoxHeight + 30);
-
-
 
                 using (Graphics legendGraphics = g)
                 {
-                    //legendGraphics.Clear(Color.White);  // Fill background
                     legendGraphics.FillRectangle(Brushes.White, 0, 0, legendBoxWidth - 1, legendBoxHeight - 1);
-                    legendGraphics.DrawRectangle(new Pen(Color.Blue, 2), 0, 0, legendBoxWidth - 1, legendBoxHeight - 1);
+                    legendGraphics.DrawRectangle(new Pen(Color.Blue, 2), 0, 0, legendBoxWidth, legendBoxHeight - 1);
                     ysample = 0;
+
                     for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
                     {
-                        Brush squareBrush = new SolidBrush(frmImportSamples.WaterData[i].color);
+                        var data = frmImportSamples.WaterData[i];
+                        Brush squareBrush = new SolidBrush(data.color);
+                        Pen axisPen = new Pen(data.color, data.lineWidth)
+                        {
+                            DashStyle = data.selectedStyle
+                        };
 
-                        Pen axisPen = new Pen(frmImportSamples.WaterData[i].color, 2);
-                        axisPen.Width = frmImportSamples.WaterData[i].lineWidth;
-                        axisPen.DashStyle = frmImportSamples.WaterData[i].selectedStyle;
-                        g.DrawLine(axisPen, 5, ysample + 5, 25, ysample + 5);
-                        string fullText = frmImportSamples.WaterData[i].Well_Name + ", " + frmImportSamples.WaterData[i].ClientID + ", " + frmImportSamples.WaterData[i].Depth;
-                        SizeF textSize = g.MeasureString(fullText, new Font("Times New Roman", legendtextSize, FontStyle.Bold));
-                        // Draw text beside the shape
+                        g.DrawLine(axisPen, 5, ysample + 10, 25, ysample + 10);
+
+                        string fullText = data.Well_Name + ", " + data.ClientID + ", " + data.Depth;
+                        RectangleF textRect = new RectangleF(30, ysample, legendBoxWidth-35, legendBoxHeight); // large height to wrap
+
+                        Font font = new Font("Times New Roman", legendtextSize, FontStyle.Bold);
+                        SizeF textSize = legendGraphics.MeasureString(fullText, font, (int)textRect.Width);
+
                         legendGraphics.DrawString(
                             fullText,
-                            new Font("Times New Roman", legendtextSize, FontStyle.Bold),
-                            Brushes.Black, 30, ysample
+                            font,
+                            Brushes.Black,
+                            textRect
                         );
 
-                        ysample += (int)(textSize.Height);
+                        ysample += (int)Math.Ceiling(textSize.Height + 10); // Move down based on wrapped height
                     }
                 }
-                //Form1.legendPanel.BackColor = Color.Transparent;
+
                 frmMainForm.legendPanel.Location = new Point(legendX - 14, legendY - 9);
-                frmMainForm.legendPanel.Size = new System.Drawing.Size(legendBoxWidth, legendBoxHeight);
+                frmMainForm.legendPanel.Size = new Size(legendBoxWidth, legendBoxHeight);
                 frmMainForm.legendPictureBox.Image = bit;
-                //Form1.pic.Location = new Point(0, 0);
-                //Form1.pic.Visible = true;
+
                 frmMainForm.legendPictureBox.MouseDoubleClick += frmMainForm.legendPictureBoxRadar;
                 frmMainForm.legendPanel.Controls.Add(frmMainForm.legendPictureBox);
-
-
                 frmMainForm.legendPanel.Visible = true;
-
                 frmMainForm.mainChartPlotting.Controls.Add(frmMainForm.legendPanel);
             }
             else
             {
                 frmMainForm.legendPanel.AutoScroll = false;
             }
-            frmMainForm.legendPanel.Show();
-            #endregion
 
+            frmMainForm.legendPanel.Show();
+
+            #endregion
         }
+        public static void RadarLegendPowerpoint(PowerPoint.Slide slide)
+        {
+            #region Draw Legend
+            if (frmImportSamples.WaterData.Count > 0)
+            {
+                int legendY = 70;
+
+                float metadataX = 500;
+                float metadataY = legendY;
+                int metaWidth = 180; // Set a fixed width for the text box (enables wrapping)
+                int metaHeight = 0;
+
+                float ysample = metadataY;
+
+                for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
+                {
+                    var data = frmImportSamples.WaterData[i];
+
+                    // Draw the colored line
+                    var line = slide.Shapes.AddLine(metadataX, ysample + 10, metadataX + 20, ysample + 10);
+                    line.Line.ForeColor.RGB = ColorTranslator.ToOle(data.color);
+                    line.Line.Weight = data.lineWidth;
+                    line.Line.DashStyle = ConvertDashStyle(data.selectedStyle);
+
+                    // Prepare wrapped text
+                    string fullText = data.Well_Name + ", " + data.ClientID + ", " + data.Depth;
+
+                    // Add textbox with wrapping and fixed width
+                    PowerPoint.Shape metadataText = slide.Shapes.AddTextbox(
+                        Office.MsoTextOrientation.msoTextOrientationHorizontal,
+                        metadataX + 25, ysample, metaWidth, 20); // initial height, PowerPoint will auto-expand
+
+                    metadataText.TextFrame.TextRange.Text = fullText;
+                    metadataText.TextFrame.TextRange.Font.Size = clsConstants.legendTextSize;
+                    metadataText.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignLeft;
+                    metadataText.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorTop;
+                    metadataText.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoTrue;
+
+                    // Remove margins to reduce waste of space
+                    metadataText.TextFrame.MarginLeft = 0;
+                    metadataText.TextFrame.MarginRight = 0;
+                    metadataText.TextFrame.MarginTop = 0;
+                    metadataText.TextFrame.MarginBottom = 0;
+
+                    // Auto-resize height only
+                    metadataText.TextFrame.AutoSize = PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
+
+                    ysample += metadataText.Height + 5;
+                    metaHeight += (int)(metadataText.Height + 5);
+                }
+
+                // Draw blue border box after content is drawn
+                PowerPoint.Shape metaBorder = slide.Shapes.AddShape(
+                    Office.MsoAutoShapeType.msoShapeRectangle,
+                    metadataX - 5, metadataY - 5, metaWidth + 35, metaHeight + 10);
+                metaBorder.Fill.Transparency = 1.0f;
+                metaBorder.Line.ForeColor.RGB = System.Drawing.ColorTranslator.ToOle(Color.Blue);
+                metaBorder.Line.Weight = 1;
+            }
+            #endregion
+        }
+
         /// <summary>
-        /// 
+        /// Draws the first radar diagram
         /// </summary>
         /// <param name="g"></param>
         /// <param name="bounds"></param>
@@ -135,11 +193,43 @@ namespace WindowsFormsApplication2
             // Data labels and values
             clsRadarScale[][] sampleData = new clsRadarScale[frmImportSamples.WaterData.Count][];
 
-
+            string title = "Elements Molar concentration";
+            Font titleFont = new Font("Times New Roman", 25, FontStyle.Bold);
+            int titleX = (int)(frmMainForm.mainChartPlotting.Width * 0.4f);
+            int titleY = (int)(0.01f * frmMainForm.mainChartPlotting.Height);
+            g.DrawString(title, titleFont, Brushes.Black, titleX, titleY);
 
             float fontSize = 12; // Make font size relative
             PrecomputeMaxValues(flag);
-            Radar1Scales = new string[] { maxCl.ToString("F5"), maxNa.ToString("F5"), maxK.ToString("F5"), maxCa.ToString("F5"), maxMg.ToString("F5"), maxBa.ToString("F5"), maxSr.ToString("F5") };
+            Console.WriteLine("maxBa before ToString: " + maxBa);
+            Console.WriteLine("maxBa after ToString: " + maxBa.ToString("F5"));
+            string fullString = maxBa.ToString("G17");
+            if (fullString.Contains("E-"))
+            {
+                int eIndex = fullString.IndexOf("E");
+                string temp="";
+                for(int i=0;i<fullString.Length;i++)
+                {
+                    if(fullString[i]!='.')
+                    {
+                        temp += fullString[i];
+                    }
+                    else
+                    {
+                        temp += fullString[i];
+                        temp += fullString[i + 1];
+                        break;
+                    }
+
+                }
+                for(int i=eIndex;i<fullString.Length;i++)
+                {
+                    temp += fullString[i];
+                }
+                fullString = temp;
+               
+            }
+            Radar1Scales = new string[] { maxCl.ToString("F5"), maxNa.ToString("F5"), maxK.ToString("F5"), maxCa.ToString("F5"), maxMg.ToString(), fullString, maxSr.ToString("F5") };
             Font AxisFont = new Font("Times New Roman", fontSize, FontStyle.Bold);
             List<string> scales = new List<string>();
             for (int i = 0; i < Radar1Scales.Count(); i++)
@@ -178,7 +268,7 @@ namespace WindowsFormsApplication2
                 "K (mol/L)\n"+ scales[2],
                 "Ca (mol/L)\n"+ scales[3],
                 "Mg (mol/L)\n"+ scales[4],
-                "Ba (mol/L)\n"+ scales[5],
+                "Ba (mol/L)\n"+ fullString,
                 "Sr (mol/L)\n"+ scales[6],
                 "Cl (mol/L)\n"+ scales[0],
                 "Na (mol/L)\n"+ scales[1]
@@ -296,28 +386,91 @@ namespace WindowsFormsApplication2
                     g.DrawPolygon(linePen, points);
                 }
             }
-            Radar_legend(g, bounds);
+            RadarLegend(g, bounds);
             #endregion
 
             flag = false;
         }
         public static void ExportRadar1ToPowerpoint(Rectangle bounds, PowerPoint.Slide slide, PowerPoint.Presentation presentation,bool flag)
         {
-
+            PowerPoint.Shape title = slide.Shapes.AddTextbox(
+                Office.MsoTextOrientation.msoTextOrientationHorizontal,
+                (presentation.PageSetup.SlideWidth / 2) - 100, clsConstants.chartYPowerpoint, 200, 50);
+            title.TextFrame.TextRange.Text = "Elements Molar Concentration";
+            title.TextFrame.TextRange.Font.Size = 25;
+            title.TextFrame.TextRange.Font.Bold = Office.MsoTriState.msoTrue;
+            title.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
+            title.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
+            title.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+            title.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
             // Data labels and values
             clsRadarScale[][] sampleData = new clsRadarScale[frmImportSamples.WaterData.Count][];
             double Bm = 35453, Bn = 22989.7, Bo = 39098.3, Bp = 40078, Bq = 24305, Br = 137327, Bs = 87620;
             PrecomputeMaxValues(flag);
+            string fullString = maxBa.ToString("G17");
+            if (fullString.Contains("E-"))
+            {
+                int eIndex = fullString.IndexOf("E");
+                string temp = "";
+                for (int i = 0; i < fullString.Length; i++)
+                {
+                    if (fullString[i] != '.')
+                    {
+                        temp += fullString[i];
+                    }
+                    else
+                    {
+                        temp += fullString[i];
+                        temp += fullString[i + 1];
+                        break;
+                    }
 
+                }
+                for (int i = eIndex; i < fullString.Length; i++)
+                {
+                    temp += fullString[i];
+                }
+                fullString = temp;
+
+            }
+            List<string> scales = new List<string>();
+            foreach (var value in Radar2Scales)
+            {
+                string s = value;
+                string temp = "";
+                bool checking = false, found = false;
+
+                for (int j = 0; j < s.Length; j++)
+                {
+                    if (s[j] == '.')
+                        checking = true;
+                    else if (s[j] != '0' && checking)
+                    {
+                        found = true;
+                        temp += s[j];
+                        break;
+                    }
+                    temp += s[j];
+                }
+
+                if (!found)
+                {
+                    int dotIndex = temp.IndexOf('.');
+                    if (dotIndex != -1)
+                        temp = temp.Substring(0, dotIndex);
+                }
+
+                scales.Add(temp);
+            }
             string[] labels =
             {
-                "K (mol/L)"+ (maxK).ToString("F5"),
-                "Ca (mol/L)"+ (maxCa).ToString("F5"),
-                "Mg (mol/L)"+ (maxMg).ToString("F5"),
-                "Ba (mol/L)"+ (maxBa).ToString("F5"),
-                "Sr (mol/L)"+ (maxSr).ToString("F5"),
-                "Cl (mol/L)"+ (maxCl).ToString("F5"),
-                "Na (mol/L)"+ (maxNa).ToString("F5")
+                "K (mol/L)\n"+ scales[2],
+                "Ca (mol/L)\n"+ scales[3],
+                "Mg (mol/L)\n"+ scales[4],
+                "Ba (mol/L)\n"+ fullString,
+                "Sr (mol/L)\n"+ scales[6],
+                "Cl (mol/L)\n"+ scales[0],
+                "Na (mol/L)\n"+ scales[1]
             };
             // Initialize jagged array
             for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
@@ -347,7 +500,7 @@ namespace WindowsFormsApplication2
 
 
             // Radius of the radar diagram
-            float radius = Math.Min(bounds.Width, bounds.Height) / 3;
+            float radius = (float)Math.Min(bounds.Width/1.5, bounds.Height/1.5) / 3;
             // Number of axes
             int numAxes = labels.Length;
 
@@ -540,67 +693,9 @@ namespace WindowsFormsApplication2
                 sampleLastLine.Line.Weight = frmImportSamples.WaterData[i].lineWidth; // Set line width
                 sampleLastLine.Line.DashStyle = ConvertDashStyle(frmImportSamples.WaterData[i].selectedStyle);
             }
-            #region Draw Legend
-            if (frmImportSamples.WaterData.Count > 0)
-            {
-                int legendY = 50;
-                
-                // Add metadata
-                float metadataX = 500;
-                float metadataY = legendY;
-                int metaWidth = 0;
-                int metaHeight = 0;
+            RadarLegendPowerpoint(slide);
 
 
-                float ysample = metadataY;
-                //List<PowerPoint.Shape> addedTexts = new List<PowerPoint.Shape>();
-
-                for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
-                {
-                    var line = slide.Shapes.AddLine(metadataX, ysample + 10, metadataX + 20, ysample + 10);
-                    line.Line.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color);
-                    line.Line.Weight = frmImportSamples.WaterData[i].lineWidth;
-                    line.Line.DashStyle = ConvertDashStyle(frmImportSamples.WaterData[i].selectedStyle);
-                    string fullText = "W" + (i + 1).ToString() + "," +
-                        frmImportSamples.WaterData[i].Well_Name + "," +
-                        frmImportSamples.WaterData[i].ClientID + "," +
-                        frmImportSamples.WaterData[i].Depth;
-
-                    PowerPoint.Shape metadataText = slide.Shapes.AddTextbox(
-                        Office.MsoTextOrientation.msoTextOrientationHorizontal,
-                        metadataX + 22, ysample, 500, 20);
-
-                    metadataText.TextFrame.TextRange.Text = fullText;
-                    metadataText.TextFrame.TextRange.Font.Size = clsConstants.legendTextSize;
-                    metadataText.TextFrame.AutoSize = PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
-                    metadataText.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignLeft;
-                    metadataText.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
-                    metadataText.TextFrame.MarginLeft = 0;
-                    metadataText.TextFrame.MarginRight = 0;
-                    metadataText.TextFrame.MarginTop = 0;
-                    metadataText.TextFrame.MarginBottom = 0;
-                    metadataText.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
-
-
-
-                    metaWidth = Math.Max(metaWidth, (int)metadataText.Width+30);
-                    ysample += metadataText.Height;
-                    metaHeight += (int)metadataText.Height + 1;
-                    //addedTexts.Add(metadataText);
-                }
-
-                // Now draw the border box *after*
-                PowerPoint.Shape metaBorder = slide.Shapes.AddShape(
-                    Office.MsoAutoShapeType.msoShapeRectangle,
-                    metadataX, metadataY, metaWidth, metaHeight);
-                metaBorder.Fill.Transparency = 1.0f;
-                metaBorder.Line.ForeColor.RGB = System.Drawing.ColorTranslator.ToOle(Color.Blue);
-                metaBorder.Line.Weight = 2;
-                // Refresh PowerPoint slide
-                //pptApplication.ActiveWindow.View.GotoSlide(presentation.Slides.Count);
-            }
-            #endregion
-            
         }
         public static void DrawRadarChart2(Graphics g, Rectangle bounds, bool flag)
         {
@@ -611,6 +706,11 @@ namespace WindowsFormsApplication2
             frmMainForm.legendPictureBox.MouseDoubleClick -= frmMainForm.legendPictureBoxRadar;
             frmMainForm.mainChartPlotting.Invalidate();
             float fontSize = 12; // Make font size relative
+            string title = "Genetic Origin and Alteration Plot";
+            Font titleFont = new Font("Times New Roman", 25, FontStyle.Bold);
+            int titleX = (int)(frmMainForm.mainChartPlotting.Width * 0.4f);
+            int titleY = (int)(0.01f * frmMainForm.mainChartPlotting.Height);
+            g.DrawString(title, titleFont, Brushes.Black, titleX, titleY);
             // Data labels and values
             clsRadarScale[][] sampleData = new clsRadarScale[frmImportSamples.WaterData.Count][];
             PrecomputeMaxValues(flag);
@@ -797,38 +897,76 @@ namespace WindowsFormsApplication2
 
 
             }
-            Radar_legend(g, bounds);
+            RadarLegend(g, bounds);
             #endregion
             flag = false;
         }
 
         public static void ExportRadar2ToPowerpoint(Rectangle bounds, PowerPoint.Slide slide, PowerPoint.Presentation presentation,bool flag)
         {
-            
 
 
 
+            PowerPoint.Shape title = slide.Shapes.AddTextbox(
+                Office.MsoTextOrientation.msoTextOrientationHorizontal,
+                (presentation.PageSetup.SlideWidth / 2) - 100, 0, 200, 50);
+            title.TextFrame.TextRange.Text = "Genetic Origin and Alteration Plot";
+            title.TextFrame.TextRange.Font.Size = 25;
+            title.TextFrame.TextRange.Font.Bold = Office.MsoTriState.msoTrue;
+            title.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
+            title.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
+            title.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+            title.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
             // Data labels and values
             clsRadarScale[][] sampleData = new clsRadarScale[frmImportSamples.WaterData.Count][];
             PrecomputeMaxValues(flag);
+            List<string> scales = new List<string>();
+            foreach (var value in Radar2Scales)
+            {
+                string s = value;
+                string temp = "";
+                bool checking = false, found = false;
+
+                for (int j = 0; j < s.Length; j++)
+                {
+                    if (s[j] == '.')
+                        checking = true;
+                    else if (s[j] != '0' && checking)
+                    {
+                        found = true;
+                        temp += s[j];
+                        break;
+                    }
+                    temp += s[j];
+                }
+
+                if (!found)
+                {
+                    int dotIndex = temp.IndexOf('.');
+                    if (dotIndex != -1)
+                        temp = temp.Substring(0, dotIndex);
+                }
+
+                scales.Add(temp);
+            }
             string[] labels =
             {
-            "EV_Na-Ca \n"+(maxNaCa).ToString("F5"),
-            "GT_K-Na \n"+ (maxKNa).ToString("F5"),
-            "SS_Sr-Mg \n"+(maxSrMg).ToString("F5"),
-            "SS_Mg-Cl \n"+(maxMgCl).ToString("F5"),
-            "SS_Sr-Cl \n"+ (maxSrCl).ToString("F5"),
-            "Lith_Sr-K \n"+ (maxSrK).ToString("F5"),
-            "Lith_Mg-K \n"+ (maxMgK).ToString("F5"),
-            "Lith_Ca-K \n"+ (maxCaK).ToString("F5"),
-            "Wt%K \n"+ (maxtK).ToString("F5"),
-            "OM_B-Cl \n"+ (maxBCl).ToString("F5"),
-            "OM_B-Na \n"+ (maxBNa).ToString("F5"),
-            "OM_B-Mg \n"+ (maxBMg).ToString("F5"),
-            "EV_Na-Cl \n"+ (maxNaCl).ToString("F5"),
-            "EV_Cl-Ca \n"+ (maxClCa).ToString("F5"),
-            "EV_HCO3-Cl \n"+(maxHCO3Cl).ToString("F5"),
-            "EV_Cl-Sr \n"+ (maxClSr).ToString("F5")
+            "EV_Na-Ca \n"+scales[4],
+            "GT_K-Na \n"+ scales[5],
+            "SS_Sr-Mg \n"+scales[6],
+            "SS_Mg-Cl \n"+scales[7],
+            "SS_Sr-Cl \n"+ scales[8],
+            "Lith_Sr-K \n"+ scales[9],
+            "Lith_Mg-K \n"+ scales[10],
+            "Lith_Ca-K \n"+ scales[11],
+            "Wt%K \n"+ scales[12],
+            "OM_B-Cl \n"+ scales[13],
+            "OM_B-Na \n"+ scales[14],
+            "OM_B-Mg \n"+ scales[15],
+            "EV_Na-Cl \n"+ scales[0],
+            "EV_Cl-Ca \n"+ scales[1],
+            "EV_HCO3-Cl \n"+scales[2],
+            "EV_Cl-Sr \n"+ scales[3]
 
         };
 
@@ -869,7 +1007,7 @@ namespace WindowsFormsApplication2
 
 
             // Radius of the radar diagram
-            float radius = Math.Min(bounds.Width, bounds.Height) / 3;
+            float radius = (float)Math.Min(bounds.Width / 1.5, bounds.Height / 1.5) / 3;
             // Number of axes
             int numAxes = labels.Length;
 
@@ -1073,66 +1211,7 @@ namespace WindowsFormsApplication2
                 setLine2.Line.Weight = frmImportSamples.WaterData[i].lineWidth; // Set line width
                 setLine2.Line.DashStyle = ConvertDashStyle(frmImportSamples.WaterData[i].selectedStyle);
             }
-            #region Draw Legend
-            if (frmImportSamples.WaterData.Count > 0)
-            {
-                int legendY = 50;
-
-                // Add metadata
-                float metadataX = 500;
-                float metadataY = legendY;
-                int metaWidth = 0;
-                int metaHeight = 0;
-
-
-                float ysample = metadataY;
-                //List<PowerPoint.Shape> addedTexts = new List<PowerPoint.Shape>();
-
-                for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
-                {
-                    var line = slide.Shapes.AddLine(metadataX, ysample + 10, metadataX + 20, ysample + 10);
-                    line.Line.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color);
-                    line.Line.Weight = frmImportSamples.WaterData[i].lineWidth;
-                    line.Line.DashStyle = ConvertDashStyle(frmImportSamples.WaterData[i].selectedStyle);
-                    string fullText = "W" + (i + 1).ToString() + "," +
-                        frmImportSamples.WaterData[i].Well_Name + "," +
-                        frmImportSamples.WaterData[i].ClientID + "," +
-                        frmImportSamples.WaterData[i].Depth;
-
-                    PowerPoint.Shape metadataText = slide.Shapes.AddTextbox(
-                        Office.MsoTextOrientation.msoTextOrientationHorizontal,
-                        metadataX + 22, ysample, 500, 20);
-
-                    metadataText.TextFrame.TextRange.Text = fullText;
-                    metadataText.TextFrame.TextRange.Font.Size = clsConstants.legendTextSize;
-                    metadataText.TextFrame.AutoSize = PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
-                    metadataText.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignLeft;
-                    metadataText.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
-                    metadataText.TextFrame.MarginLeft = 0;
-                    metadataText.TextFrame.MarginRight = 0;
-                    metadataText.TextFrame.MarginTop = 0;
-                    metadataText.TextFrame.MarginBottom = 0;
-                    metadataText.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
-
-
-
-                    metaWidth = Math.Max(metaWidth, (int)metadataText.Width + 30);
-                    ysample += metadataText.Height;
-                    metaHeight += (int)metadataText.Height + 1;
-                    //addedTexts.Add(metadataText);
-                }
-
-                // Now draw the border box *after*
-                PowerPoint.Shape metaBorder = slide.Shapes.AddShape(
-                    Office.MsoAutoShapeType.msoShapeRectangle,
-                    metadataX, metadataY, metaWidth, metaHeight);
-                metaBorder.Fill.Transparency = 1.0f;
-                metaBorder.Line.ForeColor.RGB = System.Drawing.ColorTranslator.ToOle(Color.Blue);
-                metaBorder.Line.Weight = 2;
-                // Refresh PowerPoint slide
-                //pptApplication.ActiveWindow.View.GotoSlide(presentation.Slides.Count);
-            }
-            #endregion
+            RadarLegendPowerpoint(slide);
 
         }
         public static void DrawRadarChart3(Graphics g, Rectangle bounds, bool flag)
@@ -1142,16 +1221,44 @@ namespace WindowsFormsApplication2
             frmMainForm.legendPictureBox.MouseDoubleClick -= frmMainForm.pictureBoxSchoeller_Click;
             frmMainForm.legendPictureBox.MouseDoubleClick -= frmMainForm.pictureBoxCollins_Click;
             frmMainForm.legendPictureBox.MouseDoubleClick -= frmMainForm.legendPictureBoxRadar;
-            frmMainForm.mainChartPlotting.Invalidate();
             // Data labels and values
             clsRadarScale[][] sampleData = new clsRadarScale[frmImportSamples.WaterData.Count][];
 
 
-
+            string title = "ICP Reproducibility";
+            Font titleFont = new Font("Times New Roman", 25, FontStyle.Bold);
+            int titleX = (int)(frmMainForm.mainChartPlotting.Width * 0.4f);
+            int titleY = (int)(0.01f * frmMainForm.mainChartPlotting.Height);
+            g.DrawString(title, titleFont, Brushes.Black, titleX, titleY);
             float fontSize = 12; // Make font size relative
             // Data labels and values
             PrecomputeMaxValues(flag);
+            string fullString = maxBa.ToString("G17");
+            if (fullString.Contains("E-"))
+            {
+                int eIndex = fullString.IndexOf("E");
+                string temp = "";
+                for (int i = 0; i < fullString.Length; i++)
+                {
+                    if (fullString[i] != '.')
+                    {
+                        temp += fullString[i];
+                    }
+                    else
+                    {
+                        temp += fullString[i];
+                        temp += fullString[i + 1];
+                        break;
+                    }
 
+                }
+                for (int i = eIndex; i < fullString.Length; i++)
+                {
+                    temp += fullString[i];
+                }
+                fullString = temp;
+
+            }
             Radar3Scales = new string[] { 
             maxNa.ToString("F5"),
             maxK.ToString("F5"),
@@ -1215,7 +1322,7 @@ namespace WindowsFormsApplication2
             "Ni \n"+scales[8],
             "Sr \n"+ scales[9],
             "Zn \n"+ scales[10],
-            "Ba \n"+ scales[11],
+            "Ba \n"+ fullString,
             "Pb \n"+ scales[12],
             "Fe \n"+ scales[13],
             "Cd \n"+ scales[14],
@@ -1231,7 +1338,7 @@ namespace WindowsFormsApplication2
             "Mg \n"+scales[3],
             "Al \n"+scales[4]
 
-        };
+            };
 
             // Initialize jagged array
             for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
@@ -1319,7 +1426,7 @@ namespace WindowsFormsApplication2
             g.DrawPolygon(axisPen, halfList);
             g.DrawPolygon(axisPen, thirdQuarterList);
 
-            g.DrawString("ICP Reproducibility", new Font("Times New Roman", fontSize, FontStyle.Bold), Brushes.Black, 0.2f * frmMainForm.mainChartPlotting.Width, 0.9f * frmMainForm.mainChartPlotting.Height);
+            //g.DrawString("ICP Reproducibility", new Font("Times New Roman", fontSize, FontStyle.Bold), Brushes.Black, 0.2f * frmMainForm.mainChartPlotting.Width, 0.9f * frmMainForm.mainChartPlotting.Height);
             
             g.SmoothingMode = SmoothingMode.AntiAlias;
             for (int s = 0; s < sampleData.Length; s++)
@@ -1361,14 +1468,23 @@ namespace WindowsFormsApplication2
 
             }
             #region Draw Radar legend
-            Radar_legend(g, bounds);
+            RadarLegend(g, bounds);
             #endregion
             flag = false;
         }
         public static void ExportRadar3ToPowerpoint(Rectangle bounds, PowerPoint.Slide slide, PowerPoint.Presentation presentation, bool flag)
         {
             #region Setup
-
+            PowerPoint.Shape title = slide.Shapes.AddTextbox(
+                Office.MsoTextOrientation.msoTextOrientationHorizontal,
+                (presentation.PageSetup.SlideWidth / 2) - 100, clsConstants.chartYPowerpoint, 200, 50);
+            title.TextFrame.TextRange.Text = "ICP Reproducibility";
+            title.TextFrame.TextRange.Font.Size = 25;
+            title.TextFrame.TextRange.Font.Bold = Office.MsoTriState.msoTrue;
+            title.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
+            title.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
+            title.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+            title.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
             // Process scales to be cleaner strings
             List<string> scales = new List<string>();
             foreach (var value in Radar3Scales)
@@ -1399,7 +1515,32 @@ namespace WindowsFormsApplication2
 
                 scales.Add(temp);
             }
+            string fullString = maxBa.ToString("G17");
+            if (fullString.Contains("E-"))
+            {
+                int eIndex = fullString.IndexOf("E");
+                string temp = "";
+                for (int i = 0; i < fullString.Length; i++)
+                {
+                    if (fullString[i] != '.')
+                    {
+                        temp += fullString[i];
+                    }
+                    else
+                    {
+                        temp += fullString[i];
+                        temp += fullString[i + 1];
+                        break;
+                    }
 
+                }
+                for (int i = eIndex; i < fullString.Length; i++)
+                {
+                    temp += fullString[i];
+                }
+                fullString = temp;
+
+            }
             // Axis labels based on elements
             string[] elements = { 
             "Co \n"+scales[5],
@@ -1408,7 +1549,7 @@ namespace WindowsFormsApplication2
             "Ni \n"+scales[8],
             "Sr \n"+ scales[9],
             "Zn \n"+ scales[10],
-            "Ba \n"+ scales[11],
+            "Ba \n"+ fullString,
             "Pb \n"+ scales[12],
             "Fe \n"+ scales[13],
             "Cd \n"+ scales[14],
@@ -1481,7 +1622,7 @@ namespace WindowsFormsApplication2
 
 
             // Radius of the radar diagram
-            float radius = Math.Min(bounds.Width, bounds.Height) / 3;
+            float radius = (float)Math.Min(bounds.Width / 1.5, bounds.Height / 1.5) / 3;
             // Number of axes
 
             PointF[] quarterList = new PointF[numAxes];
@@ -1600,18 +1741,18 @@ namespace WindowsFormsApplication2
             PowerPoint.Shape quarterPolygon2 = slide.Shapes.AddPolyline(quarterPoints);
             quarterPolygon2.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Gray); // Set line color
             quarterPolygon2.Line.DashStyle = Office.MsoLineDashStyle.msoLineRoundDot;
-            slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, 5, centerY + radius + 70, 1000, 30)
-                .TextFrame.TextRange.Text = "ICP Reproducibility";
-            slide.Shapes[slide.Shapes.Count].TextFrame.TextRange.Font.Size = clsConstants.legendTextSize;
-            slide.Shapes[slide.Shapes.Count].TextFrame.TextRange.Font.Bold = Microsoft.Office.Core.MsoTriState.msoTrue;
-            slide.Shapes[slide.Shapes.Count].TextFrame.AutoSize = PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
-            slide.Shapes[slide.Shapes.Count].TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignLeft;
-            slide.Shapes[slide.Shapes.Count].TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
-            slide.Shapes[slide.Shapes.Count].TextFrame.MarginLeft = 0;
-            slide.Shapes[slide.Shapes.Count].TextFrame.MarginRight = 0;
-            slide.Shapes[slide.Shapes.Count].TextFrame.MarginTop = 0;
-            slide.Shapes[slide.Shapes.Count].TextFrame.MarginBottom = 0;
-            slide.Shapes[slide.Shapes.Count].TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
+            //slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, 5, centerY + radius + 70, 1000, 30)
+            //    .TextFrame.TextRange.Text = "ICP Reproducibility";
+            //slide.Shapes[slide.Shapes.Count].TextFrame.TextRange.Font.Size = clsConstants.legendTextSize;
+            //slide.Shapes[slide.Shapes.Count].TextFrame.TextRange.Font.Bold = Microsoft.Office.Core.MsoTriState.msoTrue;
+            //slide.Shapes[slide.Shapes.Count].TextFrame.AutoSize = PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
+            //slide.Shapes[slide.Shapes.Count].TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignLeft;
+            //slide.Shapes[slide.Shapes.Count].TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+            //slide.Shapes[slide.Shapes.Count].TextFrame.MarginLeft = 0;
+            //slide.Shapes[slide.Shapes.Count].TextFrame.MarginRight = 0;
+            //slide.Shapes[slide.Shapes.Count].TextFrame.MarginTop = 0;
+            //slide.Shapes[slide.Shapes.Count].TextFrame.MarginBottom = 0;
+            //slide.Shapes[slide.Shapes.Count].TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
             for (int i = 0; i < sampleData.Length; i++)
             {
                 PointF[] points = new PointF[numAxes];
@@ -1656,66 +1797,7 @@ namespace WindowsFormsApplication2
                 
                
             }
-            #region Draw Legend
-            if (frmImportSamples.WaterData.Count > 0)
-            {
-                int legendY = 50;
-
-                // Add metadata
-                float metadataX = 500;
-                float metadataY = legendY;
-                int metaWidth = 0;
-                int metaHeight = 0;
-
-
-                float ysample = metadataY;
-                //List<PowerPoint.Shape> addedTexts = new List<PowerPoint.Shape>();
-
-                for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
-                {
-                    var line = slide.Shapes.AddLine(metadataX, ysample + 10, metadataX + 20, ysample + 10);
-                    line.Line.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color);
-                    line.Line.Weight = frmImportSamples.WaterData[i].lineWidth;
-                    line.Line.DashStyle = ConvertDashStyle(frmImportSamples.WaterData[i].selectedStyle);
-                    string fullText = "W" + (i + 1).ToString() + "," +
-                        frmImportSamples.WaterData[i].Well_Name + "," +
-                        frmImportSamples.WaterData[i].ClientID + "," +
-                        frmImportSamples.WaterData[i].Depth;
-
-                    PowerPoint.Shape metadataText = slide.Shapes.AddTextbox(
-                        Office.MsoTextOrientation.msoTextOrientationHorizontal,
-                        metadataX + 22, ysample, 500, 20);
-
-                    metadataText.TextFrame.TextRange.Text = fullText;
-                    metadataText.TextFrame.TextRange.Font.Size = clsConstants.legendTextSize;
-                    metadataText.TextFrame.AutoSize = PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
-                    metadataText.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignLeft;
-                    metadataText.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
-                    metadataText.TextFrame.MarginLeft = 0;
-                    metadataText.TextFrame.MarginRight = 0;
-                    metadataText.TextFrame.MarginTop = 0;
-                    metadataText.TextFrame.MarginBottom = 0;
-                    metadataText.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
-
-
-
-                    metaWidth = Math.Max(metaWidth, (int)metadataText.Width + 30);
-                    ysample += metadataText.Height;
-                    metaHeight += (int)metadataText.Height + 1;
-                    //addedTexts.Add(metadataText);
-                }
-
-                // Now draw the border box *after*
-                PowerPoint.Shape metaBorder = slide.Shapes.AddShape(
-                    Office.MsoAutoShapeType.msoShapeRectangle,
-                    metadataX, metadataY, metaWidth, metaHeight);
-                metaBorder.Fill.Transparency = 1.0f;
-                metaBorder.Line.ForeColor.RGB = System.Drawing.ColorTranslator.ToOle(Color.Blue);
-                metaBorder.Line.Weight = 2;
-                // Refresh PowerPoint slide
-                //pptApplication.ActiveWindow.View.GotoSlide(presentation.Slides.Count);
-            }
-            #endregion
+            RadarLegendPowerpoint(slide);
         }
 
         private static void PrecomputeMaxValues(bool flag)
