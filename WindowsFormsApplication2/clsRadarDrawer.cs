@@ -43,7 +43,7 @@ namespace WindowsFormsApplication2
 
                 int legendBoxHeight = 0;
                 int legendtextSize = clsConstants.legendTextSize;
-                int legendBoxWidth = 300; // Set fixed width for wrapping area
+                int legendBoxWidth = (int)(0.2*frmMainForm.mainChartPlotting.Width); // Set fixed width for wrapping area
 
                 using (Font font = new Font("Times New Roman", legendtextSize, FontStyle.Bold))
                 {
@@ -60,7 +60,7 @@ namespace WindowsFormsApplication2
                 Bitmap bit = new Bitmap(legendBoxWidth, legendBoxHeight);
                 g = Graphics.FromImage(bit);
 
-                g.DrawRectangle(new Pen(Color.Black), legendX - 15, legendY - 10, legendBoxWidth + 15, legendBoxHeight + 30);
+                //g.DrawRectangle(new Pen(Color.Black), legendX - 15, legendY - 10, legendBoxWidth + 15, legendBoxHeight + 30);
 
                 using (Graphics legendGraphics = g)
                 {
@@ -119,9 +119,9 @@ namespace WindowsFormsApplication2
             #region Draw Legend
             if (frmImportSamples.WaterData.Count > 0)
             {
-                int legendY = 70;
+                int legendY = 50;
 
-                float metadataX = 500;
+                float metadataX = 550;
                 float metadataY = legendY;
                 int metaWidth = 180; // Set a fixed width for the text box (enables wrapping)
                 int metaHeight = 0;
@@ -401,7 +401,7 @@ namespace WindowsFormsApplication2
             title.TextFrame.TextRange.Font.Bold = Office.MsoTriState.msoTrue;
             title.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
             title.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
-            title.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+            //title.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
             title.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
             // Data labels and values
             clsRadarScale[][] sampleData = new clsRadarScale[frmImportSamples.WaterData.Count][];
@@ -434,7 +434,7 @@ namespace WindowsFormsApplication2
 
             }
             List<string> scales = new List<string>();
-            foreach (var value in Radar2Scales)
+            foreach (var value in Radar1Scales)
             {
                 string s = value;
                 string temp = "";
@@ -622,12 +622,12 @@ namespace WindowsFormsApplication2
             PowerPoint.Shape quarterPolygon2 = slide.Shapes.AddPolyline(quarterPoints);
             quarterPolygon2.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Gray); // Set line color
             quarterPolygon2.Line.DashStyle = Office.MsoLineDashStyle.msoLineRoundDot;
-            slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, 5, centerY + radius + 70, 1000, 30)
+            slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, -200, centerY + radius + 70, 1000, 30)
                 .TextFrame.TextRange.Text = "Radar diagram showing the molar concentrations for major ions";
             slide.Shapes[slide.Shapes.Count].TextFrame.TextRange.Font.Size = clsConstants.legendTextSize;
             slide.Shapes[slide.Shapes.Count].TextFrame.TextRange.Font.Bold = Microsoft.Office.Core.MsoTriState.msoTrue;
             slide.Shapes[slide.Shapes.Count].TextFrame.AutoSize = PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
-            slide.Shapes[slide.Shapes.Count].TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignLeft;
+            slide.Shapes[slide.Shapes.Count].TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
             slide.Shapes[slide.Shapes.Count].TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
             slide.Shapes[slide.Shapes.Count].TextFrame.MarginLeft = 0;
             slide.Shapes[slide.Shapes.Count].TextFrame.MarginRight = 0;
@@ -909,13 +909,13 @@ namespace WindowsFormsApplication2
 
             PowerPoint.Shape title = slide.Shapes.AddTextbox(
                 Office.MsoTextOrientation.msoTextOrientationHorizontal,
-                (presentation.PageSetup.SlideWidth / 2) - 100, 0, 200, 50);
+                (presentation.PageSetup.SlideWidth / 2) - 100, clsConstants.chartYPowerpoint, 200, 50);
             title.TextFrame.TextRange.Text = "Genetic Origin and Alteration Plot";
             title.TextFrame.TextRange.Font.Size = 25;
             title.TextFrame.TextRange.Font.Bold = Office.MsoTriState.msoTrue;
             title.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
             title.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
-            title.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+            //title.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
             title.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
             // Data labels and values
             clsRadarScale[][] sampleData = new clsRadarScale[frmImportSamples.WaterData.Count][];
@@ -1130,12 +1130,12 @@ namespace WindowsFormsApplication2
             PowerPoint.Shape quarterPolygon2 = slide.Shapes.AddPolyline(quarterPoints);
             quarterPolygon2.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Gray); // Set line color
             quarterPolygon2.Line.DashStyle = Office.MsoLineDashStyle.msoLineRoundDot;
-            slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, 5, centerY + radius + 70, 1000, 30)
+            slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, -200, centerY + radius + 70, 1000, 30)
                 .TextFrame.TextRange.Text = "Genetic Origin and Alteration Tool Radar Plot for study waters. Ratio categories: \nwater evolution(EV), geothermometers(GT), lithology(Lith), salinity source(SS), and organic matter related(OM) \nare listed in front of each axis label.";
             slide.Shapes[slide.Shapes.Count].TextFrame.TextRange.Font.Size = clsConstants.legendTextSize;
             slide.Shapes[slide.Shapes.Count].TextFrame.TextRange.Font.Bold = Microsoft.Office.Core.MsoTriState.msoTrue;
             slide.Shapes[slide.Shapes.Count].TextFrame.AutoSize = PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
-            slide.Shapes[slide.Shapes.Count].TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignLeft;
+            slide.Shapes[slide.Shapes.Count].TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
             slide.Shapes[slide.Shapes.Count].TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
             slide.Shapes[slide.Shapes.Count].TextFrame.MarginLeft = 0;
             slide.Shapes[slide.Shapes.Count].TextFrame.MarginRight = 0;
@@ -1483,7 +1483,7 @@ namespace WindowsFormsApplication2
             title.TextFrame.TextRange.Font.Bold = Office.MsoTriState.msoTrue;
             title.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
             title.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
-            title.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+            //title.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
             title.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
             // Process scales to be cleaner strings
             List<string> scales = new List<string>();

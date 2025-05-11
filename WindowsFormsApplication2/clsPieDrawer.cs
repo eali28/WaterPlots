@@ -130,80 +130,66 @@ namespace WindowsFormsApplication2
             {
                 int metaX = (int)(0.69f * frmMainForm.mainChartPlotting.Width);
                 int metaY = (int)(0.13f * frmMainForm.mainChartPlotting.Height);
-                int size = 0;
-                for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
-                {
-                    if (frmImportSamples.WaterData[i].Well_Name.Length + frmImportSamples.WaterData[i].ClientID.Length + frmImportSamples.WaterData[i].Depth.Length > size)
-                    {
-                        size = frmImportSamples.WaterData[i].Well_Name.Length + frmImportSamples.WaterData[i].ClientID.Length + frmImportSamples.WaterData[i].Depth.Length;
-                    }
-                }
 
-
-                double metaHeight = 0;
+                int metaHeight = 0;
                 int legendtextSize = clsConstants.legendTextSize;
-                int metaWidth = 0;
+                int metaWidth = (int)(0.2 * frmMainForm.mainChartPlotting.Width);
 
                 using (Font font = new Font("Times New Roman", legendtextSize, FontStyle.Bold))
                 {
-                    for (int i = 0; i < frmImportSamples.WaterData.Count;i++ )
+                    StringFormat stringFormat = new StringFormat { FormatFlags = StringFormatFlags.NoClip, Trimming = StringTrimming.EllipsisCharacter };
+
+                    for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
                     {
-                        string fullText = "W" + (i+1).ToString() + ", " + frmImportSamples.WaterData[i].Well_Name + ", " + frmImportSamples.WaterData[i].ClientID + ", " + frmImportSamples.WaterData[i].Depth;
-                        SizeF textSize = g.MeasureString(fullText, font);
-                        if (textSize.Width > metaWidth)
-                        {
-                            metaWidth = (int)Math.Round(textSize.Width, 0);
-                            
-                        }
-                        metaHeight += Math.Round(textSize.Height, 0);
+                        string fullText = "W" + (i + 1).ToString() + ", " + frmImportSamples.WaterData[i].Well_Name + ", " + frmImportSamples.WaterData[i].ClientID + ", " + frmImportSamples.WaterData[i].Depth;
+                        SizeF textSize = g.MeasureString(fullText, font, metaWidth, stringFormat); // Adjust for wrapping width
+                        metaWidth = (int)Math.Max(metaWidth, textSize.Width); // Ensure metaWidth accounts for the largest text
+                        metaHeight += (int)Math.Ceiling(textSize.Height + 10); // Add spacing between lines
                     }
                 }
-                Bitmap metaBitmap = new Bitmap(metaWidth, (int)metaHeight);
-                //Form1.pic.Visible = true;
-                PictureBox metaPictureBox = new PictureBox();
-                metaPictureBox.Size = new Size(metaWidth, (int)metaHeight);
-                metaPictureBox.Image = metaBitmap;
+
+                Bitmap metaBitmap = new Bitmap(metaWidth, metaHeight);
+                PictureBox metaPictureBox = new PictureBox
+                {
+                    Size = new Size(metaWidth, metaHeight),
+                    Image = metaBitmap
+                };
 
                 frmMainForm.metaPanel.Controls.Add(metaPictureBox);
-                frmMainForm.metaPanel.Size = new Size(metaWidth, (int)metaHeight);
+                frmMainForm.metaPanel.Size = new Size(metaWidth, metaHeight);
                 frmMainForm.metaPanel.Visible = true;
                 frmMainForm.metaPanel.BringToFront();
 
                 g = Graphics.FromImage(metaBitmap);
                 g.Clear(Color.White);
-                g.DrawRectangle(new Pen(Color.Blue), metaX - 15.0f, metaY - 10.0f, metaWidth + 15.0f, (int)metaHeight + 30.0f);
-                int ysample = metaY;
-                //legendGraphics.Clear(Color.White);  // Fill background
-                g.FillRectangle(Brushes.White, 0, 0, metaWidth - 1, (int)metaHeight - 1);
-                g.DrawRectangle(new Pen(Color.Blue, 2), 0, 0, metaWidth - 1, (int)metaHeight - 1);
-                ysample = 0;
+                g.DrawRectangle(new Pen(Color.Blue), metaX - 15.0f, metaY - 10.0f, metaWidth + 15.0f, metaHeight + 30.0f);
+
+                int ysample = 0;
+                g.FillRectangle(Brushes.White, 0, 0, metaWidth, metaHeight);
+                g.DrawRectangle(new Pen(Color.Blue, 2), 0, 0, metaWidth, metaHeight);
+
                 for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
                 {
+                    var data = frmImportSamples.WaterData[i];
+                    //Brush squareBrush = new SolidBrush(data.color);
+                    //Pen axisPen = new Pen(data.color, data.lineWidth)
+                    //{
+                    //    DashStyle = data.selectedStyle
+                    //};
 
-                    
+                    //g.DrawLine(axisPen, 5, ysample + 10, 25, ysample + 10);
 
-                    // Draw text beside the shape
-                    g.DrawString("W"+(i+1).ToString()+", "+
-                        frmImportSamples.WaterData[i].Well_Name + ", " + frmImportSamples.WaterData[i].ClientID + ", " + frmImportSamples.WaterData[i].Depth,
-                        new Font("Times New Roman", legendtextSize, FontStyle.Bold),
-                        Brushes.Black, 0, ysample
-                    );
-                    string fullText = "W" + (i + 1).ToString() + ", " + frmImportSamples.WaterData[i].Well_Name + ", " + frmImportSamples.WaterData[i].ClientID + ", " + frmImportSamples.WaterData[i].Depth;
-                    SizeF textSize = g.MeasureString(fullText, new Font("Times New Roman", legendtextSize, FontStyle.Bold));
-                    ysample += (int)(Math.Round(textSize.Height, 0));
+                    string fullText = "W" + (i + 1).ToString() + ", " + data.Well_Name + ", " + data.ClientID + ", " + data.Depth;
+                    RectangleF textRect = new RectangleF(0, ysample, metaWidth, metaHeight);
+
+                    Font font = new Font("Times New Roman", legendtextSize, FontStyle.Bold);
+                    SizeF textSize = g.MeasureString(fullText, font, metaWidth); // Adjust for wrapping width
+
+                    g.DrawString(fullText, font, Brushes.Black, textRect);
+                    ysample += (int)Math.Ceiling(textSize.Height + 10); // Move down based on wrapped height
                 }
 
-                //Form1.legendPanel.BackColor = Color.Transparent;
                 frmMainForm.metaPanel.Location = new Point(metaX - 14, metaY - 9);
-                frmMainForm.metaPanel.Size = new System.Drawing.Size(metaWidth, metaWidth);
-                frmMainForm.legendPictureBox.Image = metaBitmap;
-                //Form1.pic.Location = new Point(0, 0);
-                //Form1.pic.Visible = true;
-                frmMainForm.metaPanel.Controls.Add(frmMainForm.legendPictureBox);
-
-
-                frmMainForm.metaPanel.Visible = true;
-
                 frmMainForm.mainChartPlotting.Controls.Add(frmMainForm.metaPanel);
                 int legendX = x1;
                 int legendY = (int)(0.1f*chartHeight);
@@ -466,52 +452,52 @@ namespace WindowsFormsApplication2
 
 
             // Add metadata
-            float metadataX = 500;
+
+            float metadataX = 550;
             float metadataY = legendY;
-            int metaWidth = 0;
+            int metaWidth = 180; // Set a fixed width for the text box (enables wrapping)
             int metaHeight = 0;
-            
-            
-            float ySample = metadataY;
-            //List<PowerPoint.Shape> addedTexts = new List<PowerPoint.Shape>();
+
+            float ysample = metadataY;
 
             for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
             {
-                string fullText = "W" + (i + 1).ToString() + "," +
-                    frmImportSamples.WaterData[i].Well_Name + "," +
-                    frmImportSamples.WaterData[i].ClientID + "," +
-                    frmImportSamples.WaterData[i].Depth;
+                var data = frmImportSamples.WaterData[i];
 
+                // Prepare wrapped text
+                string fullText ="W"+(i+1).ToString()+", "+ data.Well_Name + ", " + data.ClientID + ", " + data.Depth;
+
+                // Add textbox with wrapping and fixed width
                 PowerPoint.Shape metadataText = slide.Shapes.AddTextbox(
                     Office.MsoTextOrientation.msoTextOrientationHorizontal,
-                    metadataX+2, ySample, 500, 20);
+                    metadataX + 5, ysample, metaWidth, 20); // initial height, PowerPoint will auto-expand
 
                 metadataText.TextFrame.TextRange.Text = fullText;
-                metadataText.TextFrame.TextRange.Font.Size = fontSize;
-                metadataText.TextFrame.AutoSize = PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
+                metadataText.TextFrame.TextRange.Font.Size = clsConstants.legendTextSize;
                 metadataText.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignLeft;
-                metadataText.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+                metadataText.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorTop;
+                metadataText.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoTrue;
+
+                // Remove margins to reduce waste of space
                 metadataText.TextFrame.MarginLeft = 0;
                 metadataText.TextFrame.MarginRight = 0;
                 metadataText.TextFrame.MarginTop = 0;
                 metadataText.TextFrame.MarginBottom = 0;
-                metadataText.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
 
-                
+                // Auto-resize height only
+                metadataText.TextFrame.AutoSize = PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
 
-                metaWidth = Math.Max(metaWidth, (int)metadataText.Width);
-                ySample += metadataText.Height;
-                metaHeight += (int)metadataText.Height+1;
-                //addedTexts.Add(metadataText);
+                ysample += metadataText.Height + 5;
+                metaHeight += (int)(metadataText.Height + 5);
             }
 
-            // Now draw the border box *after*
+            // Draw blue border box after content is drawn
             PowerPoint.Shape metaBorder = slide.Shapes.AddShape(
                 Office.MsoAutoShapeType.msoShapeRectangle,
-                metadataX, metadataY, metaWidth, metaHeight);
+                metadataX - 5, metadataY - 5, metaWidth + 35, metaHeight + 10);
             metaBorder.Fill.Transparency = 1.0f;
             metaBorder.Line.ForeColor.RGB = System.Drawing.ColorTranslator.ToOle(Color.Blue);
-            metaBorder.Line.Weight = 2;
+            metaBorder.Line.Weight = 1;
             #endregion
         }
     }

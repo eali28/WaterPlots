@@ -2,15 +2,11 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
-
-using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
 using System.IO;
+using System.Linq;
+using System.Windows.Forms;
 using Office = Microsoft.Office.Core;
 using PowerPoint = Microsoft.Office.Interop.PowerPoint;
-using System.Windows.Forms.DataVisualization.Charting;
 
 namespace WindowsFormsApplication2
 {
@@ -54,8 +50,8 @@ namespace WindowsFormsApplication2
                 listBoxCharts.Items.Add("log Na Vs log Cl");
                 listBoxCharts.Items.Add("log Mg Vs log Cl");
                 listBoxCharts.Items.Add("log Ca Vs log Cl");
-                listBoxCharts.Items.Add("Radar Diagram 1");
-                listBoxCharts.Items.Add("Radar Diagram 2");
+                listBoxCharts.Items.Add("Elements Molar Concentration");
+                listBoxCharts.Items.Add("Genetic Origin and Alteration Plot");
                 listBoxCharts.Items.Add("ICP Reproducibility");
                 listBoxCharts.Items.Add("Major Element Logs");
             }
@@ -306,7 +302,7 @@ namespace WindowsFormsApplication2
                     clsBubbleDrawer.DrawBubbleDiagram(graphics);
 
                 }
-                else if (selectedChart == "Radar Diagram 1")
+                else if (selectedChart == "Elements Molar Concentration")
                 {
                     mainChartPlotting.MouseDoubleClick += PictureBoxRadarScales;
 
@@ -342,7 +338,7 @@ namespace WindowsFormsApplication2
                     int y = (mainChartPlotting.Height - diagramHeight) / 2 - (int)(0.02 * mainChartPlotting.Height);
                     clsLogsDrawer.DrawlogCa_VS_logCl(graphics, diagramWidth, diagramHeight, x, y);
                 }
-                else if (selectedChart == "Radar Diagram 2")
+                else if (selectedChart == "Genetic Origin and Alteration Plot")
                 {
                     mainChartPlotting.MouseDoubleClick += PictureBoxRadarScales;
                     Rectangle bounds = new Rectangle((int)(0.01f * mainChartPlotting.Width), (int)(0.02f * mainChartPlotting.Height), (int)(0.9 * mainChartPlotting.Width), (int)(0.9 * mainChartPlotting.Height));
@@ -426,7 +422,7 @@ namespace WindowsFormsApplication2
                     case "Bubble Diagram":
                         listBoxCharts.SelectedIndex = 5;
                         break;
-                    case "Radar Diagram 1":
+                    case "Elements Molar Concentration":
                         listBoxCharts.SelectedIndex = 9;
                         break;
                     case "Piper Diagram":
@@ -441,7 +437,7 @@ namespace WindowsFormsApplication2
                     case "log Ca Vs log Cl":
                         listBoxCharts.SelectedIndex = 8;
                         break;
-                    case "Radar Diagram 2":
+                    case "Genetic Origin and Alteration Plot":
                         listBoxCharts.SelectedIndex = 10;
                         break;
                     case "ICP Reproducibility":
@@ -520,12 +516,12 @@ namespace WindowsFormsApplication2
 
                     clsSchoellerDrawer.ExportSchoellerDiagramToPowerPoint(slide, presentation);
                 }
-                else if (listBoxSelected.Items[i].ToString() == "Radar Diagram 1")
+                else if (listBoxSelected.Items[i].ToString() == "Elements Molar Concentration")
                 {
                     Rectangle bounds = new Rectangle((int)(0.5f * slideWidth), (int)(0.08f * slideHeight), (int)(0.6 * slideWidth), (int)(0.9 * slideHeight));
                     clsRadarDrawer.ExportRadar1ToPowerpoint(bounds, slide, presentation,flag);
                 }
-                else if (listBoxSelected.Items[i].ToString() == "Radar Diagram 2")
+                else if (listBoxSelected.Items[i].ToString() == "Genetic Origin and Alteration Plot")
                 {
                     Rectangle bounds = new Rectangle((int)(0.5f * slideWidth), (int)(0.08f * slideHeight), (int)(0.6 * slideWidth), (int)(0.9 * slideHeight));
                     clsRadarDrawer.ExportRadar2ToPowerpoint(bounds, slide, presentation,flag);
@@ -560,7 +556,7 @@ namespace WindowsFormsApplication2
         public static void UpdateScalesinRadar(string name)
         {
             // Check and update each scale based on the user input from corresponding textboxes
-            if (name == "Radar Diagram 1")
+            if (name == "Elements Molar Concentration")
             {
 
                 for (int i = 0; i < clsRadarDrawer.Radar1Scales.Length; i++)
@@ -598,7 +594,7 @@ namespace WindowsFormsApplication2
 
             }
 
-            else if (name == "Radar Diagram 2")
+            else if (name == "Genetic Origin and Alteration Plot")
             {
                 for (int i = 0; i < clsRadarDrawer.Radar2Scales.Length; i++)
                 {
@@ -739,7 +735,7 @@ namespace WindowsFormsApplication2
             // After updating the values, refresh the radar chart with the updated scales
 
             
-            if (name == "Radar Diagram 1")
+            if (name == "Elements Molar Concentration")
             {
                 Bitmap chartBitmap = new Bitmap(mainChartPlotting.Width, mainChartPlotting.Height);
                 Graphics graphics = Graphics.FromImage(chartBitmap);
@@ -749,7 +745,7 @@ namespace WindowsFormsApplication2
                 mainChartPlotting.Image = chartBitmap;
 
             }
-            else if (name == "Radar Diagram 2")
+            else if (name == "Genetic Origin and Alteration Plot")
             {
                 Bitmap chartBitmap = new Bitmap(mainChartPlotting.Width, mainChartPlotting.Height);
                 Graphics graphics = Graphics.FromImage(chartBitmap);
@@ -844,7 +840,7 @@ namespace WindowsFormsApplication2
         {
 
 
-            if (listBoxCharts.SelectedItem != null && listBoxCharts.SelectedItem.ToString() == "Radar Diagram 1")
+            if (listBoxCharts.SelectedItem != null && listBoxCharts.SelectedItem.ToString() == "Elements Molar Concentration")
             {
                 Bitmap chartBitmap = new Bitmap(mainChartPlotting.Width, mainChartPlotting.Height);
                 Graphics graphics = Graphics.FromImage(chartBitmap);
@@ -854,7 +850,7 @@ namespace WindowsFormsApplication2
                 clsRadarDrawer.DrawRadarChart1(graphics, bounds, flag);
                 mainChartPlotting.Image = chartBitmap;
             }
-            else if (listBoxCharts.SelectedItem != null && listBoxCharts.SelectedItem.ToString() == "Radar Diagram 2")
+            else if (listBoxCharts.SelectedItem != null && listBoxCharts.SelectedItem.ToString() == "Genetic Origin and Alteration Plot")
             {
                 Bitmap chartBitmap = new Bitmap(mainChartPlotting.Width, mainChartPlotting.Height);
                 Graphics graphics = Graphics.FromImage(chartBitmap);

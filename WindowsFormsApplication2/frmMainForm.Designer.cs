@@ -9,7 +9,7 @@ namespace WindowsFormsApplication2
     {
         private System.Windows.Forms.CheckBox checkBoxSelectAll;
         private System.Windows.Forms.RadioButton radioButtonWater;
-        private System.Windows.Forms.ListBox listBoxSelected;
+        public static System.Windows.Forms.ListBox listBoxSelected;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton buttonOpenProject;
         private System.Windows.Forms.ToolStripButton buttonImport;
@@ -49,7 +49,7 @@ namespace WindowsFormsApplication2
             this.buttonImport = new System.Windows.Forms.ToolStripButton();
             this.radioButtonWater = new System.Windows.Forms.RadioButton();
             listBoxCharts = new System.Windows.Forms.ListBox();
-            this.listBoxSelected = new System.Windows.Forms.ListBox();
+            listBoxSelected = new System.Windows.Forms.ListBox();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.exportMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.printPowerpoint = new System.Windows.Forms.ToolStripMenuItem();
@@ -64,10 +64,6 @@ namespace WindowsFormsApplication2
             this.buttonDelete = new System.Windows.Forms.Button();
             mainChartPlotting = new System.Windows.Forms.PictureBox();
             legendPictureBox = new System.Windows.Forms.PictureBox();
-            this.FormBorderStyle = FormBorderStyle.Sizable;
-            this.SizeChanged += Form1_SizeChanged;
-
-
             this.toolStrip1.SuspendLayout();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(mainChartPlotting)).BeginInit();
@@ -128,21 +124,21 @@ namespace WindowsFormsApplication2
             // listBoxCharts
             // 
             listBoxCharts.FormattingEnabled = true;
-            listBoxCharts.Location = new System.Drawing.Point(20, 137);
+            listBoxCharts.Location = new System.Drawing.Point(12, 137);
             listBoxCharts.Name = "listBoxCharts";
-            listBoxCharts.Size = new System.Drawing.Size(150, 199);
+            listBoxCharts.Size = new System.Drawing.Size(165, 199);
             listBoxCharts.TabIndex = 4;
             listBoxCharts.SelectedIndexChanged += new System.EventHandler(this.listBoxCharts_SelectedIndexChanged);
             listBoxCharts.DoubleClick += new System.EventHandler(this.listBoxCharts_DoubleClick);
             // 
             // listBoxSelected
             // 
-            this.listBoxSelected.FormattingEnabled = true;
-            this.listBoxSelected.Location = new System.Drawing.Point(20, 397);
-            this.listBoxSelected.Name = "listBoxSelected";
-            this.listBoxSelected.Size = new System.Drawing.Size(150, 173);
-            this.listBoxSelected.TabIndex = 5;
-            this.listBoxSelected.SelectedIndexChanged += new System.EventHandler(this.listBoxSelected_SelectedIndexChanged);
+            listBoxSelected.FormattingEnabled = true;
+            listBoxSelected.Location = new System.Drawing.Point(12, 397);
+            listBoxSelected.Name = "listBoxSelected";
+            listBoxSelected.Size = new System.Drawing.Size(165, 199);
+            listBoxSelected.TabIndex = 5;
+            listBoxSelected.SelectedIndexChanged += new System.EventHandler(this.listBoxSelected_SelectedIndexChanged);
             // 
             // menuStrip
             // 
@@ -243,16 +239,17 @@ namespace WindowsFormsApplication2
             // 
             // mainChartPlotting
             // 
+            mainChartPlotting.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             mainChartPlotting.Location = new System.Drawing.Point(177, 137);
             mainChartPlotting.Name = "mainChartPlotting";
             mainChartPlotting.Size = new System.Drawing.Size(100, 50);
             mainChartPlotting.TabIndex = 0;
             mainChartPlotting.TabStop = false;
             mainChartPlotting.Text = "chart1";
-            mainChartPlotting.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-
             // 
-            // pic
+            // legendPictureBox
             // 
             legendPictureBox.Location = new System.Drawing.Point(0, 0);
             legendPictureBox.Name = "legendPictureBox";
@@ -272,7 +269,7 @@ namespace WindowsFormsApplication2
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.radioButtonWater);
             this.Controls.Add(listBoxCharts);
-            this.Controls.Add(this.listBoxSelected);
+            this.Controls.Add(listBoxSelected);
             this.MainMenuStrip = this.menuStrip;
             this.Name = "frmMainForm";
             this.Text = "Water Plots";
@@ -497,10 +494,7 @@ namespace WindowsFormsApplication2
         public static ToolStripButton saveIcon;
         public static ListBox listBoxCharts;
         public static PictureBox mainChartPlotting;
-        
         public static PictureBox legendPictureBox;
-
-
     }
 }
 
