@@ -92,10 +92,14 @@ namespace WindowsFormsApplication2
                     g.DrawString(tickValueX.ToString("F0"), axisFont, Brushes.Black, xPosition - 10, yOrigin + diagramHeight + 10);
                     
                     // Draw vertical grid line
-                    if (i > 0)
+                    if (i > 0 && i<tickCountX)
                     {
                         Pen gridPen = new Pen(Color.LightGray, 1) { DashStyle = DashStyle.Dot };
                         g.DrawLine(gridPen, xPosition, yOrigin, xPosition, yOrigin + diagramHeight);
+                    }
+                    else
+                    {
+                        g.DrawLine(axisPen, xPosition, yOrigin, xPosition, yOrigin + diagramHeight);
                     }
                 }
 
@@ -105,7 +109,7 @@ namespace WindowsFormsApplication2
                 {
                     double tickValueY = i * tickStepY;
                     double yPosition = yOrigin + diagramHeight - (double)(tickValueY * fy);
-                    
+                    //tickValueY = Math.Ceiling(tickValueY);
                     // Draw Y-axis tick
                     g.DrawLine(axisPen, xOrigin - 5, (float)yPosition, xOrigin, (float)yPosition);
                     
@@ -113,10 +117,14 @@ namespace WindowsFormsApplication2
                     g.DrawString(tickValueY.ToString("F2"), axisFont, Brushes.Black, xOrigin - 40, (float)(yPosition - 10));
                     
                     // Draw horizontal grid line
-                    if (i > 0)
+                    if (i > 0 && i<tickCountY)
                     {
                         Pen gridPen = new Pen(Color.LightGray, 1) { DashStyle = DashStyle.Dot };
                         g.DrawLine(gridPen, xOrigin, (float)(yPosition), xOrigin + diagramWidth, (float)(yPosition));
+                    }
+                    else
+                    {
+                        g.DrawLine(axisPen, xOrigin, (float)(yPosition), xOrigin + diagramWidth, (float)(yPosition));
                     }
                 }
 
@@ -429,7 +437,7 @@ namespace WindowsFormsApplication2
                     {
                         var n = slide.Shapes.AddTextbox(
                                 Office.MsoTextOrientation.msoTextOrientationHorizontal,
-                                chartX + xPosition,
+                                chartX + xPosition-7,
                                 chartY + chartHeight + 10,
                                 150,
                                 30
