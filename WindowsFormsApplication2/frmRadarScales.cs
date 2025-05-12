@@ -87,15 +87,15 @@ namespace WindowsFormsApplication2
                         double scaleValue = double.Parse(value);
 
                         // Update the appropriate scale array based on the row index
-                        if (frmMainForm.listBoxCharts.SelectedItem == "Radar Diagram 1") // Radar1 scales
+                        if (frmMainForm.listBoxCharts.SelectedItem == "Elements Molar Concentration") // Radar1 scales
                         {
                             clsRadarDrawer.Radar1Scales[e.RowIndex] = scaleValue.ToString();
                         }
-                        else if (frmMainForm.listBoxCharts.SelectedItem == "Radar Diagram 2")// Radar2 scales
+                        else if (frmMainForm.listBoxCharts.SelectedItem == "Genetic Origin and Alteration Plot")// Radar2 scales
                         {
                             clsRadarDrawer.Radar2Scales[e.RowIndex] = scaleValue.ToString();
                         }
-                        else
+                        else if(frmMainForm.listBoxCharts.SelectedItem == "ICP Reproducibility")
                         {
                             clsRadarDrawer.Radar3Scales[e.RowIndex] = scaleValue.ToString();
                         }
@@ -121,14 +121,14 @@ namespace WindowsFormsApplication2
             ScalesDatagridView.Columns.Add("Scale", "Scale");
 
             // Add rows for Radar1
-            if (frmMainForm.listBoxCharts.SelectedItem == "Radar Diagram 1")
+            if (frmMainForm.listBoxCharts.SelectedItem == "Elements Molar Concentration")
             {
                 for (int i = 0; i < labelsRadar1.Length; i++)
                 {
                     ScalesDatagridView.Rows.Add(labelsRadar1[i], clsRadarDrawer.Radar1Scales[i]);
                 }
             }
-            else if (frmMainForm.listBoxCharts.SelectedItem == "Radar Diagram 2")
+            else if (frmMainForm.listBoxCharts.SelectedItem == "Genetic Origin and Alteration Plot")
             {
                 for (int i = 0; i < labelsRadar2.Length; i++)
                 {

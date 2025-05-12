@@ -182,7 +182,7 @@ namespace WindowsFormsApplication2
         /// <param name="g"></param>
         /// <param name="bounds"></param>
         /// <param name="flag"></param>
-        public static void DrawRadarChart1(Graphics g, Rectangle bounds,bool flag)
+        public static void DrawRadarChart1(Graphics g, Rectangle bounds, bool flag)
         {
             frmMainForm.legendPictureBox.MouseDoubleClick -= frmMainForm.pictureBoxPiper_Click;
             frmMainForm.legendPictureBox.MouseDoubleClick -= frmMainForm.pictureBoxPie_Click;
@@ -190,7 +190,7 @@ namespace WindowsFormsApplication2
             frmMainForm.legendPictureBox.MouseDoubleClick -= frmMainForm.pictureBoxCollins_Click;
             frmMainForm.legendPictureBox.MouseDoubleClick -= frmMainForm.legendPictureBoxRadar;
             frmMainForm.mainChartPlotting.Invalidate();
-            // Data labels and values
+            
             clsRadarScale[][] sampleData = new clsRadarScale[frmImportSamples.WaterData.Count][];
 
             string title = "Elements Molar concentration";
@@ -201,79 +201,73 @@ namespace WindowsFormsApplication2
 
             float fontSize = 12; // Make font size relative
             PrecomputeMaxValues(flag);
-            Console.WriteLine("maxBa before ToString: " + maxBa);
-            Console.WriteLine("maxBa after ToString: " + maxBa.ToString("F5"));
-            string fullString = maxBa.ToString("G17");
-            if (fullString.Contains("E-"))
-            {
-                int eIndex = fullString.IndexOf("E");
-                string temp="";
-                for(int i=0;i<fullString.Length;i++)
-                {
-                    if(fullString[i]!='.')
-                    {
-                        temp += fullString[i];
-                    }
-                    else
-                    {
-                        temp += fullString[i];
-                        temp += fullString[i + 1];
-                        break;
-                    }
 
-                }
-                for(int i=eIndex;i<fullString.Length;i++)
-                {
-                    temp += fullString[i];
-                }
-                fullString = temp;
-               
-            }
-            Radar1Scales = new string[] { maxCl.ToString("F5"), maxNa.ToString("F5"), maxK.ToString("F5"), maxCa.ToString("F5"), maxMg.ToString(), fullString, maxSr.ToString("F5") };
+
+            Radar1Scales = new string[] { maxCl.ToString(), maxNa.ToString(), maxK.ToString(), maxCa.ToString(), maxMg.ToString(), maxBa.ToString(), maxSr.ToString() };
+
             Font AxisFont = new Font("Times New Roman", fontSize, FontStyle.Bold);
             List<string> scales = new List<string>();
             for (int i = 0; i < Radar1Scales.Count(); i++)
             {
                 string s = Radar1Scales[i];
-                string temp = "";
-                bool checking = false;
-                bool found = false;
-                for (int j = 0; j < s.Length; j++)
+                decimal parsedValue;
+
+                //Try to parse the number and use the parsed value for more accurate formatting
+                if (decimal.TryParse(s, out parsedValue))
+                    {
+                        //Format the number to remove unnecessary trailing zeros and retain precision
+                    string formattedValue = parsedValue.ToString("0.#######");  // Adjust the number of '#' based on desired precision
+                        scales.Add(formattedValue);
+                        Radar1Scales[i] = formattedValue;
+                    }
+                    else
+                    {
+                        //If parsing fails, just add the original string(error handling)
+                        scales.Add(s);
+                        Radar1Scales[i] = s;
+                    }
+            }
+            for (int i = 0; i < Radar1Scales.Length; i++)
+            {
+                string fullString = Radar1Scales[i];
+                if (fullString.Contains("E-"))
                 {
-                    if (s[j] == '.')
+                    int eIndex = fullString.IndexOf("E");
+                    string temp = "";
+                    for (int j = 0; j < fullString.Length; j++)
                     {
-                        checking = true;
+                        if (fullString[j] != '.')
+                        {
+                            temp += fullString[j];
+                        }
+                        else
+                        {
+                            temp += fullString[j];
+                            temp += fullString[j + 1];
+                            break;
+                        }
+
                     }
-                    else if (s[j] != '0' && checking)
+                    for (int j = eIndex; j < fullString.Length; j++)
                     {
-                        found = true;
-                        temp += s[j];
-                        break;
+                        temp += fullString[j];
                     }
-                    temp += s[j];
+                    fullString = temp;
+                    Radar1Scales[i] = fullString;
+
                 }
-                if (!found)
-                {
-                    int dotIndex = temp.IndexOf('.');
-                    if (dotIndex != -1)
-                    {
-                        temp = temp.Substring(0, dotIndex);
-                    }
-                }
-                scales.Add(temp);
-                Radar1Scales[i] =temp;
             }
             string[] labels =
             {
-                "K (mol/L)\n"+ scales[2],
-                "Ca (mol/L)\n"+ scales[3],
-                "Mg (mol/L)\n"+ scales[4],
-                "Ba (mol/L)\n"+ fullString,
-                "Sr (mol/L)\n"+ scales[6],
-                "Cl (mol/L)\n"+ scales[0],
-                "Na (mol/L)\n"+ scales[1]
+                "K (mol/L)\n"+ Radar1Scales[2],
+                "Ca (mol/L)\n"+ Radar1Scales[3],
+                "Mg (mol/L)\n"+ Radar1Scales[4],
+                "Ba (mol/L)\n"+ Radar1Scales[5],
+                "Sr (mol/L)\n"+ Radar1Scales[6],
+                "Cl (mol/L)\n"+ Radar1Scales[0],
+                "Na (mol/L)\n"+ Radar1Scales[1]
             };
-            
+
             for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
             {
                 sampleData[i] = new clsRadarScale[]
@@ -287,29 +281,30 @@ namespace WindowsFormsApplication2
                 new clsRadarScale { Item = frmImportSamples.WaterData[i].Na / Bn, Scale = maxNa}
                 };
             }
-            // Colors for the samples
-            Color[] colors = new Color[frmImportSamples.WaterData.Count];
+            //Colors for the samples
+
+           Color[] colors = new Color[frmImportSamples.WaterData.Count];
             for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
             {
                 colors[i] = frmImportSamples.WaterData[i].color;
             }
 
-            // Center of the diagram
+            //Center of the diagram
             float centerX = 0.3f * frmMainForm.mainChartPlotting.Width;
             float centerY = 0.4f * frmMainForm.mainChartPlotting.Height;
 
-            // Radius of the radar diagram
+            //Radius of the radar diagram
             float radius = Math.Min(bounds.Width, bounds.Height) / 3;
 
-            // Number of axes
+            //Number of axes
             int numAxes = labels.Length;
 
-            // Angle between each axis (in radians)
+            //Angle between each axis(in radians)
             double angleIncrement = 2 * Math.PI / numAxes;
 
-            // Draw the axes
+            //Draw the axes
 
-            Pen axisPen = new Pen(Color.LightGray, 1);
+           Pen axisPen = new Pen(Color.LightGray, 1);
             axisPen.DashStyle = DashStyle.Dot;
             PointF[] quarterList = new PointF[numAxes];
             PointF[] halfList = new PointF[numAxes];
@@ -321,17 +316,17 @@ namespace WindowsFormsApplication2
                 float allX = centerX + (float)(radius * Math.Cos(angle));
                 float allY = centerY + (float)(radius * Math.Sin(angle));
                 g.DrawLine(axisPen, centerX, centerY, allX, allY);
-                float quarterX = centerX + (float)((0.25*radius) * Math.Cos(angle));
-                float quarterY = centerY + (float)((0.25*radius) * Math.Sin(angle));
-                float halfX = centerX + (float)((0.5*radius) * Math.Cos(angle));
-                float halfY = centerY + (float)((0.5*radius) * Math.Sin(angle));
-                float thirdQuarterX = centerX + (float)((0.75*radius) * Math.Cos(angle));
-                float thirdQuarterY = centerY + (float)((0.75*radius) * Math.Sin(angle));
-                allList[i]=new PointF(allX,allY);
-                quarterList[i]=new PointF(quarterX, quarterY);
-                halfList[i]=new PointF(halfX, halfY);
-                thirdQuarterList[i]=new PointF(thirdQuarterX, thirdQuarterY);
-                // Draw axis labels
+                float quarterX = centerX + (float)((0.25 * radius) * Math.Cos(angle));
+                float quarterY = centerY + (float)((0.25 * radius) * Math.Sin(angle));
+                float halfX = centerX + (float)((0.5 * radius) * Math.Cos(angle));
+                float halfY = centerY + (float)((0.5 * radius) * Math.Sin(angle));
+                float thirdQuarterX = centerX + (float)((0.75 * radius) * Math.Cos(angle));
+                float thirdQuarterY = centerY + (float)((0.75 * radius) * Math.Sin(angle));
+                allList[i] = new PointF(allX, allY);
+                quarterList[i] = new PointF(quarterX, quarterY);
+                halfList[i] = new PointF(halfX, halfY);
+                thirdQuarterList[i] = new PointF(thirdQuarterX, thirdQuarterY);
+                //Draw axis labels
                 string label = labels[i];
                 SizeF labelSize = g.MeasureString(label, AxisFont);
                 float labelX = (float)(allX + (0.3 * radius) * Math.Cos(angle));
@@ -339,14 +334,14 @@ namespace WindowsFormsApplication2
                 labelX -= 0.02f * frmMainForm.mainChartPlotting.Width;
                 g.DrawString(label, AxisFont, Brushes.Black, labelX, labelY);
 
-                
+
             }
             g.DrawPolygon(axisPen, quarterList);
             g.DrawPolygon(axisPen, allList);
             g.DrawPolygon(axisPen, halfList);
             g.DrawPolygon(axisPen, thirdQuarterList);
 
-            g.DrawString("Radar diagram showing the molar concentrations for major ions", new Font("Times New Roman", fontSize, FontStyle.Bold), Brushes.Black, 0.2f*frmMainForm.mainChartPlotting.Width, 0.9f*frmMainForm.mainChartPlotting.Height);
+            g.DrawString("Radar diagram showing the molar concentrations for major ions", new Font("Times New Roman", fontSize, FontStyle.Bold), Brushes.Black, 0.2f * frmMainForm.mainChartPlotting.Width, 0.9f * frmMainForm.mainChartPlotting.Height);
 
             #region Draw Radar legend
             for (int s = 0; s < sampleData.Length; s++)
@@ -357,10 +352,10 @@ namespace WindowsFormsApplication2
                 {
                     clsRadarScale value = sampleData[s][i];
 
-                    // Normalize value to be within 0 and its max scale
+                    //Normalize value to be within 0 and its max scale
                     double normalizedValue = Math.Min(value.Item / value.Scale, 1.0);
 
-                    // Scale the normalized value according to its axis' maximum
+                    //Scale the normalized value according to its axis' maximum
                     float scaledRadius = (float)(normalizedValue * radius);
 
                     double angle = i * angleIncrement;
@@ -377,7 +372,7 @@ namespace WindowsFormsApplication2
                     points[i] = new PointF(x, y);
                 }
 
-                // Draw the polygon by connecting points
+                //Draw the polygon by connecting points
                 using (Pen linePen = new Pen(colors[s], 2))
                 {
                     linePen.Color = frmImportSamples.WaterData[s].color;
@@ -391,7 +386,7 @@ namespace WindowsFormsApplication2
 
             flag = false;
         }
-        public static void ExportRadar1ToPowerpoint(Rectangle bounds, PowerPoint.Slide slide, PowerPoint.Presentation presentation,bool flag)
+        public static void ExportRadar1ToPowerpoint(Rectangle bounds, PowerPoint.Slide slide, PowerPoint.Presentation presentation, bool flag)
         {
             PowerPoint.Shape title = slide.Shapes.AddTextbox(
                 Office.MsoTextOrientation.msoTextOrientationHorizontal,
@@ -401,78 +396,23 @@ namespace WindowsFormsApplication2
             title.TextFrame.TextRange.Font.Bold = Office.MsoTriState.msoTrue;
             title.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
             title.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
-            //title.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
             title.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
-            // Data labels and values
+            //Data labels and values
             clsRadarScale[][] sampleData = new clsRadarScale[frmImportSamples.WaterData.Count][];
             double Bm = 35453, Bn = 22989.7, Bo = 39098.3, Bp = 40078, Bq = 24305, Br = 137327, Bs = 87620;
             PrecomputeMaxValues(flag);
-            string fullString = maxBa.ToString("G17");
-            if (fullString.Contains("E-"))
-            {
-                int eIndex = fullString.IndexOf("E");
-                string temp = "";
-                for (int i = 0; i < fullString.Length; i++)
-                {
-                    if (fullString[i] != '.')
-                    {
-                        temp += fullString[i];
-                    }
-                    else
-                    {
-                        temp += fullString[i];
-                        temp += fullString[i + 1];
-                        break;
-                    }
 
-                }
-                for (int i = eIndex; i < fullString.Length; i++)
-                {
-                    temp += fullString[i];
-                }
-                fullString = temp;
-
-            }
-            List<string> scales = new List<string>();
-            foreach (var value in Radar1Scales)
-            {
-                string s = value;
-                string temp = "";
-                bool checking = false, found = false;
-
-                for (int j = 0; j < s.Length; j++)
-                {
-                    if (s[j] == '.')
-                        checking = true;
-                    else if (s[j] != '0' && checking)
-                    {
-                        found = true;
-                        temp += s[j];
-                        break;
-                    }
-                    temp += s[j];
-                }
-
-                if (!found)
-                {
-                    int dotIndex = temp.IndexOf('.');
-                    if (dotIndex != -1)
-                        temp = temp.Substring(0, dotIndex);
-                }
-
-                scales.Add(temp);
-            }
             string[] labels =
             {
-                "K (mol/L)\n"+ scales[2],
-                "Ca (mol/L)\n"+ scales[3],
-                "Mg (mol/L)\n"+ scales[4],
-                "Ba (mol/L)\n"+ fullString,
-                "Sr (mol/L)\n"+ scales[6],
-                "Cl (mol/L)\n"+ scales[0],
-                "Na (mol/L)\n"+ scales[1]
+                "K (mol/L)\n"+ Radar1Scales[2],
+                "Ca (mol/L)\n"+ Radar1Scales[3],
+                "Mg (mol/L)\n"+ Radar1Scales[4],
+                "Ba (mol/L)\n"+ Radar1Scales[5],
+                "Sr (mol/L)\n"+ Radar1Scales[6],
+                "Cl (mol/L)\n"+ Radar1Scales[0],
+                "Na (mol/L)\n"+ Radar1Scales[1]
             };
-            // Initialize jagged array
+            //Initialize jagged array
             for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
             {
                 sampleData[i] = new clsRadarScale[]
@@ -487,24 +427,25 @@ namespace WindowsFormsApplication2
                 };
             }
 
-            // Colors for the samples
-            Color[] colors = new Color[frmImportSamples.WaterData.Count];
+            //Colors for the samples
+
+           Color[] colors = new Color[frmImportSamples.WaterData.Count];
             for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
             {
                 colors[i] = frmImportSamples.WaterData[i].color;
             }
 
-            // Center of the diagram
+            //Center of the diagram
             float centerX = (bounds.Width / 2);
             float centerY = bounds.Y + bounds.Height / 2 - 50;
 
 
-            // Radius of the radar diagram
-            float radius = (float)Math.Min(bounds.Width/1.5, bounds.Height/1.5) / 3;
-            // Number of axes
+            //Radius of the radar diagram
+            float radius = (float)Math.Min(bounds.Width / 1.5, bounds.Height / 1.5) / 3;
+            //Number of axes
             int numAxes = labels.Length;
 
-            // Angle between each axis (in radians)
+            //Angle between each axis(in radians)
             PointF[] quarterList = new PointF[numAxes];
             PointF[] halfList = new PointF[numAxes];
             PointF[] thirdQuarterList = new PointF[numAxes];
@@ -525,14 +466,14 @@ namespace WindowsFormsApplication2
                 quarterList[i] = new PointF(quarterX, quarterY);
                 halfList[i] = new PointF(halfX, halfY);
                 thirdQuarterList[i] = new PointF(thirdQuarterX, thirdQuarterY);
-                var radiusLine=slide.Shapes.AddLine(centerX, centerY, allX, allY);
+                var radiusLine = slide.Shapes.AddLine(centerX, centerY, allX, allY);
                 radiusLine.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Gray);
                 radiusLine.Line.DashStyle = Office.MsoLineDashStyle.msoLineRoundDot;
                 string label = labels[i];
                 SizeF labelSize = TextRenderer.MeasureText(label, SystemFonts.DefaultFont);
-                float labelX = allX + (float)((radius*0.3) * Math.Cos(angle)) - labelSize.Width / 2;
-                float labelY = allY + (float)((radius*0.3) * Math.Sin(angle)) - labelSize.Height / 2;
-                
+                float labelX = allX + (float)((radius * 0.3) * Math.Cos(angle)) - labelSize.Width / 2;
+                float labelY = allY + (float)((radius * 0.3) * Math.Sin(angle)) - labelSize.Height / 2;
+
                 PowerPoint.Shape itemText = slide.Shapes.AddTextbox(
                     Office.MsoTextOrientation.msoTextOrientationHorizontal, labelX, labelY, 200, 30);
                 itemText.TextFrame.TextRange.Text = label;
@@ -555,7 +496,7 @@ namespace WindowsFormsApplication2
                     { allList[i + 1].X, allList[i + 1].Y}
                 };
 
-                PowerPoint.Shape allPolygon= slide.Shapes.AddPolyline(points1);
+                PowerPoint.Shape allPolygon = slide.Shapes.AddPolyline(points1);
                 allPolygon.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Gray); // Set line color
                 allPolygon.Line.DashStyle = Office.MsoLineDashStyle.msoLineRoundDot;
                 float[,] points2 = new float[,]
@@ -642,10 +583,10 @@ namespace WindowsFormsApplication2
                 {
                     clsRadarScale value = sampleData[i][j];
 
-                    // Normalize value to be within 0 and its max scale
+                    //Normalize value to be within 0 and its max scale
                     double normalizedValue = Math.Min(value.Item / value.Scale, 1.0); // Ensures it doesn't exceed 1
 
-                    // Scale the normalized value according to its axis' maximum
+                    //Scale the normalized value according to its axis' maximum
                     float scaledRadius = (float)(normalizedValue * radius);
 
                     double angle = j * angleIncrement;
@@ -661,15 +602,16 @@ namespace WindowsFormsApplication2
                     }
                     points[j] = new PointF(x, y);
                 }
-                // Flatten the points array into a float array for AddPolyline
-                float[] polylinePoints = new float[points.Length * 2];
-                for (int j = 0; j < points.Length; j++)
-                {
-                    polylinePoints[j * 2] = points[j].X;
-                    polylinePoints[j * 2 + 1] = points[j].Y;
-                }
+                //Flatten the points array into a float array for AddPolyline
 
-                // Add the polyline to the slide
+               float[] polylinePoints = new float[points.Length * 2];
+                for (int j = 0; j < points.Length; j++)
+                    {
+                        polylinePoints[j * 2] = points[j].X;
+                        polylinePoints[j * 2 + 1] = points[j].Y;
+                    }
+
+                //Add the polyline to the slide
                 PowerPoint.Shape samplePolygon = slide.Shapes.AddPolyline(new float[,]
                 {
                     { polylinePoints[0], polylinePoints[1] },
@@ -720,52 +662,71 @@ namespace WindowsFormsApplication2
             for (int i = 0; i < Radar2Scales.Count(); i++)
             {
                 string s = Radar2Scales[i];
-                string temp = "";
-                bool checking = false;
-                bool found = false;
-                for (int j = 0; j < s.Length; j++)
+                decimal parsedValue;
+
+                // Try to parse the number and use the parsed value for more accurate formatting
+                if (decimal.TryParse(s, out parsedValue))
                 {
-                    if (s[j] == '.')
-                    {
-                        checking = true;
-                    }
-                    else if (s[j] != '0' && checking)
-                    {
-                        found = true;
-                        temp += s[j];
-                        break;
-                    }
-                    temp += s[j];
+                    // Format the number to remove unnecessary trailing zeros and retain precision
+                    string formattedValue = parsedValue.ToString("0.#######");  // Adjust the number of '#' based on desired precision
+                    scales.Add(formattedValue);
+                    Radar2Scales[i] = formattedValue;
                 }
-                if (!found)
+                else
                 {
-                    int dotIndex = temp.IndexOf('.');
-                    if (dotIndex != -1)
-                    {
-                        temp = temp.Substring(0, dotIndex);
-                    }
+                    // If parsing fails, just add the original string (error handling)
+                    scales.Add(s);
+                    Radar2Scales[i] = s;
                 }
-                scales.Add(temp);
-                Radar2Scales[i] = temp;
+            }
+            for (int i = 0; i < Radar2Scales.Length; i++)
+            {
+                string fullString = Radar2Scales[i];
+                if (fullString.Contains("E-"))
+                {
+                    int eIndex = fullString.IndexOf("E");
+                    string temp = "";
+                    for (int j = 0; j < fullString.Length; j++)
+                    {
+                        if (fullString[j] != '.')
+                        {
+                            temp += fullString[j];
+                        }
+                        else
+                        {
+                            temp += fullString[j];
+                            temp += fullString[j + 1];
+                            break;
+                        }
+
+                    }
+                    for (int j = eIndex; j < fullString.Length; j++)
+                    {
+                        temp += fullString[j];
+                    }
+                    fullString = temp;
+                    Radar2Scales[i] = fullString;
+
+                }
             }
             string[] labels =
             {
-            "EV_Na-Ca \n"+scales[4],
-            "GT_K-Na \n"+ scales[5],
-            "SS_Sr-Mg \n"+scales[6],
-            "SS_Mg-Cl \n"+scales[7],
-            "SS_Sr-Cl \n"+ scales[8],
-            "Lith_Sr-K \n"+ scales[9],
-            "Lith_Mg-K \n"+ scales[10],
-            "Lith_Ca-K \n"+ scales[11],
-            "Wt%K \n"+ scales[12],
-            "OM_B-Cl \n"+ scales[13],
-            "OM_B-Na \n"+ scales[14],
-            "OM_B-Mg \n"+ scales[15],
-            "EV_Na-Cl \n"+ scales[0],
-            "EV_Cl-Ca \n"+ scales[1],
-            "EV_HCO3-Cl \n"+scales[2],
-            "EV_Cl-Sr \n"+ scales[3]
+            "EV_Na-Ca \n"+Radar2Scales[4],
+            "GT_K-Na \n"+ Radar2Scales[5],
+            "SS_Sr-Mg \n"+Radar2Scales[6],
+            "SS_Mg-Cl \n"+Radar2Scales[7],
+            "SS_Sr-Cl \n"+ Radar2Scales[8],
+            "Lith_Sr-K \n"+ Radar2Scales[9],
+            "Lith_Mg-K \n"+ Radar2Scales[10],
+            "Lith_Ca-K \n"+ Radar2Scales[11],
+            "Wt%K \n"+ Radar2Scales[12],
+            "OM_B-Cl \n"+ Radar2Scales[13],
+            "OM_B-Na \n"+ Radar2Scales[14],
+            "OM_B-Mg \n"+ Radar2Scales[15],
+            "EV_Na-Cl \n"+ Radar2Scales[0],
+            "EV_Cl-Ca \n"+ Radar2Scales[1],
+            "EV_HCO3-Cl \n"+Radar2Scales[2],
+            "EV_Cl-Sr \n"+ Radar2Scales[3]
 
         };
             // Initialize jagged array
@@ -801,11 +762,11 @@ namespace WindowsFormsApplication2
             }
 
             // Center of the diagram
-            float centerX = 0.3f*frmMainForm.mainChartPlotting.Width;
-            float centerY = 0.4f*frmMainForm.mainChartPlotting.Height;
+            float centerX = 0.3f * frmMainForm.mainChartPlotting.Width;
+            float centerY = 0.4f * frmMainForm.mainChartPlotting.Height;
 
             // Radius of the radar diagram
-            float radius = Math.Min(bounds.Width, bounds.Height) *0.32f;
+            float radius = Math.Min(bounds.Width, bounds.Height) * 0.32f;
 
             // Number of axes
             int numAxes = labels.Length;
@@ -842,7 +803,7 @@ namespace WindowsFormsApplication2
                 SizeF labelSize = g.MeasureString(label, AxisFont);
                 float labelX = (float)(allX + (0.3 * radius) * Math.Cos(angle));
                 float labelY = (float)(allY + (0.3 * radius) * Math.Sin(angle));
-                
+
                 labelX -= 0.02f * frmMainForm.mainChartPlotting.Width;
                 g.DrawString(label, AxisFont, Brushes.Black, labelX, labelY);
 
@@ -902,7 +863,7 @@ namespace WindowsFormsApplication2
             flag = false;
         }
 
-        public static void ExportRadar2ToPowerpoint(Rectangle bounds, PowerPoint.Slide slide, PowerPoint.Presentation presentation,bool flag)
+        public static void ExportRadar2ToPowerpoint(Rectangle bounds, PowerPoint.Slide slide, PowerPoint.Presentation presentation, bool flag)
         {
 
 
@@ -920,53 +881,25 @@ namespace WindowsFormsApplication2
             // Data labels and values
             clsRadarScale[][] sampleData = new clsRadarScale[frmImportSamples.WaterData.Count][];
             PrecomputeMaxValues(flag);
-            List<string> scales = new List<string>();
-            foreach (var value in Radar2Scales)
-            {
-                string s = value;
-                string temp = "";
-                bool checking = false, found = false;
 
-                for (int j = 0; j < s.Length; j++)
-                {
-                    if (s[j] == '.')
-                        checking = true;
-                    else if (s[j] != '0' && checking)
-                    {
-                        found = true;
-                        temp += s[j];
-                        break;
-                    }
-                    temp += s[j];
-                }
-
-                if (!found)
-                {
-                    int dotIndex = temp.IndexOf('.');
-                    if (dotIndex != -1)
-                        temp = temp.Substring(0, dotIndex);
-                }
-
-                scales.Add(temp);
-            }
             string[] labels =
             {
-            "EV_Na-Ca \n"+scales[4],
-            "GT_K-Na \n"+ scales[5],
-            "SS_Sr-Mg \n"+scales[6],
-            "SS_Mg-Cl \n"+scales[7],
-            "SS_Sr-Cl \n"+ scales[8],
-            "Lith_Sr-K \n"+ scales[9],
-            "Lith_Mg-K \n"+ scales[10],
-            "Lith_Ca-K \n"+ scales[11],
-            "Wt%K \n"+ scales[12],
-            "OM_B-Cl \n"+ scales[13],
-            "OM_B-Na \n"+ scales[14],
-            "OM_B-Mg \n"+ scales[15],
-            "EV_Na-Cl \n"+ scales[0],
-            "EV_Cl-Ca \n"+ scales[1],
-            "EV_HCO3-Cl \n"+scales[2],
-            "EV_Cl-Sr \n"+ scales[3]
+            "EV_Na-Ca \n"+Radar2Scales[4],
+            "GT_K-Na \n"+ Radar2Scales[5],
+            "SS_Sr-Mg \n"+Radar2Scales[6],
+            "SS_Mg-Cl \n"+Radar2Scales[7],
+            "SS_Sr-Cl \n"+ Radar2Scales[8],
+            "Lith_Sr-K \n"+ Radar2Scales[9],
+            "Lith_Mg-K \n"+ Radar2Scales[10],
+            "Lith_Ca-K \n"+ Radar2Scales[11],
+            "Wt%K \n"+ Radar2Scales[12],
+            "OM_B-Cl \n"+ Radar2Scales[13],
+            "OM_B-Na \n"+ Radar2Scales[14],
+            "OM_B-Mg \n"+ Radar2Scales[15],
+            "EV_Na-Cl \n"+ Radar2Scales[0],
+            "EV_Cl-Ca \n"+ Radar2Scales[1],
+            "EV_HCO3-Cl \n"+Radar2Scales[2],
+            "EV_Cl-Sr \n"+ Radar2Scales[3]
 
         };
 
@@ -1233,33 +1166,21 @@ namespace WindowsFormsApplication2
             float fontSize = 12; // Make font size relative
             // Data labels and values
             PrecomputeMaxValues(flag);
-            string fullString = maxBa.ToString("G17");
-            if (fullString.Contains("E-"))
+            maxNa = 0;
+            maxK = 0;
+            maxCa = 0;
+            maxMg = 0;
+            foreach (var data in frmImportSamples.WaterData)
             {
-                int eIndex = fullString.IndexOf("E");
-                string temp = "";
-                for (int i = 0; i < fullString.Length; i++)
-                {
-                    if (fullString[i] != '.')
-                    {
-                        temp += fullString[i];
-                    }
-                    else
-                    {
-                        temp += fullString[i];
-                        temp += fullString[i + 1];
-                        break;
-                    }
-
-                }
-                for (int i = eIndex; i < fullString.Length; i++)
-                {
-                    temp += fullString[i];
-                }
-                fullString = temp;
-
+                maxNa = Math.Max(maxNa, Math.Abs(data.Na));
+                maxK = Math.Max(maxK, Math.Abs(data.K));
+                maxCa = Math.Max(maxCa, Math.Abs(data.Ca));
+                maxMg = Math.Max(maxMg, Math.Abs(data.Mg));
+                maxBa = Math.Max(maxBa, Math.Abs(data.Ba));
+                maxSr = Math.Max(maxSr, Math.Abs(data.Sr));
             }
-            Radar3Scales = new string[] { 
+
+            Radar3Scales = new string[] {
             maxNa.ToString("F5"),
             maxK.ToString("F5"),
             maxCa.ToString("F5"),
@@ -1281,63 +1202,83 @@ namespace WindowsFormsApplication2
             maxSe.ToString("F5"),
             maxB.ToString("F5"),
             maxLi.ToString("F5") };
+
+
             List<string> scales = new List<string>();
             for (int i = 0; i < Radar3Scales.Count(); i++)
             {
                 string s = Radar3Scales[i];
-                string temp="";
-                bool checking=false;
-                bool found = false;
-                for (int j = 0; j < s.Length; j++)
+                decimal parsedValue;
+
+                // Try to parse the number and use the parsed value for more accurate formatting
+                if (decimal.TryParse(s, out parsedValue))
                 {
-                    if (s[j] == '.')
-                    {
-                        checking = true;
-                    }
-                    else if (s[j] != '0' && checking)
-                    {
-                        found = true;
-                        temp += s[j];
-                        break;
-                    }
-                    temp += s[j];
+                    // Format the number to remove unnecessary trailing zeros and retain precision
+                    string formattedValue = parsedValue.ToString("0.#######");  // Adjust the number of '#' based on desired precision
+                    scales.Add(formattedValue);
+                    Radar3Scales[i] = formattedValue;
                 }
-                if (!found)
+                else
                 {
-                    int dotIndex = temp.IndexOf('.');
-                    if (dotIndex != -1)
-                    {
-                        temp = temp.Substring(0, dotIndex);
-                    }
+                    // If parsing fails, just add the original string (error handling)
+                    scales.Add(s);
+                    Radar3Scales[i] = s;
                 }
-                scales.Add(temp);
-                Radar3Scales[i] = temp;
+            }
+            for (int i = 0; i < Radar3Scales.Length; i++)
+            {
+                string fullString = Radar3Scales[i];
+                if (fullString.Contains("E-"))
+                {
+                    int eIndex = fullString.IndexOf("E");
+                    string temp = "";
+                    for (int j = 0; j < fullString.Length; j++)
+                    {
+                        if (fullString[j] != '.')
+                        {
+                            temp += fullString[j];
+                        }
+                        else
+                        {
+                            temp += fullString[j];
+                            temp += fullString[j + 1];
+                            break;
+                        }
+
+                    }
+                    for (int j = eIndex; j < fullString.Length; j++)
+                    {
+                        temp += fullString[j];
+                    }
+                    fullString = temp;
+                    Radar3Scales[i] = fullString;
+
+                }
             }
 
             string[] labels =
             {
-            "Co \n"+scales[5],
-            "Cu \n"+ scales[6],
-            "Mn \n"+scales[7],
-            "Ni \n"+scales[8],
-            "Sr \n"+ scales[9],
-            "Zn \n"+ scales[10],
-            "Ba \n"+ fullString,
-            "Pb \n"+ scales[12],
-            "Fe \n"+ scales[13],
-            "Cd \n"+ scales[14],
-            "Cr \n"+ scales[15],
-            "Tl \n"+ scales[16],
-            "Be \n"+ scales[17],
-            "Se \n"+ scales[18],
-            "B \n"+scales[19],
-            "Li \n"+ scales[20],
-            "Na \n"+scales[0],
-            "K \n"+scales[1],
-            "Ca \n"+scales[2],
-            "Mg \n"+scales[3],
-            "Al \n"+scales[4]
-
+            "Co \n"+Radar3Scales[5],
+            "Cu \n"+ Radar3Scales[6],
+            "Mn \n"+Radar3Scales[7],
+            "Ni \n"+Radar3Scales[8],
+            "Sr \n"+ Radar3Scales[9],
+            "Zn \n"+ Radar3Scales[10],
+            "Ba \n"+ Radar3Scales[11],
+            "Pb \n"+ Radar3Scales[12],
+            "Fe \n"+ Radar3Scales[13],
+            "Cd \n"+ Radar3Scales[14],
+            "Cr \n"+ Radar3Scales[15],
+            "Tl \n"+ Radar3Scales[16],
+            "Be \n"+ Radar3Scales[17],
+            "Se \n"+ Radar3Scales[18],
+            "B \n"+Radar3Scales[19],
+            "Li \n"+ Radar3Scales[20],
+            "Na \n"+Radar3Scales[0],
+            "K \n"+Radar3Scales[1],
+            "Ca \n"+Radar3Scales[2],
+            "Mg \n"+Radar3Scales[3],
+            "Al \n"+Radar3Scales[4]
             };
 
             // Initialize jagged array
@@ -1416,9 +1357,9 @@ namespace WindowsFormsApplication2
                 // Draw axis labels
                 string label = labels[i];
                 SizeF labelSize = g.MeasureString(label, AxisFont);
-                float labelX = (float)(allX + (0.3 * radius) * Math.Cos(angle));
-                float labelY = (float)(allY + (0.3 * radius) * Math.Sin(angle));
-                labelX -= 0.02f * frmMainForm.mainChartPlotting.Width;
+                float labelX = (float)(allX + (0.2 * radius) * Math.Cos(angle));
+                float labelY = (float)(allY + (0.2 * radius) * Math.Sin(angle));
+                //labelX -= 0.02f * frmMainForm.mainChartPlotting.Width;
                 g.DrawString(label, AxisFont, Brushes.Black, labelX, labelY);
             }
             g.DrawPolygon(axisPen, quarterList);
@@ -1427,7 +1368,7 @@ namespace WindowsFormsApplication2
             g.DrawPolygon(axisPen, thirdQuarterList);
 
             //g.DrawString("ICP Reproducibility", new Font("Times New Roman", fontSize, FontStyle.Bold), Brushes.Black, 0.2f * frmMainForm.mainChartPlotting.Width, 0.9f * frmMainForm.mainChartPlotting.Height);
-            
+
             g.SmoothingMode = SmoothingMode.AntiAlias;
             for (int s = 0; s < sampleData.Length; s++)
             {
@@ -1446,24 +1387,24 @@ namespace WindowsFormsApplication2
                     double angle = i * angleIncrement;
                     float x = centerX + (float)(scaledRadius * Math.Cos(angle));
                     float y = centerY + (float)(scaledRadius * Math.Sin(angle));
-                    if(double.IsNaN(x))
+                    if (double.IsNaN(x))
                     {
                         x = centerX;
                     }
-                    if(double.IsNaN(y))
+                    if (double.IsNaN(y))
                     {
                         y = centerY;
                     }
                     points[i] = new PointF(x, y);
-                    
-                    
+
+
                 }
                 Pen polygonPen = new Pen(colors[s], 2f);
                 polygonPen.Width = frmImportSamples.WaterData[s].lineWidth;
                 polygonPen.DashStyle = frmImportSamples.WaterData[s].selectedStyle;
 
                 g.DrawPolygon(polygonPen, points);
-                
+
 
 
             }
@@ -1485,92 +1426,51 @@ namespace WindowsFormsApplication2
             title.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
             //title.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
             title.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
-            // Process scales to be cleaner strings
-            List<string> scales = new List<string>();
-            foreach (var value in Radar3Scales)
+            PrecomputeMaxValues(flag);
+            maxNa = 0;
+            maxK = 0;
+            maxCa = 0;
+            maxMg = 0;
+            foreach (var wdata in frmImportSamples.WaterData)
             {
-                string s = value;
-                string temp = "";
-                bool checking = false, found = false;
-
-                for (int j = 0; j < s.Length; j++)
-                {
-                    if (s[j] == '.')
-                        checking = true;
-                    else if (s[j] != '0' && checking)
-                    {
-                        found = true;
-                        temp += s[j];
-                        break;
-                    }
-                    temp += s[j];
-                }
-
-                if (!found)
-                {
-                    int dotIndex = temp.IndexOf('.');
-                    if (dotIndex != -1)
-                        temp = temp.Substring(0, dotIndex);
-                }
-
-                scales.Add(temp);
+                maxNa = Math.Max(maxNa, Math.Abs(wdata.Na));
+                maxK = Math.Max(maxK, Math.Abs(wdata.K));
+                maxCa = Math.Max(maxCa, Math.Abs(wdata.Ca));
+                maxMg = Math.Max(maxMg, Math.Abs(wdata.Mg));
+                maxBa = Math.Max(maxBa, Math.Abs(wdata.Ba));
+                maxSr = Math.Max(maxSr, Math.Abs(wdata.Sr));
             }
-            string fullString = maxBa.ToString("G17");
-            if (fullString.Contains("E-"))
-            {
-                int eIndex = fullString.IndexOf("E");
-                string temp = "";
-                for (int i = 0; i < fullString.Length; i++)
-                {
-                    if (fullString[i] != '.')
-                    {
-                        temp += fullString[i];
-                    }
-                    else
-                    {
-                        temp += fullString[i];
-                        temp += fullString[i + 1];
-                        break;
-                    }
-
-                }
-                for (int i = eIndex; i < fullString.Length; i++)
-                {
-                    temp += fullString[i];
-                }
-                fullString = temp;
-
-            }
+            
             // Axis labels based on elements
-            string[] elements = { 
-            "Co \n"+scales[5],
-            "Cu \n"+ scales[6],
-            "Mn \n"+scales[7],
-            "Ni \n"+scales[8],
-            "Sr \n"+ scales[9],
-            "Zn \n"+ scales[10],
-            "Ba \n"+ fullString,
-            "Pb \n"+ scales[12],
-            "Fe \n"+ scales[13],
-            "Cd \n"+ scales[14],
-            "Cr \n"+ scales[15],
-            "Tl \n"+ scales[16],
-            "Be \n"+ scales[17],
-            "Se \n"+ scales[18],
-            "B \n"+scales[19],
-            "Li \n"+ scales[20],
-            "Na \n"+scales[0],
-            "K \n"+scales[1],
-            "Ca \n"+scales[2],
-            "Mg \n"+scales[3],
-            "Al \n"+scales[4] };
+            string[] elements = {
+            "Co \n"+Radar3Scales[5],
+            "Cu \n"+ Radar3Scales[6],
+            "Mn \n"+Radar3Scales[7],
+            "Ni \n"+Radar3Scales[8],
+            "Sr \n"+ Radar3Scales[9],
+            "Zn \n"+ Radar3Scales[10],
+            "Ba \n"+ Radar3Scales[11],
+            "Pb \n"+ Radar3Scales[12],
+            "Fe \n"+ Radar3Scales[13],
+            "Cd \n"+ Radar3Scales[14],
+            "Cr \n"+ Radar3Scales[15],
+            "Tl \n"+ Radar3Scales[16],
+            "Be \n"+ Radar3Scales[17],
+            "Se \n"+ Radar3Scales[18],
+            "B \n"+Radar3Scales[19],
+            "Li \n"+ Radar3Scales[20],
+            "Na \n"+Radar3Scales[0],
+            "K \n"+Radar3Scales[1],
+            "Ca \n"+Radar3Scales[2],
+            "Mg \n"+Radar3Scales[3],
+            "Al \n"+Radar3Scales[4] };
 
             int numAxes = elements.Length;
             double angleIncrement = 2 * Math.PI / numAxes;
 
             // Radar center and radius
             // Center of the diagram
-            
+
 
             #endregion
 
@@ -1780,22 +1680,22 @@ namespace WindowsFormsApplication2
                     }
                     points[j] = new PointF(x, y);
                 }
-                for(int j=0;j<points.Length-1;j++)
+                for (int j = 0; j < points.Length - 1; j++)
                 {
-                    
-                    PowerPoint.Shape polygon= slide.Shapes.AddPolyline(new float[,] { { points[j].X, points[j].Y }, { points[j + 1].X, points[j + 1].Y } });
+
+                    PowerPoint.Shape polygon = slide.Shapes.AddPolyline(new float[,] { { points[j].X, points[j].Y }, { points[j + 1].X, points[j + 1].Y } });
                     polygon.Line.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color); // Set line color
                     polygon.Line.Weight = frmImportSamples.WaterData[i].lineWidth; // Set line width
                     polygon.Line.DashStyle = ConvertDashStyle(frmImportSamples.WaterData[i].selectedStyle);
                 }
-                
+
                 PowerPoint.Shape polygonLastline = slide.Shapes.AddPolyline(new float[,] { { points[0].X, points[0].Y }, { points[20].X, points[20].Y } });
                 polygonLastline.Line.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color); // Set line color
                 polygonLastline.Line.Weight = frmImportSamples.WaterData[i].lineWidth; // Set line width
                 polygonLastline.Line.DashStyle = ConvertDashStyle(frmImportSamples.WaterData[i].selectedStyle);
-                
-                
-               
+
+
+
             }
             RadarLegendPowerpoint(slide);
         }

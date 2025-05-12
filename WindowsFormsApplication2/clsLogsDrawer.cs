@@ -137,21 +137,21 @@ namespace WindowsFormsApplication2
             g.DrawString("SET", new Font("Times New Roman", setSertSize, FontStyle.Bold), Brushes.Blue, setEnd.X - (int)(0.1 * (setEnd.X - margin)), setEnd.Y, drawFormat);
         }
 
-        
-        public static void ExportLogNaVsLogClChartToPowerPoint(PowerPoint.Slide slide, float slideWidth,float slideHeight,int x,int y)
-        {
 
+        public static void ExportLogNaVsLogClChartToPowerPoint(PowerPoint.Slide slide, int titleX, int titleY, PowerPoint.Presentation presentation, float slideWidth, float slideHeight, int x, int y)
+        {
             // Chart area dimensions
-            float chartX = x, chartY = y, diagramWidth = 420, diagramHeight = 0.7f*slideHeight;
+            float chartX = x, chartY = y, diagramWidth = slideWidth, diagramHeight = slideHeight;
 
             // Add chart title
-            PowerPoint.Shape chartTitle = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, (slideWidth / 2)-100, clsConstants.chartYPowerpoint, 200, 50);
+            PowerPoint.Shape chartTitle = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, titleX, titleY, 200, 50);
             chartTitle.TextFrame.TextRange.Text = "Log Na vs. Log Cl";
             chartTitle.TextFrame.TextRange.Font.Size = 25;
             chartTitle.TextFrame.TextRange.Font.Bold = Office.MsoTriState.msoTrue;
             chartTitle.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
             chartTitle.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
             chartTitle.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+
             // Draw grid and axes
             int numGridLinesX = 6, numGridLinesY = 6;
             float xInterval = diagramWidth / numGridLinesX, yInterval = diagramHeight / numGridLinesY;
@@ -183,38 +183,31 @@ namespace WindowsFormsApplication2
                 var gridLine = slide.Shapes.AddLine(chartX, chartY + i * yInterval, chartX + diagramWidth, chartY + i * yInterval);
                 gridLine.Line.ForeColor.RGB = System.Drawing.Color.Gray.ToArgb();
                 gridLine.Line.DashStyle = Microsoft.Office.Core.MsoLineDashStyle.msoLineRoundDot; // Make line dotted
-                
-                var lineLabel = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, chartX - 60, chartY + (i) * yInterval - 10, 100, 30);
-                lineLabel.TextFrame.TextRange.Text = (6-i).ToString();
-                lineLabel.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
-                // Horizontally center the text
-                lineLabel.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
 
-                // Vertically center the text
-                lineLabel.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+                var lineLabel = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, chartX - 60, chartY + (i) * yInterval - 10, 100, 30);
+                lineLabel.TextFrame.TextRange.Text = (6 - i).ToString();
+                lineLabel.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
+                lineLabel.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
             }
             var textbox = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, chartX - 60, chartY + 6 * yInterval - 10, 100, 30);
             textbox.TextFrame.TextRange.Text = (0).ToString();
             textbox.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
-            // Horizontally center the text
             textbox.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
 
-            // Vertically center the text
-            textbox.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
             // Add axis titles
-            //slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, chartX + chartWidth / 2 - 50, chartY + chartHeight + 30, 100, 30)
-            //    .TextFrame.TextRange.Text = "Log Na";
             var xAxisLabel = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, chartX + diagramWidth / 2 - 50, chartY + diagramHeight + 30, 100, 30);
             xAxisLabel.TextFrame.TextRange.Text = "Log Na";
             xAxisLabel.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
             xAxisLabel.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
             xAxisLabel.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+
             var yAxisLabel = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, chartX - 100, chartY + diagramHeight / 2 - 40, 100, 30);
             yAxisLabel.TextFrame.TextRange.Text = "Log Cl";
             yAxisLabel.Rotation = -90;
             yAxisLabel.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
             yAxisLabel.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
             yAxisLabel.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+
             // Add SERT (red line)
             PowerPoint.Shape sertLine = slide.Shapes.AddLine(
                 chartX + (float)(0.5 / 6 * diagramWidth), chartY + diagramHeight - (float)(0.5 / 6 * diagramHeight),
@@ -223,10 +216,10 @@ namespace WindowsFormsApplication2
             sertLine.Line.ForeColor.RGB = System.Drawing.Color.Blue.ToArgb();
             sertLine.Line.Weight = 3;
 
-            // Add annotation for SERT
+            // Add annotation for SERT (start of the line)
             var sertAnnotation = slide.Shapes.AddTextbox(
                 Office.MsoTextOrientation.msoTextOrientationHorizontal,
-                chartX + (float)(0.5 / 6 * diagramWidth) + 10, chartY + diagramHeight - (float)(0.5 / 6 * diagramHeight),
+                chartX + (float)(0.5 / 6 * diagramWidth) + 10, chartY + diagramHeight - (float)(0.5 / 6 * diagramHeight)-10,
                 100,
                 30
             );
@@ -240,16 +233,16 @@ namespace WindowsFormsApplication2
             // Add SET (blue line)
             PowerPoint.Shape setLine = slide.Shapes.AddPolyline(new float[,]
             {
-                { chartX + (float)(4.1 / 6 * diagramWidth), chartY + diagramHeight - (float)(4.3 / 6 * diagramHeight) },
-                { chartX + (float)(4.9 / 6 * diagramWidth), chartY + diagramHeight - (float)(5.2 / 6 * diagramHeight) },
-                { chartX + (float)(4.0 / 6 * diagramWidth), chartY + diagramHeight - (float)(5.5 / 6 * diagramHeight) },
-                { chartX + (float)(3.7 / 6 * diagramWidth), chartY + diagramHeight - (float)(5.3 / 6 * diagramHeight) },
-                { chartX + (float)(3.2 / 6 * diagramWidth), chartY + diagramHeight - (float)(5.5 / 6 * diagramHeight) }
+        { chartX + (float)(4.1 / 6 * diagramWidth), chartY + diagramHeight - (float)(4.3 / 6 * diagramHeight) },
+        { chartX + (float)(4.9 / 6 * diagramWidth), chartY + diagramHeight - (float)(5.2 / 6 * diagramHeight) },
+        { chartX + (float)(4.0 / 6 * diagramWidth), chartY + diagramHeight - (float)(5.5 / 6 * diagramHeight) },
+        { chartX + (float)(3.7 / 6 * diagramWidth), chartY + diagramHeight - (float)(5.3 / 6 * diagramHeight) },
+        { chartX + (float)(3.2 / 6 * diagramWidth), chartY + diagramHeight - (float)(5.5 / 6 * diagramHeight) }
             });
             setLine.Line.ForeColor.RGB = System.Drawing.Color.Red.ToArgb();
             setLine.Line.Weight = 3;
 
-            // Add annotation for SET
+            // Add annotation for SET (end of the line)
             var setAnnotation = slide.Shapes.AddTextbox(
                 Office.MsoTextOrientation.msoTextOrientationHorizontal,
                 chartX + (float)(3.2 / 6 * diagramWidth) - 70,
@@ -281,6 +274,7 @@ namespace WindowsFormsApplication2
                 dataPoint.Line.Weight = 2;
             }
         }
+
         public static void DrawlogMg_VS_logCl(Graphics g, int diagramWidth, int diagramHeight, int x, int y)
         {
             x += leftMargin;
@@ -401,14 +395,14 @@ namespace WindowsFormsApplication2
             g.DrawString("SET", new Font("Times New Roman", setSertSize, FontStyle.Bold), Brushes.Blue, setEnd.X - (int)(0.1 * (setEnd.X - margin)), setEnd.Y, drawFormat);
         }
 
-        public static void ExportlogMgVslogCltoPowerpoint(PowerPoint.Slide slide, float slideWidth, float slideHeight, int x, int y)
+        public static void ExportlogMgVslogCltoPowerpoint(PowerPoint.Slide slide, int titleX,int titleY, PowerPoint.Presentation presentation, float slideWidth, float slideHeight, int x, int y)
         {
 
             // Chart area dimensions
-            float chartX = x, chartY = y, diagramWidth = 420, diagramHeight = 0.7f * slideHeight;
+            float chartX = x, chartY = y, diagramWidth = slideWidth, diagramHeight = slideHeight;
 
             // Add chart title
-            PowerPoint.Shape chartTitle = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, (slideWidth / 2) - 100, clsConstants.chartYPowerpoint, 200, 50);
+            PowerPoint.Shape chartTitle = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, titleX, titleY, 200, 50);
             chartTitle.TextFrame.TextRange.Text = "Log Mg vs. Log Cl";
             chartTitle.TextFrame.TextRange.Font.Size = 25;
             chartTitle.TextFrame.TextRange.Font.Bold = Office.MsoTriState.msoTrue;
@@ -486,7 +480,7 @@ namespace WindowsFormsApplication2
             // Add annotation for SERT
             var sertAnnotation = slide.Shapes.AddTextbox(
                 Office.MsoTextOrientation.msoTextOrientationHorizontal,
-                chartX + (float)(0.5 / 6 * diagramWidth) + 10, chartY + diagramHeight - (float)(0.5 / 6 * diagramHeight),
+                chartX + (float)(0.5 / 6 * diagramWidth) + 10, chartY + diagramHeight - (float)(0.5 / 6 * diagramHeight)-10,
                 100,
                 30
             );
@@ -513,8 +507,8 @@ namespace WindowsFormsApplication2
             // Add annotation for SET
             var setAnnotation = slide.Shapes.AddTextbox(
                 Office.MsoTextOrientation.msoTextOrientationHorizontal,
-                chartX + (float)(3.2 / 6 * diagramWidth) + 100,
-                chartY + diagramHeight - (float)(5.5 / 6 * diagramHeight) + 30,
+                chartX + (float)(3.2 / 6 * diagramWidth) + 50,
+                chartY + diagramHeight - (float)(5.5 / 6 * diagramHeight) -20,
                 100,
                 30
             );
@@ -656,13 +650,13 @@ namespace WindowsFormsApplication2
             g.DrawString("SET", new Font("Times New Roman", setSertSize, FontStyle.Bold), Brushes.Blue, setEnd.X - (int)(0.1 * (setEnd.X - margin)), setEnd.Y, drawFormat);
         }
 
-        public static void ExportlogCaVslogCltoPowerPoint(PowerPoint.Slide slide, float slideWidth, float slideHeight, int x, int y)
+        public static void ExportlogCaVslogCltoPowerPoint(PowerPoint.Slide slide,int titleX, int titleY, PowerPoint.Presentation presentation, float slideWidth, float slideHeight, int x, int y)
         {
             // Chart area dimensions
-            float chartX = x, chartY = y, diagramWidth = 420, diagramHeight = 0.7f * slideHeight;
+            float chartX = x, chartY = y, diagramWidth = slideWidth, diagramHeight = slideHeight;
 
             // Add chart title
-            PowerPoint.Shape chartTitle = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, (slideWidth / 2) - 100, clsConstants.chartYPowerpoint, 200, 50);
+            PowerPoint.Shape chartTitle = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, titleX, titleY, 200, 50);
             chartTitle.TextFrame.TextRange.Text = "Log Ca vs. Log Cl";
             chartTitle.TextFrame.TextRange.Font.Size = 25;
             chartTitle.TextFrame.TextRange.Font.Bold = Office.MsoTriState.msoTrue;
@@ -741,7 +735,7 @@ namespace WindowsFormsApplication2
             // Add annotation for SERT
             var sertAnnotation = slide.Shapes.AddTextbox(
                 Office.MsoTextOrientation.msoTextOrientationHorizontal,
-                chartX + (float)(0.8 / 6 * diagramWidth) + 10, chartY + diagramHeight - (float)(0.6 / 6 * diagramHeight),
+                chartX + (float)(0.8 / 6 * diagramWidth) + 10, chartY + diagramHeight - (float)(0.6 / 6 * diagramHeight)-10,
                 100,
                 30
             );
@@ -769,7 +763,7 @@ namespace WindowsFormsApplication2
             // Add annotation for SET
             var setAnnotation = slide.Shapes.AddTextbox(
                 Office.MsoTextOrientation.msoTextOrientationHorizontal,
-                chartX + (float)(1.7 / 6 * diagramWidth) + 100,
+                chartX + (float)(1.7 / 6 * diagramWidth) + 50,
                 chartY + diagramHeight - (float)(5.5 / 6 * diagramHeight) - 15,
                 100,
                 30

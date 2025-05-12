@@ -804,7 +804,7 @@ namespace WindowsFormsApplication2
             // Set chartBounds equal to the slide bounds
             Rectangle chartBounds = new Rectangle(0, 0, (int)slideWidth, (int)slideHeight);
 
-            int triangleHeight = availableHeightPowerPoint / 2 - 150;
+            int triangleHeight = availableHeightPowerPoint / 2 - 100;
             int triangleWidth = triangleHeight;
 
             int diamondHeight = triangleWidth * 2;
@@ -827,7 +827,7 @@ namespace WindowsFormsApplication2
 
             var text = slide.Shapes.AddTextbox(
                                         Microsoft.Office.Core.MsoTextOrientation.msoTextOrientationHorizontal,
-                                        0, 15, 400, 100 // Adjust the position and size as needed
+                                        0, 30, 400, 100 // Adjust the position and size as needed
                                     );
 
             //text.Select();
@@ -839,7 +839,7 @@ namespace WindowsFormsApplication2
                                    "Na-HCO₃ waters - typical of deeper ground waters influenced by ion exchange.\n";
 
             // Increase the general font size
-            text.TextFrame.TextRange.Font.Size = 12; // Adjust the size as needed
+            text.TextFrame.TextRange.Font.Size = 15; // Adjust the size as needed
             FormatKeyword(text.TextFrame.TextRange, "Classification of water", "Black");
             FormatKeyword(text.TextFrame.TextRange, "Ca-SO₄ waters", "Red");
             FormatKeyword(text.TextFrame.TextRange, "Ca-HCO₃ waters", "Blue");
@@ -852,19 +852,19 @@ namespace WindowsFormsApplication2
             #region Define triangle and diamond bounds
             Rectangle cationTriangleBounds = new Rectangle(
                 chartBounds.Left + (int)slideWidth / 2 - (int)(0.2 * (int)slideWidth) - (int)(diamondWidth / 1.7),
-                chartBounds.Top + availableHeightPowerPoint - triangleHeight - 100,
+                chartBounds.Top + availableHeightPowerPoint - triangleHeight - 10,
                 triangleWidth,
                 triangleHeight);
 
 
             Rectangle diamondBounds = new Rectangle(
                 chartBounds.Left + (int)slideWidth / 2 - (int)(0.2 * (int)slideWidth),
-                chartBounds.Top + 160,
+                chartBounds.Top + 170,
                 diamondWidth,
                 diamondHeight);
             Rectangle anionTriangleBounds = new Rectangle(
                 chartBounds.Left + (int)slideWidth / 2 - (int)(0.2 * (int)slideWidth) + (int)(diamondWidth / 1.7),
-                chartBounds.Top + availableHeight - triangleHeight - 100,
+                chartBounds.Top + availableHeightPowerPoint - triangleHeight - 10,
                 triangleWidth,
                 triangleHeight);
             #endregion
@@ -887,6 +887,35 @@ namespace WindowsFormsApplication2
             string[] anions = { "SO4", "HCO3+CO3", "CL" };
             cationVertices.Clear();
             anionVertices.Clear();
+            #region Text Positioning for Cations and Anions Triangles
+            // Cations Labels (Magnesium, Calcium, Sodium/Potassium) - Place near triangle edges
+            // Adjusting positions as in the image:
+            var magnesiumLabel = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, cationTriangleBounds.Left, cationTriangleBounds.Top, 100, 30);
+            magnesiumLabel.TextFrame.TextRange.Text = "Magnesium";
+            magnesiumLabel.TextFrame.TextRange.Font.Size = 15;
+
+            var calciumLabel = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, cationTriangleBounds.Right - 100, cationTriangleBounds.Top, 100, 30);
+            calciumLabel.TextFrame.TextRange.Text = "Calcium";
+            calciumLabel.TextFrame.TextRange.Font.Size = 15;
+
+            var sodiumPotassiumLabel = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, cationTriangleBounds.Left + 30, cationTriangleBounds.Bottom - 50, 150, 30);
+            sodiumPotassiumLabel.TextFrame.TextRange.Text = "Sodium/Potassium";
+            sodiumPotassiumLabel.TextFrame.TextRange.Font.Size = 15;
+
+            // Anions Labels (Sulfate, Bicarbonate, Chloride) - Place near triangle edges
+            var sulfateLabel = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, anionTriangleBounds.Left, anionTriangleBounds.Top, 100, 30);
+            sulfateLabel.TextFrame.TextRange.Text = "Sulfate";
+            sulfateLabel.TextFrame.TextRange.Font.Size = 15;
+
+            var bicarbonateLabel = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, anionTriangleBounds.Left + 30, anionTriangleBounds.Bottom - 50, 150, 30);
+            bicarbonateLabel.TextFrame.TextRange.Text = "Bicarbonate";
+            bicarbonateLabel.TextFrame.TextRange.Font.Size = 15;
+
+            var chlorideLabel = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, anionTriangleBounds.Right - 100, anionTriangleBounds.Top, 100, 30);
+            chlorideLabel.TextFrame.TextRange.Text = "Chloride";
+            chlorideLabel.TextFrame.TextRange.Font.Size = 15;
+            #endregion
+
             ExportTriangleToPowerpoint(slide, cationTriangleBounds, "Cations", cations);
             ExportTriangleToPowerpoint(slide, anionTriangleBounds, "Anions", anions);
             ExportDiamondToPowerpoint(slide, diamondBounds, cationTriangleBounds, anionTriangleBounds);
@@ -1112,17 +1141,17 @@ namespace WindowsFormsApplication2
                     Office.MsoTextOrientation.msoTextOrientationHorizontal,
                     leftToTop.X - 30, leftToTop.Y - 20, 300, 15);
                 leftside.TextFrame.TextRange.Text = (i * 10).ToString("0");
-                leftside.TextFrame.TextRange.Font.Size = 8;
+                leftside.TextFrame.TextRange.Font.Size = fontsize;
                 PowerPoint.Shape rightside = slide.Shapes.AddTextbox(
                     Office.MsoTextOrientation.msoTextOrientationHorizontal,
                     rightToTop.X + 5, rightToTop.Y - 10, 300, 15);
                 rightside.TextFrame.TextRange.Text = ((c) * 10).ToString("0");
-                rightside.TextFrame.TextRange.Font.Size = 8;
+                rightside.TextFrame.TextRange.Font.Size = fontsize;
                 PowerPoint.Shape bottomside = slide.Shapes.AddTextbox(
                     Office.MsoTextOrientation.msoTextOrientationHorizontal,
                     leftToRight.X - 5, leftToRight.Y + 5, 300, 15);
                 bottomside.TextFrame.TextRange.Text = ((c) * 10).ToString("0");
-                bottomside.TextFrame.TextRange.Font.Size = 8;
+                bottomside.TextFrame.TextRange.Font.Size = fontsize;
 
                 c -= 2;
                 if (i != 0)
@@ -1163,17 +1192,17 @@ namespace WindowsFormsApplication2
                     Office.MsoTextOrientation.msoTextOrientationHorizontal,
                     topToLeft.X - 35, topToLeft.Y - 10, 100, 15);
             label1.TextFrame.TextRange.Text = (100).ToString("0");
-            label1.TextFrame.TextRange.Font.Size = 15;
+            label1.TextFrame.TextRange.Font.Size = fontsize;
             PowerPoint.Shape label2 = slide.Shapes.AddTextbox(
                     Office.MsoTextOrientation.msoTextOrientationHorizontal,
                     TopToRight.X + 5, TopToRight.Y - 10, 100, 15);
             label2.TextFrame.TextRange.Text = (0).ToString("0");
-            label2.TextFrame.TextRange.Font.Size = 15;
+            label2.TextFrame.TextRange.Font.Size = fontsize;
             PowerPoint.Shape label3 = slide.Shapes.AddTextbox(
                     Office.MsoTextOrientation.msoTextOrientationHorizontal,
                     RightToLeft.X - 5, RightToLeft.Y + 5, 100, 15);
             label3.TextFrame.TextRange.Text = (0).ToString("0");
-            label3.TextFrame.TextRange.Font.Size = 15;
+            label3.TextFrame.TextRange.Font.Size = fontsize;
 
             #endregion
 
@@ -1216,33 +1245,33 @@ namespace WindowsFormsApplication2
                 sodiumPotassiumShape.Fill.Transparency = 0.5f;
                 sodiumPotassiumShape.Line.Visible = Office.MsoTriState.msoFalse;
 
-                // Add Text Labels for Sections
-                PowerPoint.Shape text1 = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal,
-                magnesiumPoints[1, 0] + 20, magnesiumPoints[1, 1] - 60, 150, 30);
-                text1.TextFrame.TextRange.Text = "Magnesium";
-                text1.TextFrame.TextRange.Font.Name = "Times New Roman";
-                text1.TextFrame.TextRange.Font.Size = 8;
-                text1.TextFrame.TextRange.Font.Bold = Office.MsoTriState.msoCTrue;
-                PowerPoint.Shape text2 = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal,
-                calciumPoints[1, 0] + 30, calciumPoints[1, 1] - 70, 100, 30);
-                text2.TextFrame.TextRange.Text = "Calcium type";
-                text2.TextFrame.TextRange.Font.Name = "Times New Roman";
-                text2.TextFrame.TextRange.Font.Size = 8;
-                text2.TextFrame.TextRange.Font.Bold = Office.MsoTriState.msoCTrue;
+                //// Add Text Labels for Sections
+                //PowerPoint.Shape text1 = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal,
+                //magnesiumPoints[1, 0] + 20, magnesiumPoints[1, 1] - 60, 150, 30);
+                //text1.TextFrame.TextRange.Text = "Magnesium";
+                //text1.TextFrame.TextRange.Font.Name = "Times New Roman";
+                //text1.TextFrame.TextRange.Font.Size = fontsize;
+                //text1.TextFrame.TextRange.Font.Bold = Office.MsoTriState.msoCTrue;
+                //PowerPoint.Shape text2 = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal,
+                //calciumPoints[1, 0] + 30, calciumPoints[1, 1] - 70, 100, 30);
+                //text2.TextFrame.TextRange.Text = "Calcium type";
+                //text2.TextFrame.TextRange.Font.Name = "Times New Roman";
+                //text2.TextFrame.TextRange.Font.Size = fontsize;
+                //text2.TextFrame.TextRange.Font.Bold = Office.MsoTriState.msoCTrue;
 
-                PowerPoint.Shape text3 = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal,
-                 sodiumPotassiumPoints[2, 0] + 40, sodiumPotassiumPoints[2, 1] - 90, 100, 30);
-                text3.TextFrame.TextRange.Text = "Sodium and Potassium";
-                text3.TextFrame.TextRange.Font.Name = "Times New Roman";
-                text3.TextFrame.TextRange.Font.Size = 8;
-                text3.TextFrame.TextRange.Font.Bold = Office.MsoTriState.msoCTrue;
+                //PowerPoint.Shape text3 = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal,
+                // sodiumPotassiumPoints[2, 0] + 40, sodiumPotassiumPoints[2, 1] - 90, 100, 30);
+                //text3.TextFrame.TextRange.Text = "Sodium and Potassium";
+                //text3.TextFrame.TextRange.Font.Name = "Times New Roman";
+                //text3.TextFrame.TextRange.Font.Size = fontsize;
+                //text3.TextFrame.TextRange.Font.Bold = Office.MsoTriState.msoCTrue;
 
-                PowerPoint.Shape text4 = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal,
-                calciumPoints[0, 0] + 30, calciumPoints[0, 1] + 10, 100, 30);
-                text4.TextFrame.TextRange.Text = "No dominant type";
-                text4.TextFrame.TextRange.Font.Name = "Times New Roman";
-                text4.TextFrame.TextRange.Font.Size = fontsize;
-                text4.TextFrame.TextRange.Font.Bold = Office.MsoTriState.msoCTrue;
+                //PowerPoint.Shape text4 = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal,
+                //calciumPoints[0, 0] + 30, calciumPoints[0, 1] + 10, 100, 30);
+                //text4.TextFrame.TextRange.Text = "No dominant type";
+                //text4.TextFrame.TextRange.Font.Name = "Times New Roman";
+                //text4.TextFrame.TextRange.Font.Size = fontsize;
+                //text4.TextFrame.TextRange.Font.Bold = Office.MsoTriState.msoCTrue;
 
 
             }
@@ -1286,32 +1315,32 @@ namespace WindowsFormsApplication2
                 chlorideShape.Line.Visible = Office.MsoTriState.msoFalse;
 
                 // Add Text Labels with "Times New Roman" font
-                PowerPoint.Shape text1 = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal,
-                    sulphatePoints[1, 0] + 30, sulphatePoints[1, 1] - 70, 100, 40);
-                text1.TextFrame.TextRange.Text = "Sulphate type";
-                text1.TextFrame.TextRange.Font.Name = "Times New Roman";
-                text1.TextFrame.TextRange.Font.Bold = Office.MsoTriState.msoCTrue;
-                text1.TextFrame.TextRange.Font.Size = fontsize;
+                //PowerPoint.Shape text1 = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal,
+                //    sulphatePoints[1, 0] + 30, sulphatePoints[1, 1] - 70, 100, 40);
+                //text1.TextFrame.TextRange.Text = "Sulphate type";
+                //text1.TextFrame.TextRange.Font.Name = "Times New Roman";
+                //text1.TextFrame.TextRange.Font.Bold = Office.MsoTriState.msoCTrue;
+                //text1.TextFrame.TextRange.Font.Size = fontsize;
 
-                PowerPoint.Shape text2 = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal,
-                    bicarbonatePoints[1, 0] + 20, bicarbonatePoints[1, 1] - 60, 120, 40);
-                text2.TextFrame.TextRange.Text = "Bicarbonate type";
-                text2.TextFrame.TextRange.Font.Name = "Times New Roman";
-                text2.TextFrame.TextRange.Font.Size = fontsize;
-                text2.TextFrame.TextRange.Font.Bold = Office.MsoTriState.msoCTrue;
+                //PowerPoint.Shape text2 = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal,
+                //    bicarbonatePoints[1, 0] + 20, bicarbonatePoints[1, 1] - 60, 120, 40);
+                //text2.TextFrame.TextRange.Text = "Bicarbonate type";
+                //text2.TextFrame.TextRange.Font.Name = "Times New Roman";
+                //text2.TextFrame.TextRange.Font.Size = fontsize;
+                //text2.TextFrame.TextRange.Font.Bold = Office.MsoTriState.msoCTrue;
 
-                PowerPoint.Shape text3 = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal,
-                    chloridePoints[2, 0] + 40, chloridePoints[2, 1] - 70, 100, 60);
-                text3.TextFrame.TextRange.Text = "Chloride type";
-                text3.TextFrame.TextRange.Font.Name = "Times New Roman";
-                text3.TextFrame.TextRange.Font.Size = fontsize;
-                text3.TextFrame.TextRange.Font.Bold = Office.MsoTriState.msoCTrue;
-                PowerPoint.Shape text4 = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal,
-                    bicarbonatePoints[0, 0] + 45, bicarbonatePoints[0, 1] + 10, 100, 40);
-                text4.TextFrame.TextRange.Text = "No dominant type";
-                text4.TextFrame.TextRange.Font.Name = "Times New Roman";
-                text4.TextFrame.TextRange.Font.Size = fontsize;
-                text4.TextFrame.TextRange.Font.Bold = Office.MsoTriState.msoCTrue;
+                //PowerPoint.Shape text3 = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal,
+                //    chloridePoints[2, 0] + 40, chloridePoints[2, 1] - 70, 100, 60);
+                //text3.TextFrame.TextRange.Text = "Chloride type";
+                //text3.TextFrame.TextRange.Font.Name = "Times New Roman";
+                //text3.TextFrame.TextRange.Font.Size = fontsize;
+                //text3.TextFrame.TextRange.Font.Bold = Office.MsoTriState.msoCTrue;
+                //PowerPoint.Shape text4 = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal,
+                //    bicarbonatePoints[0, 0] + 45, bicarbonatePoints[0, 1] + 10, 100, 40);
+                //text4.TextFrame.TextRange.Text = "No dominant type";
+                //text4.TextFrame.TextRange.Font.Name = "Times New Roman";
+                //text4.TextFrame.TextRange.Font.Size = fontsize;
+                //text4.TextFrame.TextRange.Font.Bold = Office.MsoTriState.msoCTrue;
             }
 
             PowerPoint.Shape Labeltext = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal,
@@ -1508,7 +1537,7 @@ namespace WindowsFormsApplication2
                 Color color = Color.FromName(colorName);
                 keywordRange.Font.Color.RGB = ColorTranslator.ToOle(color);
 
-                keywordRange.Font.Size = 10;
+                keywordRange.Font.Size = 15;
                 keywordRange.Font.Bold = Office.MsoTriState.msoTrue;
                 keywordRange.Font.Italic = Office.MsoTriState.msoTrue;
 

@@ -7,6 +7,8 @@ using System.Linq;
 using System.Windows.Forms;
 using Office = Microsoft.Office.Core;
 using PowerPoint = Microsoft.Office.Interop.PowerPoint;
+using System.Runtime.InteropServices;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace WindowsFormsApplication2
 {
@@ -501,15 +503,15 @@ namespace WindowsFormsApplication2
                 }
                 else if (listBoxSelected.Items[i].ToString() == "log Na Vs log Cl")
                 {
-                    clsLogsDrawer.ExportLogNaVsLogClChartToPowerPoint(slide, (int)(presentation.PageSetup.SlideWidth), presentation.PageSetup.SlideHeight,(int)(0.1f*slideWidth),100);
+                    clsLogsDrawer.ExportLogNaVsLogClChartToPowerPoint(slide, (int)((presentation.PageSetup.SlideWidth / 2) - 100),clsConstants.chartYPowerpoint, presentation, 420, 378,(int)(0.1f*slideWidth),100);
                 }
                 else if (listBoxSelected.Items[i].ToString() == "log Mg Vs log Cl")
                 {
-                    clsLogsDrawer.ExportlogMgVslogCltoPowerpoint(slide, (int)( presentation.PageSetup.SlideWidth), presentation.PageSetup.SlideHeight, (int)(0.1f * slideWidth), 100);
+                    clsLogsDrawer.ExportlogMgVslogCltoPowerpoint(slide, (int)((presentation.PageSetup.SlideWidth / 2) - 100), clsConstants.chartYPowerpoint, presentation, 420, 378, (int)(0.1f * slideWidth), 100);
                 }
                 else if (listBoxSelected.Items[i].ToString() == "log Ca Vs log Cl")
                 {
-                    clsLogsDrawer.ExportlogCaVslogCltoPowerPoint(slide, (int)(presentation.PageSetup.SlideWidth), presentation.PageSetup.SlideHeight, (int)(0.1f * slideWidth), 100);
+                    clsLogsDrawer.ExportlogCaVslogCltoPowerPoint(slide, (int)((presentation.PageSetup.SlideWidth / 2) - 100), clsConstants.chartYPowerpoint, presentation, 420, 378, (int)(0.1f * slideWidth), 100);
                 }
                 else if (listBoxSelected.Items[i].ToString() == "Schoeller Diagram")
                 {
@@ -533,17 +535,17 @@ namespace WindowsFormsApplication2
                 else if (listBoxSelected.Items[i].ToString() == "Major Element Logs")
                 {
 
-                    int diagramWidth = 600, diagramHeight = 400;
+                    int diagramWidth = 250, diagramHeight = 150;
                     // First chart (Log Na vs Log Cl) - Top left
-                    clsLogsDrawer.ExportLogNaVsLogClChartToPowerPoint(slide, diagramWidth, diagramHeight, 200, 100);
+                    clsLogsDrawer.ExportLogNaVsLogClChartToPowerPoint(slide,50+ diagramWidth/4,10,presentation, diagramWidth, diagramHeight, 100, 60);
 
                     // Second chart (Log Mg vs Log Cl) - Top right
-                    clsLogsDrawer.ExportlogMgVslogCltoPowerpoint(slide, diagramWidth, diagramHeight, (int)(slideWidth * 0.6f), 100);
+                    clsLogsDrawer.ExportlogMgVslogCltoPowerpoint(slide,400+ diagramWidth / 4,10, presentation, diagramWidth, diagramHeight, 450, 60);
 
                     // Third chart (Log Ca vs Log Cl) - Bottom right
-                    clsLogsDrawer.ExportlogCaVslogCltoPowerPoint(slide, diagramWidth, diagramHeight, (int)(slideWidth * 0.6f), (int)(slideHeight * 0.6f));
+                    clsLogsDrawer.ExportlogCaVslogCltoPowerPoint(slide,170+ diagramWidth / 4, (int)(slideHeight * 0.5f), presentation, diagramWidth, diagramHeight, 220, (int)(slideHeight * 0.6f));
                 }
-                else
+                else if(listBoxSelected.Items[i].ToString()== "ICP Reproducibility")
                 {
                     Rectangle bounds = new Rectangle((int)(0.5f * slideWidth), (int)(0.08f * slideHeight), (int)(0.6 * slideWidth), (int)(0.9 * slideHeight));
                     clsRadarDrawer.ExportRadar3ToPowerpoint(bounds, slide, presentation, flag);
@@ -998,7 +1000,97 @@ namespace WindowsFormsApplication2
                 frmMainForm.mainChartPlotting.Invalidate();
             }
         }
+        public void ReadExcelFile(string filePath)
+        {
+            frmMainForm.flag = false;
+            clsRadarDrawer.maxAl = 0; clsRadarDrawer.maxCo = 0; clsRadarDrawer.maxCu = 0; clsRadarDrawer.maxMn = 0; clsRadarDrawer.maxNi = 0; clsRadarDrawer.maxZn = 0; clsRadarDrawer.maxPb = 0; clsRadarDrawer.maxFe = 0; clsRadarDrawer.maxCd = 0; clsRadarDrawer.maxCr = 0; clsRadarDrawer.maxTl = 0; clsRadarDrawer.maxBe = 0; clsRadarDrawer.maxSe = 0; clsRadarDrawer.maxLi = 0; clsRadarDrawer.maxB = 0;
+            clsRadarDrawer.maxNaCl = 0; clsRadarDrawer.maxClCa = 0; clsRadarDrawer.maxHCO3Cl = 0; clsRadarDrawer.maxClSr = 0; clsRadarDrawer.maxNaCa = 0; clsRadarDrawer.maxKNa = 0; clsRadarDrawer.maxSrMg = 0; clsRadarDrawer.maxMgCl = 0; clsRadarDrawer.maxSrCl = 0; clsRadarDrawer.maxSrK = 0; clsRadarDrawer.maxMgK = 0; clsRadarDrawer.maxCaK = 0; clsRadarDrawer.maxtK = 0; clsRadarDrawer.maxBCl = 0; clsRadarDrawer.maxBNa = 0; clsRadarDrawer.maxBMg = 0;
+            clsRadarDrawer.maxCl = 0; clsRadarDrawer.maxNa = 0; clsRadarDrawer.maxK = 0; clsRadarDrawer.maxCa = 0; clsRadarDrawer.maxMg = 0; clsRadarDrawer.maxBa = 0; clsRadarDrawer.maxSr = 0;
+            var excelApp = new Excel.Application();
+            excelApp.Visible = false;  // Don't show Excel window
+            
+            try
+            {
+                var workbook = excelApp.Workbooks.Open(filePath);
+                var worksheet = (Excel.Worksheet)workbook.Sheets[1]; // Get the first sheet
+
+                // Get the actual last row with data
+                int lastRow = worksheet.Cells.Find(
+                    What: "*",
+                    SearchOrder: Excel.XlSearchOrder.xlByRows,
+                    SearchDirection: Excel.XlSearchDirection.xlPrevious,
+                    MatchCase: false).Row;
+
+                frmImportSamples.WaterData.Clear();
+
+                for (int row = 2; row <= lastRow; row++)
+                {
+                    // Skip empty rows
+                    if (string.IsNullOrWhiteSpace(worksheet.Cells[row, 1].Text))
+                        continue;
 
 
+                    var waterSample = new clsWater();
+
+                    waterSample.ClientID = worksheet.Cells[row, 1].Text;
+                    waterSample.K = ParseDouble(worksheet.Cells[row, 4].Text);
+                    waterSample.Na = ParseDouble(worksheet.Cells[row, 5].Text);
+                    waterSample.Mg = ParseDouble(worksheet.Cells[row, 6].Text);
+                    waterSample.Ca = ParseDouble(worksheet.Cells[row, 7].Text);
+                    waterSample.Al = ParseDouble(worksheet.Cells[row, 8].Text);
+                    waterSample.Co = ParseDouble(worksheet.Cells[row, 9].Text);
+                    waterSample.Cu = ParseDouble(worksheet.Cells[row, 10].Text);
+                    waterSample.Mn = ParseDouble(worksheet.Cells[row, 11].Text);
+                    waterSample.Ni = ParseDouble(worksheet.Cells[row, 12].Text);
+                    waterSample.Sr = ParseDouble(worksheet.Cells[row, 13].Text);
+                    waterSample.Zn = ParseDouble(worksheet.Cells[row, 14].Text);
+                    waterSample.Ba = ParseDouble(worksheet.Cells[row, 15].Text);
+                    waterSample.Pb = ParseDouble(worksheet.Cells[row, 16].Text);
+                    waterSample.Fe = ParseDouble(worksheet.Cells[row, 17].Text);
+                    waterSample.Cd = ParseDouble(worksheet.Cells[row, 18].Text);
+                    waterSample.Cr = ParseDouble(worksheet.Cells[row, 19].Text);
+                    waterSample.Tl = ParseDouble(worksheet.Cells[row, 20].Text);
+                    waterSample.Be = ParseDouble(worksheet.Cells[row, 21].Text);
+                    waterSample.Se = ParseDouble(worksheet.Cells[row, 22].Text);
+                    waterSample.B = ParseDouble(worksheet.Cells[row, 23].Text);
+                    waterSample.Li = ParseDouble(worksheet.Cells[row, 24].Text);
+                    waterSample.color = frmImportSamples.GetRandomColor(false);
+                    frmImportSamples.WaterData.Add(waterSample);
+                }
+
+                workbook.Close(false);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+            finally
+            {
+                excelApp.Quit();
+            }
+        }
+        private double ParseDouble(string value)
+        {
+            value = value.Replace("<", "").Replace(">", "");
+            return double.TryParse(value, out double result) ? result : 0;
+        }
+        private void importFromExcelMenuItem_Click(object sender, EventArgs e)
+        {
+            // Create an OpenFileDialog instance
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+
+            // Set the filter to only show Excel files
+            openFileDialog.Filter = "Excel Files (*.xlsx;*.xls)|*.xlsx;*.xls";
+
+            // Show the dialog and check if the user selected a file
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                // Get the selected file path
+                string filePath = openFileDialog.FileName;
+                ReadExcelFile(filePath);
+                
+                MessageBox.Show("Selected file: " + filePath);
+            }
+        }
     }
 }

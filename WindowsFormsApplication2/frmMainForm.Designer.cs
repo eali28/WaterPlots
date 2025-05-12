@@ -9,7 +9,6 @@ namespace WindowsFormsApplication2
     {
         private System.Windows.Forms.CheckBox checkBoxSelectAll;
         private System.Windows.Forms.RadioButton radioButtonWater;
-        public static System.Windows.Forms.ListBox listBoxSelected;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton buttonOpenProject;
         private System.Windows.Forms.ToolStripButton buttonImport;
@@ -49,7 +48,7 @@ namespace WindowsFormsApplication2
             this.buttonImport = new System.Windows.Forms.ToolStripButton();
             this.radioButtonWater = new System.Windows.Forms.RadioButton();
             listBoxCharts = new System.Windows.Forms.ListBox();
-            listBoxSelected = new System.Windows.Forms.ListBox();
+            this.listBoxSelected = new System.Windows.Forms.ListBox();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.exportMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.printPowerpoint = new System.Windows.Forms.ToolStripMenuItem();
@@ -133,12 +132,12 @@ namespace WindowsFormsApplication2
             // 
             // listBoxSelected
             // 
-            listBoxSelected.FormattingEnabled = true;
-            listBoxSelected.Location = new System.Drawing.Point(12, 397);
-            listBoxSelected.Name = "listBoxSelected";
-            listBoxSelected.Size = new System.Drawing.Size(165, 199);
-            listBoxSelected.TabIndex = 5;
-            listBoxSelected.SelectedIndexChanged += new System.EventHandler(this.listBoxSelected_SelectedIndexChanged);
+            this.listBoxSelected.FormattingEnabled = true;
+            this.listBoxSelected.Location = new System.Drawing.Point(12, 397);
+            this.listBoxSelected.Name = "listBoxSelected";
+            this.listBoxSelected.Size = new System.Drawing.Size(165, 199);
+            this.listBoxSelected.TabIndex = 5;
+            this.listBoxSelected.SelectedIndexChanged += new System.EventHandler(this.listBoxSelected_SelectedIndexChanged);
             // 
             // menuStrip
             // 
@@ -182,19 +181,19 @@ namespace WindowsFormsApplication2
             // openMenuItem
             // 
             this.openMenuItem.Name = "openMenuItem";
-            this.openMenuItem.Size = new System.Drawing.Size(114, 22);
+            this.openMenuItem.Size = new System.Drawing.Size(180, 22);
             this.openMenuItem.Text = "Open";
             // 
             // saveMenuItem
             // 
             this.saveMenuItem.Name = "saveMenuItem";
-            this.saveMenuItem.Size = new System.Drawing.Size(114, 22);
+            this.saveMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveMenuItem.Text = "Save";
             // 
             // saveAsMenuItem
             // 
             this.saveAsMenuItem.Name = "saveAsMenuItem";
-            this.saveAsMenuItem.Size = new System.Drawing.Size(114, 22);
+            this.saveAsMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveAsMenuItem.Text = "Save As";
             // 
             // importMenu
@@ -203,7 +202,7 @@ namespace WindowsFormsApplication2
             this.importFromDbMenuItem,
             this.importFromExcelMenuItem});
             this.importMenu.Name = "importMenu";
-            this.importMenu.Size = new System.Drawing.Size(114, 22);
+            this.importMenu.Size = new System.Drawing.Size(180, 22);
             this.importMenu.Text = "Import";
             // 
             // importFromDbMenuItem
@@ -217,6 +216,7 @@ namespace WindowsFormsApplication2
             this.importFromExcelMenuItem.Name = "importFromExcelMenuItem";
             this.importFromExcelMenuItem.Size = new System.Drawing.Size(192, 22);
             this.importFromExcelMenuItem.Text = "Import From Excel";
+            this.importFromExcelMenuItem.Click += new System.EventHandler(this.importFromExcelMenuItem_Click);
             // 
             // checkBoxSelectAll
             // 
@@ -269,7 +269,7 @@ namespace WindowsFormsApplication2
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.radioButtonWater);
             this.Controls.Add(listBoxCharts);
-            this.Controls.Add(listBoxSelected);
+            this.Controls.Add(this.listBoxSelected);
             this.MainMenuStrip = this.menuStrip;
             this.Name = "frmMainForm";
             this.Text = "Water Plots";
@@ -426,7 +426,7 @@ namespace WindowsFormsApplication2
                                 writer.WriteLine("X(metamorphic) = (Cl - Na) / Mg");
                                 writer.WriteLine("Y(desulphurization) = (So4 * 100) / Cl");
                                 writer.WriteLine("");
-                                writer.WriteLine("# Radar Driagram 1");
+                                writer.WriteLine("# Elements Molar Concentration");
                                 writer.WriteLine("Calculations: ");
                                 writer.WriteLine("Bm = 35453, Bn = 22989.7, Bo = 39098.3, Bp = 40078, Bq = 24305, Br = 137327, Bs = 87620");
                                 writer.WriteLine("Normalized Na=Na/Bn");
@@ -437,7 +437,7 @@ namespace WindowsFormsApplication2
                                 writer.WriteLine("Normalized Sr=Sr/Bs");
                                 writer.WriteLine("Normalized Ba=Ba/Br");
                                 writer.WriteLine("");
-                                writer.WriteLine("Radar Diagram 2");
+                                writer.WriteLine("#Genetic Origin and Alteration Plot");
                                 writer.WriteLine("Calculations: ");
                                 writer.WriteLine("EV_Na-Ca=Na / Ca");
                                 writer.WriteLine("GT_K-Na=K / Na");
@@ -491,6 +491,7 @@ namespace WindowsFormsApplication2
         private ToolStripMenuItem importFromExcelMenuItem;
         private ToolStripMenuItem exportMenu;
         private ToolStripMenuItem printPowerpoint;
+        public ListBox listBoxSelected;
         public static ToolStripButton saveIcon;
         public static ListBox listBoxCharts;
         public static PictureBox mainChartPlotting;
