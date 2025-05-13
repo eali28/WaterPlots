@@ -34,10 +34,16 @@ namespace WindowsFormsApplication2
 
 
         }
+        /// <summary>
+        /// Handles the size change event of the chart, ensuring the legend is properly redrawn
+        /// </summary>
         private void Chart1_SizeChanged(object sender, EventArgs e)
         {
             legendPictureBox.Invalidate();
         }
+        /// <summary>
+        /// Updates the available chart types when water analysis is selected
+        /// </summary>
         private void radioButtonWater_CheckedChanged(object sender, EventArgs e)
         {
             if (radioButtonWater.Checked)
@@ -58,6 +64,9 @@ namespace WindowsFormsApplication2
                 listBoxCharts.Items.Add("Major Element Logs");
             }
         }
+        /// <summary>
+        /// Handles double-click events on chart items, adding them to the selected charts list
+        /// </summary>
         private void listBoxCharts_DoubleClick(object sender, EventArgs e)
         {
             if (listBoxCharts.SelectedItem != null)
@@ -87,6 +96,9 @@ namespace WindowsFormsApplication2
             }
         }
 
+        /// <summary>
+        /// Initializes the form and sets up initial UI state
+        /// </summary>
         private void Form1_Load(object sender, EventArgs e)
         {
             listBoxCharts.Refresh();
@@ -102,6 +114,9 @@ namespace WindowsFormsApplication2
 
 
         }
+        /// <summary>
+        /// Handles opening and parsing of SCSH files containing water analysis data
+        /// </summary>
         private void buttonopenFile_Click(object sender, EventArgs e)
         {
         using (OpenFileDialog openFileDialog = new OpenFileDialog())
@@ -216,6 +231,9 @@ namespace WindowsFormsApplication2
         }
     }
 
+        /// <summary>
+        /// Adjusts the main chart plotting area when the form is resized
+        /// </summary>
         private void Form1_SizeChanged(object sender, EventArgs e)
         {
             // Example: adjust picturebox size to match form
@@ -226,6 +244,9 @@ namespace WindowsFormsApplication2
 
 
 
+        /// <summary>
+        /// Handles the select all checkbox functionality for chart selection
+        /// </summary>
         private void checkBoxSelectAll_CheckedChanged(object sender, EventArgs e)
         {
             // Handle the "Select All" checkbox
@@ -244,6 +265,9 @@ namespace WindowsFormsApplication2
             mainChartPlotting.Invalidate();
         }
 
+        /// <summary>
+        /// Updates the chart display when a different chart type is selected
+        /// </summary>
         private void listBoxCharts_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (listBoxCharts.SelectedItem != null)
@@ -366,6 +390,9 @@ namespace WindowsFormsApplication2
         }
 
 
+        /// <summary>
+        /// Removes selected charts from the selection list
+        /// </summary>
         private void buttonDelete_Click(object sender, EventArgs e)
         {
             if (listBoxSelected.SelectedItem != null)
@@ -390,6 +417,9 @@ namespace WindowsFormsApplication2
 
 
 
+        /// <summary>
+        /// Updates the chart display when a different chart is selected from the selection list
+        /// </summary>
         private void listBoxSelected_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (listBoxSelected.SelectedItem != null)
@@ -457,6 +487,9 @@ namespace WindowsFormsApplication2
             }
         }
 
+        /// <summary>
+        /// Exports selected charts to PowerPoint presentation
+        /// </summary>
         private void printPowerpoint_Click(object sender, EventArgs e)
         {
             string userName = Environment.UserName;
@@ -554,7 +587,9 @@ namespace WindowsFormsApplication2
             listBoxCharts.Refresh();
             listBoxSelected.Refresh();
         }
-        // Event handler to update chart scales based on user input from textboxes
+        /// <summary>
+        /// Updates the scales for radar charts based on user input
+        /// </summary>
         public static void UpdateScalesinRadar(string name)
         {
             // Check and update each scale based on the user input from corresponding textboxes
@@ -570,22 +605,22 @@ namespace WindowsFormsApplication2
                             clsRadarDrawer.maxCl = double.Parse(clsRadarDrawer.Radar1Scales[i]);
                                 break;
                         case 1:
-                                clsRadarDrawer.maxNa = double.Parse(clsRadarDrawer.Radar1Scales[i]);
+                                clsRadarDrawer.maxNa1 = double.Parse(clsRadarDrawer.Radar1Scales[i]);
                                 break;
                         case 2:
-                                clsRadarDrawer.maxK = double.Parse(clsRadarDrawer.Radar1Scales[i]);
+                                clsRadarDrawer.maxK1 = double.Parse(clsRadarDrawer.Radar1Scales[i]);
                                 break;
                         case 3:
-                                clsRadarDrawer.maxCa = double.Parse(clsRadarDrawer.Radar1Scales[i]);
+                                clsRadarDrawer.maxCa1 = double.Parse(clsRadarDrawer.Radar1Scales[i]);
                                 break;
                         case 4:
-                                clsRadarDrawer.maxMg = double.Parse(clsRadarDrawer.Radar1Scales[i]);
+                                clsRadarDrawer.maxMg1 = double.Parse(clsRadarDrawer.Radar1Scales[i]);
                                 break;
                         case 5:
-                                clsRadarDrawer.maxBa = double.Parse(clsRadarDrawer.Radar1Scales[i]);
+                                clsRadarDrawer.maxBa1 = double.Parse(clsRadarDrawer.Radar1Scales[i]);
                                 break;
                         case 6:
-                                clsRadarDrawer.maxSr = double.Parse(clsRadarDrawer.Radar1Scales[i]);
+                                clsRadarDrawer.maxSr1 = double.Parse(clsRadarDrawer.Radar1Scales[i]);
                                 break;
 
                     }
@@ -665,16 +700,16 @@ namespace WindowsFormsApplication2
                     switch (i)
                     {
                         case 0:
-                            clsRadarDrawer.maxNa = double.Parse(clsRadarDrawer.Radar3Scales[i]);
+                            clsRadarDrawer.maxNa3 = double.Parse(clsRadarDrawer.Radar3Scales[i]);
                             break;
                         case 1:
-                            clsRadarDrawer.maxK = double.Parse(clsRadarDrawer.Radar3Scales[i]);
+                            clsRadarDrawer.maxK3 = double.Parse(clsRadarDrawer.Radar3Scales[i]);
                             break;
                         case 2:
-                            clsRadarDrawer.maxCa = double.Parse(clsRadarDrawer.Radar3Scales[i]);
+                            clsRadarDrawer.maxCa3 = double.Parse(clsRadarDrawer.Radar3Scales[i]);
                             break;
                         case 3:
-                            clsRadarDrawer.maxMg = double.Parse(clsRadarDrawer.Radar3Scales[i]);
+                            clsRadarDrawer.maxMg3 = double.Parse(clsRadarDrawer.Radar3Scales[i]);
                             break;
                         case 4:
                             clsRadarDrawer.maxAl = double.Parse(clsRadarDrawer.Radar3Scales[i]);
@@ -692,13 +727,13 @@ namespace WindowsFormsApplication2
                             clsRadarDrawer.maxNi = double.Parse(clsRadarDrawer.Radar3Scales[i]);
                             break;
                         case 9:
-                            clsRadarDrawer.maxSr = double.Parse(clsRadarDrawer.Radar3Scales[i]);
+                            clsRadarDrawer.maxSr3 = double.Parse(clsRadarDrawer.Radar3Scales[i]);
                             break;
                         case 10:
                             clsRadarDrawer.maxZn = double.Parse(clsRadarDrawer.Radar3Scales[i]);
                             break;
                         case 11:
-                            clsRadarDrawer.maxBa = double.Parse(clsRadarDrawer.Radar3Scales[i]);
+                            clsRadarDrawer.maxBa3 = double.Parse(clsRadarDrawer.Radar3Scales[i]);
                             break;
                         case 12:
                             clsRadarDrawer.maxPb = double.Parse(clsRadarDrawer.Radar3Scales[i]);
@@ -769,12 +804,18 @@ namespace WindowsFormsApplication2
             
         }
 
+        /// <summary>
+        /// Handles the update scales button click event
+        /// </summary>
         private void ButtonUpdateScales_Click(object sender, EventArgs e)
         {
             string selectedChart = listBoxCharts.SelectedItem.ToString();
             UpdateScalesinRadar(selectedChart);
         }
 
+        /// <summary>
+        /// Opens the radar legend form for customization
+        /// </summary>
         public static void legendPictureBoxRadar(object sender, EventArgs e)
         {
             frmRadarLegend itemDetails = new frmRadarLegend();
@@ -786,6 +827,9 @@ namespace WindowsFormsApplication2
                 UpdateRadarDiagram();
             }
         }
+        /// <summary>
+        /// Opens the radar scales form for customization
+        /// </summary>
         public static void PictureBoxRadarScales(object sender, EventArgs e)
         {
             frmRadarScales itemDetails = new frmRadarScales();
@@ -797,6 +841,9 @@ namespace WindowsFormsApplication2
                 UpdateRadarDiagram();
             }
         }
+        /// <summary>
+        /// Opens the Schoeller diagram details form
+        /// </summary>
         public static void pictureBoxSchoeller_Click(object sender, EventArgs e)
         {
             SchoellerDetails itemDetails = new SchoellerDetails();
@@ -809,6 +856,9 @@ namespace WindowsFormsApplication2
             }
         }
 
+        /// <summary>
+        /// Opens the pie chart legend form
+        /// </summary>
         public static void pictureBoxPie_Click(object sender, EventArgs e)
         {
             frmPieLegend itemDetails = new frmPieLegend();
@@ -818,6 +868,9 @@ namespace WindowsFormsApplication2
             UpdatePieDiagram();
         }
         
+        /// <summary>
+        /// Opens the Piper diagram legend form
+        /// </summary>
         public static void pictureBoxPiper_Click(object sender, EventArgs e)
         {
             frmPiperLegend itemDetails = new frmPiperLegend();
@@ -828,6 +881,9 @@ namespace WindowsFormsApplication2
             UpdatePiperDiagram();
         }
 
+        /// <summary>
+        /// Opens the Collins diagram legend form
+        /// </summary>
         public static void pictureBoxCollins_Click(object sender, EventArgs e)
         {
             frmCollinsLegend itemDetails = new frmCollinsLegend();
@@ -838,6 +894,9 @@ namespace WindowsFormsApplication2
             UpdateCollinsDiagram();
         }
 
+        /// <summary>
+        /// Updates the radar diagram display with current settings
+        /// </summary>
         public static void UpdateRadarDiagram()
         {
 
@@ -875,6 +934,9 @@ namespace WindowsFormsApplication2
             
         }
 
+        /// <summary>
+        /// Updates the Piper diagram display with current settings
+        /// </summary>
         public static void UpdatePiperDiagram()
         {
             if (listBoxCharts.SelectedItem != null && listBoxCharts.SelectedItem.ToString() == "Piper Diagram")
@@ -888,6 +950,9 @@ namespace WindowsFormsApplication2
                 frmMainForm.mainChartPlotting.Invalidate();
             }
         }
+        /// <summary>
+        /// Updates the pie chart display with current settings
+        /// </summary>
         public static void UpdatePieDiagram()
         {
 
@@ -902,6 +967,9 @@ namespace WindowsFormsApplication2
             }
             
         }
+        /// <summary>
+        /// Updates the Schoeller diagram display with current settings
+        /// </summary>
         public static void UpdateSchoellerDiagram()
         {
             if (listBoxCharts.SelectedItem != null && listBoxCharts.SelectedItem.ToString() == "Schoeller Diagram")
@@ -914,6 +982,9 @@ namespace WindowsFormsApplication2
                 frmMainForm.mainChartPlotting.Invalidate();
             }
         }
+        /// <summary>
+        /// Updates the Collins diagram display with current settings
+        /// </summary>
         public static void UpdateCollinsDiagram()
         {
             if (listBoxCharts.SelectedItem != null && listBoxCharts.SelectedItem.ToString() == "Collins Diagram")
@@ -926,6 +997,9 @@ namespace WindowsFormsApplication2
                 frmMainForm.mainChartPlotting.Invalidate();
             }
         }
+        /// <summary>
+        /// Updates the bubble diagram display with current settings
+        /// </summary>
         public static void UpdateBubbleDiagram()
         {
             if (listBoxCharts.SelectedItem != null && listBoxCharts.SelectedItem.ToString() == "Bubble Diagram")
@@ -938,6 +1012,9 @@ namespace WindowsFormsApplication2
                 frmMainForm.mainChartPlotting.Invalidate();
             }
         }
+        /// <summary>
+        /// Updates the log diagrams display with current settings
+        /// </summary>
         public static void UpdateLogsDiagram()
         {
             if (listBoxCharts.SelectedItem == "log Na Vs log Cl")
@@ -988,6 +1065,9 @@ namespace WindowsFormsApplication2
             }
             
         }
+        /// <summary>
+        /// Updates the Stiff diagram display with current settings
+        /// </summary>
         public static void UpdateStiffDiagram()
         {
             if (listBoxCharts.SelectedItem != null && listBoxCharts.SelectedItem.ToString() == "Stiff Diagram")
@@ -1000,12 +1080,16 @@ namespace WindowsFormsApplication2
                 frmMainForm.mainChartPlotting.Invalidate();
             }
         }
+        /// <summary>
+        /// Reads and processes water analysis data from an Excel file
+        /// </summary>
         public void ReadExcelFile(string filePath)
         {
             frmMainForm.flag = false;
-            clsRadarDrawer.maxAl = 0; clsRadarDrawer.maxCo = 0; clsRadarDrawer.maxCu = 0; clsRadarDrawer.maxMn = 0; clsRadarDrawer.maxNi = 0; clsRadarDrawer.maxZn = 0; clsRadarDrawer.maxPb = 0; clsRadarDrawer.maxFe = 0; clsRadarDrawer.maxCd = 0; clsRadarDrawer.maxCr = 0; clsRadarDrawer.maxTl = 0; clsRadarDrawer.maxBe = 0; clsRadarDrawer.maxSe = 0; clsRadarDrawer.maxLi = 0; clsRadarDrawer.maxB = 0;
-            clsRadarDrawer.maxNaCl = 0; clsRadarDrawer.maxClCa = 0; clsRadarDrawer.maxHCO3Cl = 0; clsRadarDrawer.maxClSr = 0; clsRadarDrawer.maxNaCa = 0; clsRadarDrawer.maxKNa = 0; clsRadarDrawer.maxSrMg = 0; clsRadarDrawer.maxMgCl = 0; clsRadarDrawer.maxSrCl = 0; clsRadarDrawer.maxSrK = 0; clsRadarDrawer.maxMgK = 0; clsRadarDrawer.maxCaK = 0; clsRadarDrawer.maxtK = 0; clsRadarDrawer.maxBCl = 0; clsRadarDrawer.maxBNa = 0; clsRadarDrawer.maxBMg = 0;
-            clsRadarDrawer.maxCl = 0; clsRadarDrawer.maxNa = 0; clsRadarDrawer.maxK = 0; clsRadarDrawer.maxCa = 0; clsRadarDrawer.maxMg = 0; clsRadarDrawer.maxBa = 0; clsRadarDrawer.maxSr = 0;
+            //clsRadarDrawer.maxAl = 0; clsRadarDrawer.maxCo = 0; clsRadarDrawer.maxCu = 0; clsRadarDrawer.maxMn = 0; clsRadarDrawer.maxNi = 0; clsRadarDrawer.maxZn = 0; clsRadarDrawer.maxPb = 0; clsRadarDrawer.maxFe = 0; clsRadarDrawer.maxCd = 0; clsRadarDrawer.maxCr = 0; clsRadarDrawer.maxTl = 0; clsRadarDrawer.maxBe = 0; clsRadarDrawer.maxSe = 0; clsRadarDrawer.maxLi = 0; clsRadarDrawer.maxB = 0;
+            //clsRadarDrawer.maxNaCl = 0; clsRadarDrawer.maxClCa = 0; clsRadarDrawer.maxHCO3Cl = 0; clsRadarDrawer.maxClSr = 0; clsRadarDrawer.maxNaCa = 0; clsRadarDrawer.maxKNa = 0; clsRadarDrawer.maxSrMg = 0; clsRadarDrawer.maxMgCl = 0; clsRadarDrawer.maxSrCl = 0; clsRadarDrawer.maxSrK = 0; clsRadarDrawer.maxMgK = 0; clsRadarDrawer.maxCaK = 0; clsRadarDrawer.maxtK = 0; clsRadarDrawer.maxBCl = 0; clsRadarDrawer.maxBNa = 0; clsRadarDrawer.maxBMg = 0;
+            //clsRadarDrawer.maxCl = 0; clsRadarDrawer.maxNa1 = 0; clsRadarDrawer.maxK1 = 0; clsRadarDrawer.maxCa1 = 0; clsRadarDrawer.maxMg1 = 0; clsRadarDrawer.maxBa1 = 0; clsRadarDrawer.maxSr1 = 0;
+            //clsRadarDrawer.maxNa3 = 0; clsRadarDrawer.maxK3 = 0; clsRadarDrawer.maxCa3 = 0; clsRadarDrawer.maxMg3 = 0; clsRadarDrawer.maxBa3 = 0; clsRadarDrawer.maxSr3 = 0;
             var excelApp = new Excel.Application();
             excelApp.Visible = false;  // Don't show Excel window
             
@@ -1021,59 +1105,81 @@ namespace WindowsFormsApplication2
                     SearchDirection: Excel.XlSearchDirection.xlPrevious,
                     MatchCase: false).Row;
 
+                // Get the header row to find column indices
+                int headerRow = 1;
+                Dictionary<string, int> columnIndices = new Dictionary<string, int>();
+                
+                // Read header row to get column indices
+                Excel.Range headerRange = worksheet.Range[worksheet.Cells[headerRow, 1], worksheet.Cells[headerRow, worksheet.UsedRange.Columns.Count]];
+                foreach (Excel.Range cell in headerRange)
+                {
+                    string headerText = cell.Text.Trim();
+                    if (!string.IsNullOrEmpty(headerText))
+                    {
+                        columnIndices[headerText] = cell.Column;
+                    }
+                }
+
                 frmImportSamples.WaterData.Clear();
 
-                for (int row = 2; row <= lastRow; row++)
+                for (int row = headerRow + 1; row <= lastRow; row++)
                 {
                     // Skip empty rows
-                    if (string.IsNullOrWhiteSpace(worksheet.Cells[row, 1].Text))
+                    if (string.IsNullOrWhiteSpace(worksheet.Cells[row, columnIndices["Client ID"]].Text))
                         continue;
-
 
                     var waterSample = new clsWater();
 
-                    waterSample.ClientID = worksheet.Cells[row, 1].Text;
-                    waterSample.K = ParseDouble(worksheet.Cells[row, 4].Text);
-                    waterSample.Na = ParseDouble(worksheet.Cells[row, 5].Text);
-                    waterSample.Mg = ParseDouble(worksheet.Cells[row, 6].Text);
-                    waterSample.Ca = ParseDouble(worksheet.Cells[row, 7].Text);
-                    waterSample.Al = ParseDouble(worksheet.Cells[row, 8].Text);
-                    waterSample.Co = ParseDouble(worksheet.Cells[row, 9].Text);
-                    waterSample.Cu = ParseDouble(worksheet.Cells[row, 10].Text);
-                    waterSample.Mn = ParseDouble(worksheet.Cells[row, 11].Text);
-                    waterSample.Ni = ParseDouble(worksheet.Cells[row, 12].Text);
-                    waterSample.Sr = ParseDouble(worksheet.Cells[row, 13].Text);
-                    waterSample.Zn = ParseDouble(worksheet.Cells[row, 14].Text);
-                    waterSample.Ba = ParseDouble(worksheet.Cells[row, 15].Text);
-                    waterSample.Pb = ParseDouble(worksheet.Cells[row, 16].Text);
-                    waterSample.Fe = ParseDouble(worksheet.Cells[row, 17].Text);
-                    waterSample.Cd = ParseDouble(worksheet.Cells[row, 18].Text);
-                    waterSample.Cr = ParseDouble(worksheet.Cells[row, 19].Text);
-                    waterSample.Tl = ParseDouble(worksheet.Cells[row, 20].Text);
-                    waterSample.Be = ParseDouble(worksheet.Cells[row, 21].Text);
-                    waterSample.Se = ParseDouble(worksheet.Cells[row, 22].Text);
-                    waterSample.B = ParseDouble(worksheet.Cells[row, 23].Text);
-                    waterSample.Li = ParseDouble(worksheet.Cells[row, 24].Text);
+                    // Read data using column names
+                    waterSample.ClientID = worksheet.Cells[row, columnIndices["Client ID"]].Text;
+                    waterSample.K = ParseDouble(worksheet.Cells[row, columnIndices["K"]].Text);
+                    waterSample.Na = ParseDouble(worksheet.Cells[row, columnIndices["Na"]].Text);
+                    waterSample.Mg = ParseDouble(worksheet.Cells[row, columnIndices["Mg"]].Text);
+                    waterSample.Ca = ParseDouble(worksheet.Cells[row, columnIndices["Ca"]].Text);
+                    waterSample.Al = ParseDouble(worksheet.Cells[row, columnIndices["Al"]].Text);
+                    waterSample.Co = ParseDouble(worksheet.Cells[row, columnIndices["Co"]].Text);
+                    waterSample.Cu = ParseDouble(worksheet.Cells[row, columnIndices["Cu"]].Text);
+                    waterSample.Mn = ParseDouble(worksheet.Cells[row, columnIndices["Mn"]].Text);
+                    waterSample.Ni = ParseDouble(worksheet.Cells[row, columnIndices["Ni"]].Text);
+                    waterSample.Sr = ParseDouble(worksheet.Cells[row, columnIndices["Sr"]].Text);
+                    waterSample.Zn = ParseDouble(worksheet.Cells[row, columnIndices["Zn"]].Text);
+                    waterSample.Ba = ParseDouble(worksheet.Cells[row, columnIndices["Ba"]].Text);
+                    waterSample.Pb = ParseDouble(worksheet.Cells[row, columnIndices["Pb"]].Text);
+                    waterSample.Fe = ParseDouble(worksheet.Cells[row, columnIndices["Fe"]].Text);
+                    waterSample.Cd = ParseDouble(worksheet.Cells[row, columnIndices["Cd"]].Text);
+                    waterSample.Cr = ParseDouble(worksheet.Cells[row, columnIndices["Cr"]].Text);
+                    waterSample.Tl = ParseDouble(worksheet.Cells[row, columnIndices["Tl"]].Text);
+                    waterSample.Be = ParseDouble(worksheet.Cells[row, columnIndices["Be"]].Text);
+                    waterSample.Se = ParseDouble(worksheet.Cells[row, columnIndices["Se"]].Text);
+                    waterSample.B = ParseDouble(worksheet.Cells[row, columnIndices["B"]].Text);
+                    waterSample.Li = ParseDouble(worksheet.Cells[row, columnIndices["Li"]].Text);
                     waterSample.color = frmImportSamples.GetRandomColor(false);
                     frmImportSamples.WaterData.Add(waterSample);
                 }
 
                 workbook.Close(false);
+                UpdateRadarDiagram();
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"An error occurred: {ex.Message}");
+                MessageBox.Show($"An error occurred while reading the Excel file: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
                 excelApp.Quit();
             }
         }
+        /// <summary>
+        /// Parses a string value to a double, handling special characters
+        /// </summary>
         private double ParseDouble(string value)
         {
             value = value.Replace("<", "").Replace(">", "");
             return double.TryParse(value, out double result) ? result : 0;
         }
+        /// <summary>
+        /// Handles the import from Excel menu item click event
+        /// </summary>
         private void importFromExcelMenuItem_Click(object sender, EventArgs e)
         {
             // Create an OpenFileDialog instance

@@ -16,20 +16,32 @@ namespace WindowsFormsApplication2
 {
     public class clsRadarDrawer
     {
-        
-        public static double maxCl = 0, maxNa = 0, maxK = 0, maxCa = 0, maxMg = 0, maxBa = 0, maxSr = 0;
+        /// <summary>
+        /// Scale values for First Radar Diagram
+        /// </summary>
+        public static double maxCl = 0, maxNa1 = 0, maxK1 = 0, maxCa1 = 0, maxMg1 = 0, maxBa1 = 0, maxSr1 = 0;
+        /// <summary>
+        /// Scale values for Second Radar Diagram
+        /// </summary>
         public static double maxNaCl = 0, maxClCa = 0, maxHCO3Cl = 0, maxClSr = 0, maxNaCa = 0, maxKNa = 0, maxSrMg = 0, maxMgCl = 0, maxSrCl = 0, maxSrK = 0, maxMgK = 0, maxCaK = 0, maxtK = 0, maxBCl = 0, maxBNa = 0, maxBMg = 0;
-        public static double maxAl = 0, maxCo = 0, maxCu = 0, maxMn = 0, maxNi = 0, maxZn = 0, maxPb = 0, maxFe = 0, maxCd = 0, maxCr = 0, maxTl = 0, maxBe = 0, maxSe = 0, maxLi=0,maxB=0;
+        /// <summary>
+        /// Scale values for Third Radar Diagram
+        /// </summary>
+        public static double maxNa3 = 0, maxK3 = 0, maxCa3 = 0, maxMg3 = 0, maxBa3 = 0, maxSr3 = 0,maxAl = 0, maxCo = 0, maxCu = 0, maxMn = 0, maxNi = 0, maxZn = 0, maxPb = 0, maxFe = 0, maxCd = 0, maxCr = 0, maxTl = 0, maxBe = 0, maxSe = 0, maxLi=0,maxB=0;
+        /// <summary>
+        /// Factors to convert into (mol/L)
+        /// </summary>
         public static double Bm = 35453, Bn = 22989.7, Bo = 39098.3, Bp = 40078, Bq = 24305, Br = 137327, Bs = 87620;
         public static TextBox txt;
         public static string[] Radar1Scales=new string[7];
         public static string[] Radar2Scales = new string[16];
         public static string[] Radar3Scales = new string[21];
         /// <summary>
-        /// Draw Radar legend
+        /// Draws a legend for the radar chart showing sample information including well name, client ID, and depth.
+        /// The legend is positioned on the right side of the chart and includes colored lines matching each sample's style.
         /// </summary>
-        /// <param name="g">graphics</param>
-        /// <param name="bounds">bounds of the radar</param>
+        /// <param name="g">Graphics object used for drawing</param>
+        /// <param name="bounds">Bounds of the radar chart area</param>
         public static void RadarLegend(Graphics g, Rectangle bounds)
         {
             #region Draw Legend
@@ -114,6 +126,11 @@ namespace WindowsFormsApplication2
 
             #endregion
         }
+        /// <summary>
+        /// Draws a legend for the radar chart in PowerPoint format, showing sample information including well name, client ID, and depth.
+        /// The legend is positioned on the right side of the slide and includes colored lines matching each sample's style.
+        /// </summary>
+        /// <param name="slide">PowerPoint slide to draw the legend on</param>
         public static void RadarLegendPowerpoint(PowerPoint.Slide slide)
         {
             #region Draw Legend
@@ -177,11 +194,12 @@ namespace WindowsFormsApplication2
         }
 
         /// <summary>
-        /// Draws the first radar diagram
+        /// Draws the first radar chart showing molar concentrations of major ions (Cl, Na, K, Ca, Mg, Ba, Sr).
+        /// Each axis represents a different ion and shows its maximum concentration value.
         /// </summary>
-        /// <param name="g"></param>
-        /// <param name="bounds"></param>
-        /// <param name="flag"></param>
+        /// <param name="g">Graphics object used for drawing</param>
+        /// <param name="bounds">Bounds of the radar chart area</param>
+        /// <param name="flag">Flag to control whether to recompute maximum values</param>
         public static void DrawRadarChart1(Graphics g, Rectangle bounds, bool flag)
         {
             frmMainForm.legendPictureBox.MouseDoubleClick -= frmMainForm.pictureBoxPiper_Click;
@@ -203,7 +221,7 @@ namespace WindowsFormsApplication2
             PrecomputeMaxValues(flag);
 
 
-            Radar1Scales = new string[] { maxCl.ToString(), maxNa.ToString(), maxK.ToString(), maxCa.ToString(), maxMg.ToString(), maxBa.ToString(), maxSr.ToString() };
+            Radar1Scales = new string[] { maxCl.ToString(), maxNa1.ToString(), maxK1.ToString(), maxCa1.ToString(), maxMg1.ToString(), maxBa1.ToString(), maxSr1.ToString() };
 
             Font AxisFont = new Font("Times New Roman", fontSize, FontStyle.Bold);
             List<string> scales = new List<string>();
@@ -272,13 +290,13 @@ namespace WindowsFormsApplication2
             {
                 sampleData[i] = new clsRadarScale[]
                 {
-                new clsRadarScale { Item = frmImportSamples.WaterData[i].K / Bo, Scale = maxK},
-                new clsRadarScale { Item = frmImportSamples.WaterData[i].Ca / Bp, Scale = maxCa},
-                new clsRadarScale { Item = frmImportSamples.WaterData[i].Mg / Bq, Scale = maxMg},
-                new clsRadarScale { Item = frmImportSamples.WaterData[i].Ba / Br, Scale = maxBa},
-                new clsRadarScale { Item = frmImportSamples.WaterData[i].Sr / Bs, Scale = maxSr},
+                new clsRadarScale { Item = frmImportSamples.WaterData[i].K / Bo, Scale = maxK1},
+                new clsRadarScale { Item = frmImportSamples.WaterData[i].Ca / Bp, Scale = maxCa1},
+                new clsRadarScale { Item = frmImportSamples.WaterData[i].Mg / Bq, Scale = maxMg1},
+                new clsRadarScale { Item = frmImportSamples.WaterData[i].Ba / Br, Scale = maxBa1},
+                new clsRadarScale { Item = frmImportSamples.WaterData[i].Sr / Bs, Scale = maxSr1},
                 new clsRadarScale { Item = frmImportSamples.WaterData[i].Cl / Bm, Scale = maxCl},
-                new clsRadarScale { Item = frmImportSamples.WaterData[i].Na / Bn, Scale = maxNa}
+                new clsRadarScale { Item = frmImportSamples.WaterData[i].Na / Bn, Scale = maxNa1}
                 };
             }
             //Colors for the samples
@@ -386,6 +404,14 @@ namespace WindowsFormsApplication2
 
             flag = false;
         }
+        /// <summary>
+        /// Exports the first radar chart to PowerPoint, showing molar concentrations of major ions.
+        /// Creates a new slide with the chart and legend in PowerPoint format.
+        /// </summary>
+        /// <param name="bounds">Bounds of the radar chart area</param>
+        /// <param name="slide">PowerPoint slide to draw on</param>
+        /// <param name="presentation">PowerPoint presentation object</param>
+        /// <param name="flag">Flag to control whether to recompute maximum values</param>
         public static void ExportRadar1ToPowerpoint(Rectangle bounds, PowerPoint.Slide slide, PowerPoint.Presentation presentation, bool flag)
         {
             PowerPoint.Shape title = slide.Shapes.AddTextbox(
@@ -417,13 +443,13 @@ namespace WindowsFormsApplication2
             {
                 sampleData[i] = new clsRadarScale[]
                 {
-                new clsRadarScale { Item = frmImportSamples.WaterData[i].K / Bo, Scale = maxK},
-                new clsRadarScale { Item = frmImportSamples.WaterData[i].Ca / Bp, Scale = maxCa},
-                new clsRadarScale { Item = frmImportSamples.WaterData[i].Mg / Bq, Scale = maxMg},
-                new clsRadarScale { Item = frmImportSamples.WaterData[i].Ba / Br, Scale = maxBa},
-                new clsRadarScale { Item = frmImportSamples.WaterData[i].Sr / Bs, Scale = maxSr},
+                new clsRadarScale { Item = frmImportSamples.WaterData[i].K / Bo, Scale = maxK1},
+                new clsRadarScale { Item = frmImportSamples.WaterData[i].Ca / Bp, Scale = maxCa1},
+                new clsRadarScale { Item = frmImportSamples.WaterData[i].Mg / Bq, Scale = maxMg1},
+                new clsRadarScale { Item = frmImportSamples.WaterData[i].Ba / Br, Scale = maxBa1},
+                new clsRadarScale { Item = frmImportSamples.WaterData[i].Sr / Bs, Scale = maxSr1},
                 new clsRadarScale { Item = frmImportSamples.WaterData[i].Cl / Bm, Scale = maxCl},
-                new clsRadarScale { Item = frmImportSamples.WaterData[i].Na / Bn, Scale = maxNa}
+                new clsRadarScale { Item = frmImportSamples.WaterData[i].Na / Bn, Scale = maxNa1}
                 };
             }
 
@@ -639,6 +665,13 @@ namespace WindowsFormsApplication2
 
 
         }
+        /// <summary>
+        /// Draws the second radar chart showing genetic origin and alteration ratios.
+        /// Includes ratios for water evolution, geothermometers, lithology, salinity source, and organic matter.
+        /// </summary>
+        /// <param name="g">Graphics object used for drawing</param>
+        /// <param name="bounds">Bounds of the radar chart area</param>
+        /// <param name="flag">Flag to control whether to recompute maximum values</param>
         public static void DrawRadarChart2(Graphics g, Rectangle bounds, bool flag)
         {
             frmMainForm.legendPictureBox.MouseDoubleClick -= frmMainForm.pictureBoxPiper_Click;
@@ -863,6 +896,14 @@ namespace WindowsFormsApplication2
             flag = false;
         }
 
+        /// <summary>
+        /// Exports the second radar chart to PowerPoint, showing genetic origin and alteration ratios.
+        /// Creates a new slide with the chart and legend in PowerPoint format.
+        /// </summary>
+        /// <param name="bounds">Bounds of the radar chart area</param>
+        /// <param name="slide">PowerPoint slide to draw on</param>
+        /// <param name="presentation">PowerPoint presentation object</param>
+        /// <param name="flag">Flag to control whether to recompute maximum values</param>
         public static void ExportRadar2ToPowerpoint(Rectangle bounds, PowerPoint.Slide slide, PowerPoint.Presentation presentation, bool flag)
         {
 
@@ -1147,6 +1188,13 @@ namespace WindowsFormsApplication2
             RadarLegendPowerpoint(slide);
 
         }
+        /// <summary>
+        /// Draws the third radar chart showing ICP reproducibility data for various elements.
+        /// Includes major ions and trace elements with their concentrations.
+        /// </summary>
+        /// <param name="g">Graphics object used for drawing</param>
+        /// <param name="bounds">Bounds of the radar chart area</param>
+        /// <param name="flag">Flag to control whether to recompute maximum values</param>
         public static void DrawRadarChart3(Graphics g, Rectangle bounds, bool flag)
         {
             frmMainForm.legendPictureBox.MouseDoubleClick -= frmMainForm.pictureBoxPiper_Click;
@@ -1166,33 +1214,33 @@ namespace WindowsFormsApplication2
             float fontSize = 12; // Make font size relative
             // Data labels and values
             PrecomputeMaxValues(flag);
-            maxNa = 0;
-            maxK = 0;
-            maxCa = 0;
-            maxMg = 0;
-            foreach (var data in frmImportSamples.WaterData)
-            {
-                maxNa = Math.Max(maxNa, Math.Abs(data.Na));
-                maxK = Math.Max(maxK, Math.Abs(data.K));
-                maxCa = Math.Max(maxCa, Math.Abs(data.Ca));
-                maxMg = Math.Max(maxMg, Math.Abs(data.Mg));
-                maxBa = Math.Max(maxBa, Math.Abs(data.Ba));
-                maxSr = Math.Max(maxSr, Math.Abs(data.Sr));
-            }
+            //maxNa = 0;
+            //maxK = 0;
+            //maxCa = 0;
+            //maxMg = 0;
+            //foreach (var data in frmImportSamples.WaterData)
+            //{
+            //    maxNa = Math.Max(maxNa, Math.Abs(data.Na));
+            //    maxK = Math.Max(maxK, Math.Abs(data.K));
+            //    maxCa = Math.Max(maxCa, Math.Abs(data.Ca));
+            //    maxMg = Math.Max(maxMg, Math.Abs(data.Mg));
+            //    maxBa = Math.Max(maxBa, Math.Abs(data.Ba));
+            //    maxSr = Math.Max(maxSr, Math.Abs(data.Sr));
+            //}
 
             Radar3Scales = new string[] {
-            maxNa.ToString("F5"),
-            maxK.ToString("F5"),
-            maxCa.ToString("F5"),
-            maxMg.ToString("F5"),
+            maxNa3.ToString("F5"),
+            maxK3.ToString("F5"),
+            maxCa3.ToString("F5"),
+            maxMg3.ToString("F5"),
             maxAl.ToString("F5"),
             maxCo.ToString("F5"),
             maxCu.ToString("F5"),
             maxMn.ToString("F5"),
             maxNi.ToString("F5"),
-            maxSr.ToString("F5"),
+            maxSr3.ToString("F5"),
             maxZn.ToString("F5"),
-            maxBa.ToString("F5"),
+            maxBa3.ToString("F5"),
             maxPb.ToString("F5"),
             maxFe.ToString("F5"),
             maxCd.ToString("F5"),
@@ -1290,9 +1338,9 @@ namespace WindowsFormsApplication2
                     new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Cu), Scale = maxCu },
                     new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Mn), Scale = maxMn },
                     new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Ni), Scale = maxNi },
-                    new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Sr), Scale = maxSr },
+                    new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Sr), Scale = maxSr3 },
                     new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Zn), Scale = maxZn },
-                    new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Ba), Scale = maxBa },
+                    new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Ba), Scale = maxBa3 },
                     new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Pb), Scale = maxPb },
                     new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Fe), Scale = maxFe },
                     new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Cd), Scale = maxCd },
@@ -1302,10 +1350,10 @@ namespace WindowsFormsApplication2
                     new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Se), Scale = maxSe },
                     new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].B),  Scale = maxB },
                     new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Li), Scale = maxLi },
-                    new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Na), Scale = maxNa },
-                    new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].K),  Scale = maxK },
-                    new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Ca), Scale = maxCa },
-                    new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Mg), Scale = maxMg },
+                    new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Na), Scale = maxNa3 },
+                    new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].K),  Scale = maxK3 },
+                    new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Ca), Scale = maxCa3 },
+                    new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Mg), Scale = maxMg3 },
                     new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Al), Scale = maxAl },
                 };
             }
@@ -1413,6 +1461,14 @@ namespace WindowsFormsApplication2
             #endregion
             flag = false;
         }
+        /// <summary>
+        /// Exports the third radar chart to PowerPoint, showing ICP reproducibility data.
+        /// Creates a new slide with the chart and legend in PowerPoint format.
+        /// </summary>
+        /// <param name="bounds">Bounds of the radar chart area</param>
+        /// <param name="slide">PowerPoint slide to draw on</param>
+        /// <param name="presentation">PowerPoint presentation object</param>
+        /// <param name="flag">Flag to control whether to recompute maximum values</param>
         public static void ExportRadar3ToPowerpoint(Rectangle bounds, PowerPoint.Slide slide, PowerPoint.Presentation presentation, bool flag)
         {
             #region Setup
@@ -1427,19 +1483,19 @@ namespace WindowsFormsApplication2
             //title.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
             title.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
             PrecomputeMaxValues(flag);
-            maxNa = 0;
-            maxK = 0;
-            maxCa = 0;
-            maxMg = 0;
-            foreach (var wdata in frmImportSamples.WaterData)
-            {
-                maxNa = Math.Max(maxNa, Math.Abs(wdata.Na));
-                maxK = Math.Max(maxK, Math.Abs(wdata.K));
-                maxCa = Math.Max(maxCa, Math.Abs(wdata.Ca));
-                maxMg = Math.Max(maxMg, Math.Abs(wdata.Mg));
-                maxBa = Math.Max(maxBa, Math.Abs(wdata.Ba));
-                maxSr = Math.Max(maxSr, Math.Abs(wdata.Sr));
-            }
+            //maxNa = 0;
+            //maxK = 0;
+            //maxCa = 0;
+            //maxMg = 0;
+            //foreach (var wdata in frmImportSamples.WaterData)
+            //{
+            //    maxNa = Math.Max(maxNa, Math.Abs(wdata.Na));
+            //    maxK = Math.Max(maxK, Math.Abs(wdata.K));
+            //    maxCa = Math.Max(maxCa, Math.Abs(wdata.Ca));
+            //    maxMg = Math.Max(maxMg, Math.Abs(wdata.Mg));
+            //    maxBa = Math.Max(maxBa, Math.Abs(wdata.Ba));
+            //    maxSr = Math.Max(maxSr, Math.Abs(wdata.Sr));
+            //}
             
             // Axis labels based on elements
             string[] elements = {
@@ -1487,9 +1543,9 @@ namespace WindowsFormsApplication2
                     new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Cu), Scale = maxCu },
                     new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Mn), Scale = maxMn },
                     new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Ni), Scale = maxNi },
-                    new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Sr), Scale = maxSr },
+                    new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Sr), Scale = maxSr3 },
                     new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Zn), Scale = maxZn },
-                    new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Ba), Scale = maxBa },
+                    new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Ba), Scale = maxBa3 },
                     new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Pb), Scale = maxPb },
                     new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Fe), Scale = maxFe },
                     new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Cd), Scale = maxCd },
@@ -1499,10 +1555,10 @@ namespace WindowsFormsApplication2
                     new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Se), Scale = maxSe },
                     new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].B),  Scale = maxB },
                     new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Li), Scale = maxLi },
-                    new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Na), Scale = maxNa },
-                    new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].K),  Scale = maxK },
-                    new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Ca), Scale = maxCa },
-                    new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Mg), Scale = maxMg },
+                    new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Na), Scale = maxNa3 },
+                    new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].K),  Scale = maxK3 },
+                    new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Ca), Scale = maxCa3 },
+                    new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Mg), Scale = maxMg3 },
                     new clsRadarScale { Item = Math.Abs(frmImportSamples.WaterData[i].Al), Scale = maxAl },
                 };
             }
@@ -1700,19 +1756,22 @@ namespace WindowsFormsApplication2
             RadarLegendPowerpoint(slide);
         }
 
+        /// <summary>
+        /// Precomputes maximum values for all elements and ratios used in the radar charts.
+        /// This is used to scale the radar chart axes appropriately.
+        /// </summary>
+        /// <param name="flag">Flag to control whether to recompute values</param>
         private static void PrecomputeMaxValues(bool flag)
         {
             if (flag) return;
-            maxCl = maxNa = maxK = maxCa = maxMg = maxBa = maxSr = 0;
+            maxAl = 0; maxCo = 0; maxCu = 0; maxMn = 0; maxNi = 0; maxZn = 0; maxPb = 0; maxFe = 0; maxCd = 0; maxCr = 0; maxTl = 0; maxBe = 0; maxSe = 0; maxLi = 0; maxB = 0;
+            maxNaCl = 0; maxClCa = 0; maxHCO3Cl = 0; maxClSr = 0; maxNaCa = 0; maxKNa = 0; maxSrMg = 0; maxMgCl = 0; maxSrCl = 0; maxSrK = 0; maxMgK = 0; maxCaK = 0; maxtK = 0; maxBCl = 0; maxBNa = 0; maxBMg = 0;
+            maxCl = 0; maxNa1 = 0; maxK1 = 0; maxCa1 = 0; maxMg1 = 0; maxBa1 = 0; maxSr1 = 0;
+            maxNa3 = 0; maxK3 = 0; maxCa3 = 0; maxMg3 = 0; maxBa3 = 0; maxSr3 = 0;
             foreach (var data in frmImportSamples.WaterData)
             {
                 maxCl = Math.Max(maxCl, Math.Abs(data.Cl) / Bm);
-                maxNa = Math.Max(maxNa, Math.Abs(data.Na)/Bn);
-                maxK = Math.Max(maxK, Math.Abs(data.K)/Bo);
-                maxCa = Math.Max(maxCa, Math.Abs(data.Ca)/Bp);
-                maxMg = Math.Max(maxMg, Math.Abs(data.Mg)/Bq);
-                maxBa = Math.Max(maxBa, Math.Abs(data.Ba)/Br);
-                maxSr = Math.Max(maxSr, Math.Abs(data.Sr)/Bs);
+                
                 maxNaCl = Math.Max(maxNaCl, Math.Abs(data.Na) / Math.Abs(data.Cl));
                 maxClCa = Math.Max(maxClCa, Math.Abs(data.Cl) / Math.Abs(data.Ca));
                 maxHCO3Cl = Math.Max(maxHCO3Cl, Math.Abs(data.HCO3) / Math.Abs(data.Cl));
@@ -1744,11 +1803,32 @@ namespace WindowsFormsApplication2
                 maxSe = Math.Max(maxSe, Math.Abs(data.Se));
                 maxB = Math.Max(maxB, Math.Abs(data.B));
                 maxLi = Math.Max(maxLi, Math.Abs(data.Li));
+                
+                // Always update both sets of scales
+                maxNa3 = Math.Max(maxNa3, Math.Abs(data.Na));
+                maxK3 = Math.Max(maxK3, Math.Abs(data.K));
+                maxCa3 = Math.Max(maxCa3, Math.Abs(data.Ca));
+                maxMg3 = Math.Max(maxMg3, Math.Abs(data.Mg));
+                maxBa3 = Math.Max(maxBa3, Math.Abs(data.Ba));
+                maxSr3 = Math.Max(maxSr3, Math.Abs(data.Sr));
+                
+                maxNa1 = Math.Max(maxNa1, Math.Abs(data.Na) / Bn);
+                maxK1 = Math.Max(maxK1, Math.Abs(data.K) / Bo);
+                maxCa1 = Math.Max(maxCa1, Math.Abs(data.Ca) / Bp);
+                maxMg1 = Math.Max(maxMg1, Math.Abs(data.Mg) / Bq);
+                maxBa1 = Math.Max(maxBa1, Math.Abs(data.Ba) / Br);
+                maxSr1 = Math.Max(maxSr1, Math.Abs(data.Sr) / Bs);
             }
             
 
         }
 
+        /// <summary>
+        /// Converts a System.Drawing.DashStyle to PowerPoint's MsoLineDashStyle.
+        /// Used for maintaining consistent line styles between Windows Forms and PowerPoint.
+        /// </summary>
+        /// <param name="dashStyle">System.Drawing.DashStyle to convert</param>
+        /// <returns>Equivalent PowerPoint MsoLineDashStyle</returns>
         public static Office.MsoLineDashStyle ConvertDashStyle(DashStyle dashStyle)
         {
             switch (dashStyle)
