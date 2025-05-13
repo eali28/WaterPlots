@@ -31,6 +31,9 @@ namespace WindowsFormsApplication2
         // Calculate triangle and diamond dimensions within the chart area
         public static int availableWidth = chartBounds.Width - 4 * margin;
         public static int availableHeight = chartBounds.Height - 4 * margin;
+        /// <summary>
+        /// Draws the Collins Diagram, plotting stacked bars for cations and anions for each sample.
+        /// </summary>
         public static void DrawCollinsDiagram(Graphics g, int chartWidth, int chartHeight)
         {
             frmMainForm.legendPictureBox.MouseDoubleClick -= frmMainForm.pictureBoxPiper_Click;
@@ -337,6 +340,9 @@ namespace WindowsFormsApplication2
             #endregion
         }
 
+        /// <summary>
+        /// Exports the Collins Diagram to a PowerPoint slide.
+        /// </summary>
         public static void ExportCollinsToPowerPoint(PowerPoint.Slide slide, PowerPoint.Presentation presentation)
         {
 

@@ -16,7 +16,7 @@ namespace WindowsFormsApplication2
     public class clsBubbleDrawer
     {
         /// <summary>
-        /// Draws a Bubble Diagram on chart2.
+        /// Draws a Bubble Diagram on the main chart plotting area.
         /// </summary>
         public static void DrawBubbleDiagram(Graphics g)
         {
@@ -167,50 +167,19 @@ namespace WindowsFormsApplication2
             }
             if (frmImportSamples.WaterData.Count > 0)
             {
-                DrawLegendBubble(g, Colors);
+                DrawLegendBubble(g);
             }
             
         }
-        public static MarkerStyle GetMarkerStyle(string shape)
-        {
-            switch (shape)
-            {
-                case "circle":
-                    return MarkerStyle.Circle;
-                case "cube":
-                    return MarkerStyle.Square;
-                case "hexagon":
-                    return MarkerStyle.Diamond; // Closest to hexagon
-                case "merkaba":
-                    return MarkerStyle.Star5; // 5-point star for Merkaba
-                case "triangle":
-                    return MarkerStyle.Triangle;
-                default:
-                    return MarkerStyle.Circle;
-            }
-        }
+        
 
-        public static Office.MsoAutoShapeType ConvertShapeToPowerPoint(string shape)
-        {
-            switch (shape)
-            {
-                case "circle":
-                    return Office.MsoAutoShapeType.msoShapeOval; // Perfect circle
-                case "cube":
-                    return Office.MsoAutoShapeType.msoShapeRectangle; 
-                case "hexagon":
-                    return Office.MsoAutoShapeType.msoShapeHexagon; // Hexagon shape
-                case "merkaba":
-                    return Office.MsoAutoShapeType.msoShape5pointStar; // Star shape for Merkaba
-                case "triangle":
-                    return Office.MsoAutoShapeType.msoShapeIsoscelesTriangle;
-                default:
-                    return Office.MsoAutoShapeType.msoShapeOval; // Default fallback
-            }
-        }
+        
 
 
-        public static void DrawLegendBubble(Graphics g, List<Brush> BubbleColors)
+        /// <summary>
+        /// Draws the legend for the Bubble Diagram, showing color ranges and sample metadata.
+        /// </summary>
+        public static void DrawLegendBubble(Graphics g)
         {
 
             // Define legend colors and labels
@@ -366,6 +335,9 @@ namespace WindowsFormsApplication2
 
 
         }
+        /// <summary>
+        /// Exports the Bubble Diagram to a PowerPoint slide.
+        /// </summary>
         public static void ExportBubbleDiagramToPowerPoint(PowerPoint.Slide slide, PowerPoint.Presentation presentation)
         {
             try
@@ -631,6 +603,9 @@ namespace WindowsFormsApplication2
             }
 
         }
+        /// <summary>
+        /// Returns a color based on the TDS value for a sample.
+        /// </summary>
         private static Color GetColorByTDS(double tds)
         {
             if (tds >= 20000 && tds < 40000) return Color.Red;

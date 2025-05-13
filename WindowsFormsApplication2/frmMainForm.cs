@@ -266,7 +266,7 @@ namespace WindowsFormsApplication2
         }
 
         /// <summary>
-        /// Updates the chart display when a different chart type is selected
+        /// Handles the selection change event in the charts list box
         /// </summary>
         private void listBoxCharts_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -389,9 +389,8 @@ namespace WindowsFormsApplication2
             }
         }
 
-
         /// <summary>
-        /// Removes selected charts from the selection list
+        /// Handles the deletion of selected charts from the list
         /// </summary>
         private void buttonDelete_Click(object sender, EventArgs e)
         {
@@ -415,10 +414,8 @@ namespace WindowsFormsApplication2
 
         }
 
-
-
         /// <summary>
-        /// Updates the chart display when a different chart is selected from the selection list
+        /// Handles the selection change event in the selected charts list box
         /// </summary>
         private void listBoxSelected_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -588,7 +585,7 @@ namespace WindowsFormsApplication2
             listBoxSelected.Refresh();
         }
         /// <summary>
-        /// Updates the scales for radar charts based on user input
+        /// Updates the scales for radar plots based on the selected name
         /// </summary>
         public static void UpdateScalesinRadar(string name)
         {
@@ -814,7 +811,7 @@ namespace WindowsFormsApplication2
         }
 
         /// <summary>
-        /// Opens the radar legend form for customization
+        /// Handles the drawing of the radar plot legend
         /// </summary>
         public static void legendPictureBoxRadar(object sender, EventArgs e)
         {
@@ -828,7 +825,7 @@ namespace WindowsFormsApplication2
             }
         }
         /// <summary>
-        /// Opens the radar scales form for customization
+        /// Handles the drawing of radar plot scales
         /// </summary>
         public static void PictureBoxRadarScales(object sender, EventArgs e)
         {
@@ -842,7 +839,7 @@ namespace WindowsFormsApplication2
             }
         }
         /// <summary>
-        /// Opens the Schoeller diagram details form
+        /// Handles the click event for the Schoeller diagram
         /// </summary>
         public static void pictureBoxSchoeller_Click(object sender, EventArgs e)
         {
@@ -857,7 +854,7 @@ namespace WindowsFormsApplication2
         }
 
         /// <summary>
-        /// Opens the pie chart legend form
+        /// Handles the click event for the pie chart
         /// </summary>
         public static void pictureBoxPie_Click(object sender, EventArgs e)
         {
@@ -869,7 +866,7 @@ namespace WindowsFormsApplication2
         }
         
         /// <summary>
-        /// Opens the Piper diagram legend form
+        /// Handles the click event for the Piper diagram
         /// </summary>
         public static void pictureBoxPiper_Click(object sender, EventArgs e)
         {
@@ -895,7 +892,7 @@ namespace WindowsFormsApplication2
         }
 
         /// <summary>
-        /// Updates the radar diagram display with current settings
+        /// Updates the radar diagram with current data
         /// </summary>
         public static void UpdateRadarDiagram()
         {
@@ -935,7 +932,7 @@ namespace WindowsFormsApplication2
         }
 
         /// <summary>
-        /// Updates the Piper diagram display with current settings
+        /// Updates the Piper diagram with current data
         /// </summary>
         public static void UpdatePiperDiagram()
         {
@@ -951,7 +948,7 @@ namespace WindowsFormsApplication2
             }
         }
         /// <summary>
-        /// Updates the pie chart display with current settings
+        /// Updates the pie diagram with current data
         /// </summary>
         public static void UpdatePieDiagram()
         {
@@ -968,7 +965,7 @@ namespace WindowsFormsApplication2
             
         }
         /// <summary>
-        /// Updates the Schoeller diagram display with current settings
+        /// Updates the Schoeller diagram with current data
         /// </summary>
         public static void UpdateSchoellerDiagram()
         {
@@ -983,7 +980,7 @@ namespace WindowsFormsApplication2
             }
         }
         /// <summary>
-        /// Updates the Collins diagram display with current settings
+        /// Updates the Collins diagram with current data
         /// </summary>
         public static void UpdateCollinsDiagram()
         {
@@ -998,7 +995,7 @@ namespace WindowsFormsApplication2
             }
         }
         /// <summary>
-        /// Updates the bubble diagram display with current settings
+        /// Updates the bubble diagram with current data
         /// </summary>
         public static void UpdateBubbleDiagram()
         {
@@ -1013,7 +1010,7 @@ namespace WindowsFormsApplication2
             }
         }
         /// <summary>
-        /// Updates the log diagrams display with current settings
+        /// Updates the logs diagram with current data
         /// </summary>
         public static void UpdateLogsDiagram()
         {
@@ -1066,7 +1063,7 @@ namespace WindowsFormsApplication2
             
         }
         /// <summary>
-        /// Updates the Stiff diagram display with current settings
+        /// Updates the Stiff diagram with current data
         /// </summary>
         public static void UpdateStiffDiagram()
         {
@@ -1170,7 +1167,7 @@ namespace WindowsFormsApplication2
             }
         }
         /// <summary>
-        /// Parses a string value to a double, handling special characters
+        /// Parses a string value to a double, handling various number formats
         /// </summary>
         private double ParseDouble(string value)
         {

@@ -145,8 +145,8 @@ namespace WindowsFormsApplication2
                     break;
                 case 12: // Trapezoid (up)
                     symbolNames.Add("Trapezoid (up)");
-                    g.FillPolygon(fill, new Point[] { new Point(x + 10, y + size - 5), new Point(x + size - 10, y + size - 5), new Point(x + size - 5, y + 5), new Point(x + 5, y + 5) });
-                    g.DrawPolygon(border, new Point[] { new Point(x + 10, y + size - 5), new Point(x + size - 10, y + size - 5), new Point(x + size - 5, y + 5), new Point(x + 5, y + 5) });
+                    g.FillPolygon(fill, new Point[] { new Point(x + 10, y+5), new Point(x + size - 10, y+5), new Point(x + size - 5, y + size - 5), new Point(x + 5, y + size - 5) });
+                    g.DrawPolygon(border, new Point[] { new Point(x + 10, y+5), new Point(x + size - 10,y+5), new Point(x + size - 5, y + size - 5), new Point(x + 5, y + size - 5) });
                     break;
                 case 13: // Trapezoid (right)
                     symbolNames.Add("Trapezoid (right)");

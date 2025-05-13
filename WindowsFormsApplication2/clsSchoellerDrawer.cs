@@ -15,6 +15,9 @@ namespace WindowsFormsApplication2
 {
     public class clsSchoellerDrawer
     {
+        /// <summary>
+        /// Draws the Schoeller Diagram, plotting ion concentrations for each sample.
+        /// </summary>
         public static void DrawSchoellerDiagram(Graphics g)
         {
             // Remove existing event handlers
@@ -214,6 +217,9 @@ namespace WindowsFormsApplication2
 
             #endregion
         }
+        /// <summary>
+        /// Exports the Schoeller Diagram to a PowerPoint slide.
+        /// </summary>
         public static void ExportSchoellerDiagramToPowerPoint(PowerPoint.Slide slide, PowerPoint.Presentation presentation)
         {
 
@@ -243,12 +249,6 @@ namespace WindowsFormsApplication2
             descriptionText.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
             descriptionText.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
             descriptionText.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoTrue;
-            // Remove margins to reduce waste of space
-            descriptionText.TextFrame.MarginLeft = 0;
-            descriptionText.TextFrame.MarginRight = 0;
-            descriptionText.TextFrame.MarginTop = 0;
-            descriptionText.TextFrame.MarginBottom = 0;
-
             // Remove margins to reduce waste of space
             descriptionText.TextFrame.MarginLeft = 0;
             descriptionText.TextFrame.MarginRight = 0;

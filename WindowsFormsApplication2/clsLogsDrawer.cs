@@ -22,6 +22,10 @@ namespace WindowsFormsApplication2
         public static int margin = (int)(0.02 * chartBounds.Width); // Make margin relative to width
         public static int leftMargin = (int)(0.1 * frmMainForm.mainChartPlotting.Width);
         public static int topMargin = (int)(0.01 * frmMainForm.mainChartPlotting.Height);
+
+        /// <summary>
+        /// Draws a log-log plot of Na vs Cl for the water samples.
+        /// </summary>
         public static void DrawlogNa_VS_logCl(Graphics g,int diagramWidth,int diagramHeight,int x,int y)
         {
             y += topMargin;
@@ -137,7 +141,9 @@ namespace WindowsFormsApplication2
             g.DrawString("SET", new Font("Times New Roman", setSertSize, FontStyle.Bold), Brushes.Blue, setEnd.X - (int)(0.1 * (setEnd.X - margin)), setEnd.Y, drawFormat);
         }
 
-
+        /// <summary>
+        /// Exports the log-log Na vs Cl chart to a PowerPoint slide.
+        /// </summary>
         public static void ExportLogNaVsLogClChartToPowerPoint(PowerPoint.Slide slide, int titleX, int titleY, PowerPoint.Presentation presentation, float slideWidth, float slideHeight, int x, int y)
         {
             // Chart area dimensions
@@ -193,6 +199,7 @@ namespace WindowsFormsApplication2
             textbox.TextFrame.TextRange.Text = (0).ToString();
             textbox.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
             textbox.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
+            textbox.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
 
             // Add axis titles
             var xAxisLabel = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, chartX + diagramWidth / 2 - 50, chartY + diagramHeight + 30, 100, 30);
@@ -275,6 +282,9 @@ namespace WindowsFormsApplication2
             }
         }
 
+        /// <summary>
+        /// Draws a log-log plot of Mg vs Cl for the water samples.
+        /// </summary>
         public static void DrawlogMg_VS_logCl(Graphics g, int diagramWidth, int diagramHeight, int x, int y)
         {
             x += leftMargin;
@@ -395,6 +405,9 @@ namespace WindowsFormsApplication2
             g.DrawString("SET", new Font("Times New Roman", setSertSize, FontStyle.Bold), Brushes.Blue, setEnd.X - (int)(0.1 * (setEnd.X - margin)), setEnd.Y, drawFormat);
         }
 
+        /// <summary>
+        /// Exports the log-log Mg vs Cl chart to a PowerPoint slide.
+        /// </summary>
         public static void ExportlogMgVslogCltoPowerpoint(PowerPoint.Slide slide, int titleX,int titleY, PowerPoint.Presentation presentation, float slideWidth, float slideHeight, int x, int y)
         {
 
@@ -535,6 +548,9 @@ namespace WindowsFormsApplication2
                 dataPoint.Line.Weight = 2;
             }
         }
+        /// <summary>
+        /// Draws a log-log plot of Ca vs Cl for the water samples.
+        /// </summary>
         public static void DrawlogCa_VS_logCl(Graphics g, int diagramWidth, int diagramHeight, int x, int y)
         {
             y += topMargin;
@@ -650,6 +666,9 @@ namespace WindowsFormsApplication2
             g.DrawString("SET", new Font("Times New Roman", setSertSize, FontStyle.Bold), Brushes.Blue, setEnd.X - (int)(0.1 * (setEnd.X - margin)), setEnd.Y, drawFormat);
         }
 
+        /// <summary>
+        /// Exports the log-log Ca vs Cl chart to a PowerPoint slide.
+        /// </summary>
         public static void ExportlogCaVslogCltoPowerPoint(PowerPoint.Slide slide,int titleX, int titleY, PowerPoint.Presentation presentation, float slideWidth, float slideHeight, int x, int y)
         {
             // Chart area dimensions

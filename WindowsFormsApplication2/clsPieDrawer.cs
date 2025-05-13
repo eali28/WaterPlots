@@ -19,6 +19,9 @@ namespace WindowsFormsApplication2
     {
         public static Color[] pieColors = { Color.Cyan, Color.Purple, Color.Orange, Color.Blue, Color.Gray, Color.Green };
         public static string[] labels = { "Na+K", "Ca", "Mg", "Cl", "SO4", "HCO3 + CO3" };
+        /// <summary>
+        /// Draws a Pie Chart representing the distribution of ions for each sample.
+        /// </summary>
         public static void DrawPieChart(Graphics g, int chartWidth, int chartHeight)
         {
             // Detach the event handler if it is attached
@@ -267,6 +270,9 @@ namespace WindowsFormsApplication2
 
 
         }
+        /// <summary>
+        /// Exports the Pie Chart to a PowerPoint slide.
+        /// </summary>
         public static void ExportPieChartToPowerPoint(PowerPoint.Slide slide, PowerPoint.Presentation presentation)
         {
             // Get the chart dimensions from the main form

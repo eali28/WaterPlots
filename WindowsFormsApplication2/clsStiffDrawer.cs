@@ -20,6 +20,9 @@ namespace WindowsFormsApplication2
     public class clsStiffDrawer
     {
         public static string[] labels = { "Na+K", "Ca", "Mg", "Cl", "SO4", "HCO3 + CO3" };
+        /// <summary>
+        /// Draws the Stiff Diagram, plotting cation and anion concentrations for each sample.
+        /// </summary>
         public static void DrawStiffDiagram(Graphics g)
         {
             // Calculate center position
@@ -290,6 +293,9 @@ namespace WindowsFormsApplication2
         }
 
 
+        /// <summary>
+        /// Exports the Stiff Diagram to a PowerPoint slide.
+        /// </summary>
         public static void ExportStiffDiagramToPowerPoint(PowerPoint.Slide slide, PowerPoint.Presentation presentation)
         {
 
