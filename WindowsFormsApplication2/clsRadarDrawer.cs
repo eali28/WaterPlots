@@ -347,9 +347,10 @@ namespace WindowsFormsApplication2
                 //Draw axis labels
                 string label = labels[i];
                 SizeF labelSize = g.MeasureString(label, AxisFont);
-                float labelX = (float)(allX + (0.3 * radius) * Math.Cos(angle));
-                float labelY = (float)(allY + (0.3 * radius) * Math.Sin(angle));
+                float labelX = (float)(allX + (0.2 * radius) * Math.Cos(angle));
+                float labelY = (float)(allY + (0.2 * radius) * Math.Sin(angle));
                 labelX -= 0.02f * frmMainForm.mainChartPlotting.Width;
+                labelY -= 0.02f * frmMainForm.mainChartPlotting.Height;
                 g.DrawString(label, AxisFont, Brushes.Black, labelX, labelY);
 
 
@@ -497,9 +498,9 @@ namespace WindowsFormsApplication2
                 radiusLine.Line.DashStyle = Office.MsoLineDashStyle.msoLineRoundDot;
                 string label = labels[i];
                 SizeF labelSize = TextRenderer.MeasureText(label, SystemFonts.DefaultFont);
-                float labelX = allX + (float)((radius * 0.3) * Math.Cos(angle)) - labelSize.Width / 2;
-                float labelY = allY + (float)((radius * 0.3) * Math.Sin(angle)) - labelSize.Height / 2;
-
+                float labelX = allX + (float)((radius * 0.2) * Math.Cos(angle)) - labelSize.Width / 2;
+                float labelY = allY + (float)((radius * 0.2) * Math.Sin(angle)) - labelSize.Height / 2;
+                labelX += 8;
                 PowerPoint.Shape itemText = slide.Shapes.AddTextbox(
                     Office.MsoTextOrientation.msoTextOrientationHorizontal, labelX, labelY, 200, 30);
                 itemText.TextFrame.TextRange.Text = label;
@@ -1407,7 +1408,8 @@ namespace WindowsFormsApplication2
                 SizeF labelSize = g.MeasureString(label, AxisFont);
                 float labelX = (float)(allX + (0.2 * radius) * Math.Cos(angle));
                 float labelY = (float)(allY + (0.2 * radius) * Math.Sin(angle));
-                //labelX -= 0.02f * frmMainForm.mainChartPlotting.Width;
+                labelY -= 0.02f * frmMainForm.mainChartPlotting.Height;
+                labelX -= 0.01f * frmMainForm.mainChartPlotting.Width;
                 g.DrawString(label, AxisFont, Brushes.Black, labelX, labelY);
             }
             g.DrawPolygon(axisPen, quarterList);
@@ -1605,8 +1607,9 @@ namespace WindowsFormsApplication2
                 radiusLine.Line.DashStyle = Office.MsoLineDashStyle.msoLineRoundDot;
                 string label = elements[i];
                 SizeF labelSize = TextRenderer.MeasureText(label, SystemFonts.DefaultFont);
-                float labelX = allX + (float)((radius * 0.3) * Math.Cos(angle)) - labelSize.Width / 2;
-                float labelY = allY + (float)((radius * 0.3) * Math.Sin(angle)) - labelSize.Height / 2;
+                float labelX = allX + (float)((radius * 0.2) * Math.Cos(angle)) - labelSize.Width / 2;
+                float labelY = allY + (float)((radius * 0.2) * Math.Sin(angle)) - labelSize.Height / 2;
+                labelX += 8;
 
                 PowerPoint.Shape itemText = slide.Shapes.AddTextbox(
                     Office.MsoTextOrientation.msoTextOrientationHorizontal, labelX, labelY, 200, 30);

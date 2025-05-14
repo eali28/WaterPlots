@@ -114,7 +114,7 @@ namespace WindowsFormsApplication2
                     g.DrawPolygon(border, new Point[] { new Point(cx, y + 5), new Point(x + size - 5, y + size - 5), new Point(x + 5, y + size - 5) });
                     break;
                 case 6: // Left triangle
-                    symbolNames.Add("Left triangle");
+                    symbolNames.Add("Right triangle");
                     g.FillPolygon(fill, new Point[] { new Point(x + size - 5, cy), new Point(x + 5, y + 5), new Point(x + 5, y + size - 5) });
                     g.DrawPolygon(border, new Point[] { new Point(x + size - 5, cy), new Point(x + 5, y + 5), new Point(x + 5, y + size - 5) });
                     break;
@@ -124,7 +124,7 @@ namespace WindowsFormsApplication2
                     g.DrawPolygon(border, new Point[] { new Point(cx, y + size - 5), new Point(x + size - 5, y + 5), new Point(x + 5, y + 5) });
                     break;
                 case 8: // Right triangle
-                    symbolNames.Add("Right triangle");
+                    symbolNames.Add("Left triangle");
                     g.FillPolygon(fill, new Point[] { new Point(x + 5, cy), new Point(x + size - 5, y + 5), new Point(x + size - 5, y + size - 5) });
                     g.DrawPolygon(border, new Point[] { new Point(x + 5, cy), new Point(x + size - 5, y + 5), new Point(x + size - 5, y + size - 5) });
                     break;

@@ -560,7 +560,6 @@ namespace WindowsFormsApplication2
                     diamondVertices[0].X + fraction * (diamondVertices[3].X - diamondVertices[0].X),
                     diamondVertices[0].Y + fraction * (diamondVertices[3].Y - diamondVertices[0].Y)
                 );
-
                 // Draw diagonals
                 g.DrawLine(gridPen, topToRight, bottomToLeft); // Diagonal from top-right to bottom-left
                 g.DrawLine(gridPen, rightToBottom, leftToTop); // Diagonal from right-bottom to left-top
@@ -848,14 +847,14 @@ namespace WindowsFormsApplication2
 
             var text = slide.Shapes.AddTextbox(
                                         Microsoft.Office.Core.MsoTextOrientation.msoTextOrientationHorizontal,
-                                        0, 30, 400, 100 // Adjust the position and size as needed
+                                        0, 30, (int)(3.13*72), 100 // Adjust the position and size as needed
                                     );
 
             //text.Select();
             text.TextFrame.TextRange.Text = "Classification of water\n" +
                                    "Ca-SO₄ waters - typical of gypsum ground waters and mine drainage.\n" +
                                    "Ca-HCO₃ waters - typical of shallow, fresh ground waters.\n" +
-                                   "Na-Cl waters - typical of marine and\n" +
+                                   "Na-Cl waters - typical of marine and" +
                                    "deep ancient ground waters.\n" +
                                    "Na-HCO₃ waters - typical of deeper ground waters influenced by ion exchange.\n";
 
@@ -1011,11 +1010,12 @@ namespace WindowsFormsApplication2
                             trapezoidRight.Line.Weight = 1;
                             break;
                         case "Trapezoid (down)":
+
                             var trapezoidDownPoints = new float[,] {
-                                { metadataX + 3, ysample+4 },
-                                { metadataX + 12, ysample +4 },
-                                { metadataX + 15, ysample - 12 },
-                                { metadataX, ysample - 12 }
+                                { metadataX + 3, ysample+4+7 },
+                                { metadataX + 12, ysample +4+7 },
+                                { metadataX + 15, ysample - 12+7 },
+                                { metadataX, ysample - 12+7 }
                             };
                             var trapezoidDown = slide.Shapes.AddPolyline(trapezoidDownPoints);
                             trapezoidDown.Fill.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color);
@@ -1093,6 +1093,7 @@ namespace WindowsFormsApplication2
                             rightArrow.Line.Weight = 1;
                             break;
                         case "Down arrow":
+                            
                             var downArrowPoints = new float[,] {
                                 { metadataX + 7, ysample + 12 },
                                 { metadataX, ysample - 2 },
@@ -1218,7 +1219,7 @@ namespace WindowsFormsApplication2
                             triangleDown.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                             triangleDown.Line.Weight = 1;
                             break;
-                        case "Right triangle":
+                        case "Left triangle":
                             var triangleLeftPoints = new float[,] {
                                 { metadataX - 2, ysample + 5 },
                                 { metadataX + 12, ysample + 12 },
@@ -1229,7 +1230,7 @@ namespace WindowsFormsApplication2
                             triangleLeft.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                             triangleLeft.Line.Weight = 1;
                             break;
-                        case "Left triangle":
+                        case "Right triangle":
                             var triangleRightPoints = new float[,] {
                                 { metadataX + 12, ysample + 5 },
                                 { metadataX - 2, ysample + 12 },
@@ -1748,10 +1749,10 @@ namespace WindowsFormsApplication2
                     return;
                 case "Trapezoid (right)":
                     var trapezoidRightPoints = new float[,] {
-                        { x - 7, y - 5 },
-                        { x + 7, y - 7 },
-                        { x + 7, y + 7 },
-                        { x - 7, y + 5 }
+                        { x + 7, y - 5 },
+                        { x - 7, y - 7 },
+                        { x - 7, y + 7 },
+                        { x + 7, y + 5 }
                     };
                     var trapezoidRight = slide.Shapes.AddPolyline(trapezoidRightPoints);
                     trapezoidRight.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
@@ -1760,10 +1761,10 @@ namespace WindowsFormsApplication2
                     return;
                 case "Trapezoid (down)":
                     var trapezoidDownPoints = new float[,] {
-                        { x - 5, y - 7 },
-                        { x + 5, y - 7 },
-                        { x + 7, y + 7 },
-                        { x - 7, y + 7 }
+                        { x - 5, y + 7 },
+                        { x + 5, y + 7 },
+                        { x + 7, y - 7 },
+                        { x - 7, y - 7 }
                     };
                     var trapezoidDown = slide.Shapes.AddPolyline(trapezoidDownPoints);
                     trapezoidDown.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
@@ -1772,10 +1773,10 @@ namespace WindowsFormsApplication2
                     return;
                 case "Trapezoid (left)":
                     var trapezoidLeftPoints = new float[,] {
-                        { x - 7, y - 7 },
-                        { x + 7, y - 5 },
-                        { x + 7, y + 5 },
-                        { x - 7, y + 7 }
+                        { x + 7, y - 7 },
+                        { x - 7, y - 5 },
+                        { x - 7, y + 5 },
+                        { x + 7, y + 7 }
                     };
                     var trapezoidLeft = slide.Shapes.AddPolyline(trapezoidLeftPoints);
                     trapezoidLeft.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
@@ -1942,6 +1943,55 @@ namespace WindowsFormsApplication2
                     fatArrow.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
                     fatArrow.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                     fatArrow.Line.Weight = 1;
+                    return;
+
+                case "Up triangle":
+                    y -= 7;
+                    var triangleUpPoints = new float[,] {
+                                { x, y },
+                                { x-8, y + 15 },
+                                { x+8, y + 15 }
+                            };
+                    var triangleUp = slide.Shapes.AddPolyline(triangleUpPoints);
+                    triangleUp.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
+                    triangleUp.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
+                    triangleUp.Line.Weight = 1;
+                    return;
+                case "Down triangle":
+                    y += 7;
+                    var triangleDownPoints = new float[,] {
+                                { x, y },
+                                { x + 8, y - 15 },
+                                { x-8, y - 15 }
+                            };
+                    var triangleDown = slide.Shapes.AddPolyline(triangleDownPoints);
+                    triangleDown.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
+                    triangleDown.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
+                    triangleDown.Line.Weight = 1;
+                    return;
+                case "Right triangle":
+                    x += 7;
+                    var triangleRightPoints = new float[,] {
+                                { x, y },
+                                { x - 15, y - 8 },
+                                { x - 15, y +8 }
+                            };
+                    var triangleRight = slide.Shapes.AddPolyline(triangleRightPoints);
+                    triangleRight.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
+                    triangleRight.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
+                    triangleRight.Line.Weight = 1;
+                    return;
+                case "Left triangle":
+                    x -= 7;
+                    var triangleLeftPoints = new float[,] {
+                                { x, y },
+                                { x + 15, y - 8 },
+                                { x + 15, y + 8 }
+                            };
+                    var triangleLeft = slide.Shapes.AddPolyline(triangleLeftPoints);
+                    triangleLeft.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
+                    triangleLeft.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
+                    triangleLeft.Line.Weight = 1;
                     return;
                 default:
                     // For any other shape, use a plus sign as default
@@ -2021,7 +2071,6 @@ namespace WindowsFormsApplication2
                 case "Octagon":
                     bubbleType = Office.MsoAutoShapeType.msoShapeOctagon; // Octagon shape
                     break;
-                
                 case "Star (5-point)":
                     bubbleType = Office.MsoAutoShapeType.msoShape5pointStar; // 5-point star
                     break;
@@ -2060,10 +2109,10 @@ namespace WindowsFormsApplication2
                     return;
                 case "Trapezoid (right)":
                     var trapezoidRightPoints = new float[,] {
-                        { x - 7, y - 5 },
-                        { x + 7, y - 7 },
-                        { x + 7, y + 7 },
-                        { x - 7, y + 5 }
+                        { x + 7, y - 5 },
+                        { x - 7, y - 7 },
+                        { x - 7, y + 7 },
+                        { x + 7, y + 5 }
                     };
                     var trapezoidRight = slide.Shapes.AddPolyline(trapezoidRightPoints);
                     trapezoidRight.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
@@ -2072,10 +2121,10 @@ namespace WindowsFormsApplication2
                     return;
                 case "Trapezoid (down)":
                     var trapezoidDownPoints = new float[,] {
-                        { x - 5, y - 7 },
-                        { x + 5, y - 7 },
-                        { x + 7, y + 7 },
-                        { x - 7, y + 7 }
+                        { x - 5, y + 7 },
+                        { x + 5, y + 7 },
+                        { x + 7, y - 7 },
+                        { x - 7, y - 7 }
                     };
                     var trapezoidDown = slide.Shapes.AddPolyline(trapezoidDownPoints);
                     trapezoidDown.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
@@ -2084,10 +2133,10 @@ namespace WindowsFormsApplication2
                     return;
                 case "Trapezoid (left)":
                     var trapezoidLeftPoints = new float[,] {
-                        { x - 7, y - 7 },
-                        { x + 7, y - 5 },
-                        { x + 7, y + 5 },
-                        { x - 7, y + 7 }
+                        { x + 7, y - 7 },
+                        { x - 7, y - 5 },
+                        { x - 7, y + 5 },
+                        { x + 7, y + 7 }
                     };
                     var trapezoidLeft = slide.Shapes.AddPolyline(trapezoidLeftPoints);
                     trapezoidLeft.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
@@ -2255,6 +2304,55 @@ namespace WindowsFormsApplication2
                     fatArrow.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                     fatArrow.Line.Weight = 1;
                     return;
+
+                case "Up triangle":
+                    y -= 7;
+                    var triangleUpPoints = new float[,] {
+                                { x, y },
+                                { x-8, y + 15 },
+                                { x+8, y + 15 }
+                            };
+                    var triangleUp = slide.Shapes.AddPolyline(triangleUpPoints);
+                    triangleUp.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
+                    triangleUp.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
+                    triangleUp.Line.Weight = 1;
+                    return;
+                case "Down triangle":
+                    y += 7;
+                    var triangleDownPoints = new float[,] {
+                                { x, y },
+                                { x + 8, y - 15 },
+                                { x-8, y - 15 }
+                            };
+                    var triangleDown = slide.Shapes.AddPolyline(triangleDownPoints);
+                    triangleDown.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
+                    triangleDown.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
+                    triangleDown.Line.Weight = 1;
+                    return;
+                case "Right triangle":
+                    x += 7;
+                    var triangleRightPoints = new float[,] {
+                                { x, y },
+                                { x - 15, y - 8 },
+                                { x - 15, y +8 }
+                            };
+                    var triangleRight = slide.Shapes.AddPolyline(triangleRightPoints);
+                    triangleRight.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
+                    triangleRight.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
+                    triangleRight.Line.Weight = 1;
+                    return;
+                case "Left triangle":
+                    x -= 7;
+                    var triangleLeftPoints = new float[,] {
+                                { x, y },
+                                { x + 15, y - 8 },
+                                { x + 15, y + 8 }
+                            };
+                    var triangleLeft = slide.Shapes.AddPolyline(triangleLeftPoints);
+                    triangleLeft.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
+                    triangleLeft.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
+                    triangleLeft.Line.Weight = 1;
+                    return;
                 default:
                     // For any other shape, use a plus sign as default
                     var hRect = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 7, y - 3, 15, 7);
@@ -2262,10 +2360,10 @@ namespace WindowsFormsApplication2
                     hRect.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                     hRect.Line.Weight = 1;
 
-                    var vRectang = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 3, y - 7, 7, 15);
-                    vRectang.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
-                    vRectang.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
-                    vRectang.Line.Weight = 1;
+                    var vRectangle = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 3, y - 7, 7, 15);
+                    vRectangle.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
+                    vRectangle.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
+                    vRectangle.Line.Weight = 1;
                     return; // Exit since we've already created the plus sign
             }
 
@@ -2511,7 +2609,7 @@ namespace WindowsFormsApplication2
                     var data = frmImportSamples.WaterData[i];
                     Color brush = frmImportSamples.WaterData[i].color;
                     PointF diamondCenter = new PointF((vertices[1].X + vertices[3].X) / 2, (vertices[0].Y + vertices[2].Y) / 2);
-                    FindIntersectionPowerpoint(slide,bounds,data.Na+data.K,data.Ca,data.Mg,data.Cl+data.So4,data.HCO3,data.CO3,brush,data.shape);
+                    FindIntersectionPowerpoint(slide, bounds, data.Na + data.K, data.Ca, data.Mg, data.Cl + data.So4, data.HCO3, data.CO3, data.color, data.shape);
                 }
             }
 
