@@ -293,7 +293,7 @@ namespace WindowsFormsApplication2
             if (frmImportSamples.isCalculateAndPlotClicked)
             {
                 // Trigger radar diagram update immediately
-                frmMainForm.flag = false;
+                frmMainForm.isScalesNeedNoUpdate = false;
                 //clsRadarDrawer.maxAl = 0; clsRadarDrawer.maxCo = 0; clsRadarDrawer.maxCu = 0; clsRadarDrawer.maxMn = 0; clsRadarDrawer.maxNi = 0; clsRadarDrawer.maxZn = 0; clsRadarDrawer.maxPb = 0; clsRadarDrawer.maxFe = 0; clsRadarDrawer.maxCd = 0; clsRadarDrawer.maxCr = 0; clsRadarDrawer.maxTl = 0; clsRadarDrawer.maxBe = 0; clsRadarDrawer.maxSe = 0; clsRadarDrawer.maxLi = 0; clsRadarDrawer.maxB = 0;
                 //clsRadarDrawer.maxNaCl = 0; clsRadarDrawer.maxClCa = 0; clsRadarDrawer.maxHCO3Cl = 0; clsRadarDrawer.maxClSr = 0; clsRadarDrawer.maxNaCa = 0; clsRadarDrawer.maxKNa = 0; clsRadarDrawer.maxSrMg = 0; clsRadarDrawer.maxMgCl = 0; clsRadarDrawer.maxSrCl = 0; clsRadarDrawer.maxSrK = 0; clsRadarDrawer.maxMgK = 0; clsRadarDrawer.maxCaK = 0; clsRadarDrawer.maxtK = 0; clsRadarDrawer.maxBCl = 0; clsRadarDrawer.maxBNa = 0; clsRadarDrawer.maxBMg = 0;
                 //clsRadarDrawer.maxCl = 0; clsRadarDrawer.maxNa1 = 0; clsRadarDrawer.maxK1 = 0; clsRadarDrawer.maxCa1 = 0; clsRadarDrawer.maxMg1 = 0; clsRadarDrawer.maxBa1 = 0; clsRadarDrawer.maxSr1 = 0;

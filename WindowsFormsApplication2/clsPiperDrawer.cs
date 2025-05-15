@@ -744,7 +744,7 @@ namespace WindowsFormsApplication2
             }
             // Step 4: Draw the point
             Brush squareBrush = new SolidBrush(brush);
-            if (shape != null && shape!="Plus")
+            if (shape != null && shape!="Plus" && !float.IsNaN(x) && !float.IsNaN(y))
             {
                 for (int i = 0; i < frmSymbolPicker.symbolNames.Count; i++)
                 {
@@ -786,7 +786,7 @@ namespace WindowsFormsApplication2
 
             // Step 4: Draw the point
             Brush squareBrush = new SolidBrush(brush);
-            if (shape != null && shape != "Plus")
+            if (shape != null && shape != "Plus" && !float.IsNaN(x) && !float.IsNaN(y))
             {
                 for (int i = 0; i < frmSymbolPicker.symbolNames.Count; i++)
                 {

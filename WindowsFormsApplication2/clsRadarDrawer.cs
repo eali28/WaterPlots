@@ -424,6 +424,7 @@ namespace WindowsFormsApplication2
             title.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
             title.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
             title.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
+            
             //Data labels and values
             clsRadarScale[][] sampleData = new clsRadarScale[frmImportSamples.WaterData.Count][];
             double Bm = 35453, Bn = 22989.7, Bo = 39098.3, Bp = 40078, Bq = 24305, Br = 137327, Bs = 87620;

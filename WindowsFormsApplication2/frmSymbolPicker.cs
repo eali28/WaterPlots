@@ -369,7 +369,7 @@ namespace WindowsFormsApplication2
                     {
                         for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
                         {
-                            if (frmImportSamples.WaterData[i].sampleID == selectedRow.Cells[1].Value.ToString())
+                            if (frmImportSamples.WaterData[i].sampleID == selectedRow.Cells[1].Value.ToString() || frmImportSamples.WaterData[i].ID == selectedRow.Cells[0].Value.ToString())
                             {
                                 frmImportSamples.WaterData[i].shape = symbolNames.ElementAt(symbolIndex);
                                 break;

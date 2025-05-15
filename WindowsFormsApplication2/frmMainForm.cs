@@ -20,7 +20,8 @@ namespace WindowsFormsApplication2
         public RectangleF textBounds;
         public string text;
         
-        public static bool flag = false;
+        public static bool isScalesNeedNoUpdate = false;
+        public static bool isExcelFileImported = false;
         public static string connectionString = "Server=SQL-STRATOCHEM;Database=BRI;Integrated Security=True;";
         public static List<string> selectedSamples = new List<string>();
         public static Bitmap bmbpic;
@@ -333,7 +334,7 @@ namespace WindowsFormsApplication2
                     mainChartPlotting.MouseDoubleClick += PictureBoxRadarScales;
 
                     Rectangle bounds = new Rectangle((int)(0.01f*mainChartPlotting.Width), (int)(0.08f*mainChartPlotting.Height), (int)(0.9 * mainChartPlotting.Width), (int)(0.9 * mainChartPlotting.Height));
-                    clsRadarDrawer.DrawRadarChart1(graphics, bounds, flag);
+                    clsRadarDrawer.DrawRadarChart1(graphics, bounds, isScalesNeedNoUpdate);
 
                 }
                 else if (selectedChart == "Piper Diagram")
@@ -368,7 +369,7 @@ namespace WindowsFormsApplication2
                 {
                     mainChartPlotting.MouseDoubleClick += PictureBoxRadarScales;
                     Rectangle bounds = new Rectangle((int)(0.01f * mainChartPlotting.Width), (int)(0.02f * mainChartPlotting.Height), (int)(0.9 * mainChartPlotting.Width), (int)(0.9 * mainChartPlotting.Height));
-                    clsRadarDrawer.DrawRadarChart2(graphics, bounds, flag);
+                    clsRadarDrawer.DrawRadarChart2(graphics, bounds, isScalesNeedNoUpdate);
                 }
                 else if (selectedChart == "Major Element Logs")
                 {
@@ -380,7 +381,7 @@ namespace WindowsFormsApplication2
                 {
                     mainChartPlotting.MouseDoubleClick += PictureBoxRadarScales;
                     Rectangle bounds = new Rectangle((int)(0.01f * mainChartPlotting.Width), (int)(0.02f * mainChartPlotting.Height), (int)(0.9 * mainChartPlotting.Width), (int)(0.9 * mainChartPlotting.Height));
-                    clsRadarDrawer.DrawRadarChart3(graphics, bounds, flag);
+                    clsRadarDrawer.DrawRadarChart3(graphics, bounds, isScalesNeedNoUpdate);
                 }
                 Bitmap resized = new Bitmap(chartBitmap, mainChartPlotting.Width, mainChartPlotting.Height);
                 mainChartPlotting.Image = resized;
@@ -551,12 +552,12 @@ namespace WindowsFormsApplication2
                 else if (listBoxSelected.Items[i].ToString() == "Elements Molar Concentration")
                 {
                     Rectangle bounds = new Rectangle((int)(0.5f * slideWidth), (int)(0.08f * slideHeight), (int)(0.6 * slideWidth), (int)(0.9 * slideHeight));
-                    clsRadarDrawer.ExportRadar1ToPowerpoint(bounds, slide, presentation,flag);
+                    clsRadarDrawer.ExportRadar1ToPowerpoint(bounds, slide, presentation,isScalesNeedNoUpdate);
                 }
                 else if (listBoxSelected.Items[i].ToString() == "Genetic Origin and Alteration Plot")
                 {
                     Rectangle bounds = new Rectangle((int)(0.5f * slideWidth), (int)(0.08f * slideHeight), (int)(0.6 * slideWidth), (int)(0.9 * slideHeight));
-                    clsRadarDrawer.ExportRadar2ToPowerpoint(bounds, slide, presentation,flag);
+                    clsRadarDrawer.ExportRadar2ToPowerpoint(bounds, slide, presentation,isScalesNeedNoUpdate);
                 }
                 else if (listBoxSelected.Items[i].ToString() == "Piper Diagram")
                 {
@@ -578,7 +579,7 @@ namespace WindowsFormsApplication2
                 else if(listBoxSelected.Items[i].ToString()== "ICP Reproducibility")
                 {
                     Rectangle bounds = new Rectangle((int)(0.5f * slideWidth), (int)(0.08f * slideHeight), (int)(0.6 * slideWidth), (int)(0.9 * slideHeight));
-                    clsRadarDrawer.ExportRadar3ToPowerpoint(bounds, slide, presentation, flag);
+                    clsRadarDrawer.ExportRadar3ToPowerpoint(bounds, slide, presentation, isScalesNeedNoUpdate);
                 }
             }
             listBoxCharts.Refresh();
@@ -624,7 +625,7 @@ namespace WindowsFormsApplication2
                     
                 }
 
-                flag = true;
+                isScalesNeedNoUpdate = true;
 
             }
 
@@ -687,7 +688,7 @@ namespace WindowsFormsApplication2
                     }
 
                 }
-                flag = true;
+                isScalesNeedNoUpdate = true;
             }
             else if(name== "ICP Reproducibility")
             {
@@ -762,7 +763,7 @@ namespace WindowsFormsApplication2
                     }
 
                 }
-                flag = true;
+                isScalesNeedNoUpdate = true;
             }
 
             
@@ -775,7 +776,7 @@ namespace WindowsFormsApplication2
                 Graphics graphics = Graphics.FromImage(chartBitmap);
                 graphics.Clear(Color.White);
                 Rectangle bounds = new Rectangle(50, 50, (int)(0.9 * mainChartPlotting.Width), (int)(0.9 * mainChartPlotting.Height));
-                clsRadarDrawer.DrawRadarChart1(graphics, bounds, flag);
+                clsRadarDrawer.DrawRadarChart1(graphics, bounds, isScalesNeedNoUpdate);
                 mainChartPlotting.Image = chartBitmap;
 
             }
@@ -785,7 +786,7 @@ namespace WindowsFormsApplication2
                 Graphics graphics = Graphics.FromImage(chartBitmap);
                 graphics.Clear(Color.White);
                 Rectangle bounds = new Rectangle(50, 50, (int)(0.9 * mainChartPlotting.Width), (int)(0.9 * mainChartPlotting.Height));
-                clsRadarDrawer.DrawRadarChart2(graphics, bounds, flag);
+                clsRadarDrawer.DrawRadarChart2(graphics, bounds, isScalesNeedNoUpdate);
                 mainChartPlotting.Image = chartBitmap;
 
             }
@@ -795,7 +796,7 @@ namespace WindowsFormsApplication2
                 Graphics graphics = Graphics.FromImage(chartBitmap);
                 graphics.Clear(Color.White);
                 Rectangle bounds = new Rectangle(50, 50, (int)(0.9 * mainChartPlotting.Width), (int)(0.9 * mainChartPlotting.Height));
-                clsRadarDrawer.DrawRadarChart3(graphics, bounds, flag);
+                clsRadarDrawer.DrawRadarChart3(graphics, bounds, isScalesNeedNoUpdate);
                 mainChartPlotting.Image = chartBitmap;
             }
             
@@ -905,7 +906,7 @@ namespace WindowsFormsApplication2
                 graphics.Clear(Color.White);
                 Rectangle bounds = new Rectangle(50, 50, (int)(0.9 * mainChartPlotting.Width), (int)(0.9 * mainChartPlotting.Height));
 
-                clsRadarDrawer.DrawRadarChart1(graphics, bounds, flag);
+                clsRadarDrawer.DrawRadarChart1(graphics, bounds, isScalesNeedNoUpdate);
                 mainChartPlotting.Image = chartBitmap;
             }
             else if (listBoxCharts.SelectedItem != null && listBoxCharts.SelectedItem.ToString() == "Genetic Origin and Alteration Plot")
@@ -914,7 +915,7 @@ namespace WindowsFormsApplication2
                 Graphics graphics = Graphics.FromImage(chartBitmap);
                 graphics.Clear(Color.White);
                 Rectangle bounds = new Rectangle(50, 50, (int)(0.9 * mainChartPlotting.Width), (int)(0.9 * mainChartPlotting.Height));
-                clsRadarDrawer.DrawRadarChart2(graphics, bounds, flag);
+                clsRadarDrawer.DrawRadarChart2(graphics, bounds, isScalesNeedNoUpdate);
                 mainChartPlotting.Image = chartBitmap;
             }
             else if (listBoxCharts.SelectedItem != null && listBoxCharts.SelectedItem.ToString() == "ICP Reproducibility")
@@ -923,7 +924,7 @@ namespace WindowsFormsApplication2
                 Graphics graphics = Graphics.FromImage(chartBitmap);
                 graphics.Clear(Color.White);
                 Rectangle bounds = new Rectangle(50, 50, (int)(0.9 * mainChartPlotting.Width), (int)(0.9 * mainChartPlotting.Height));
-                clsRadarDrawer.DrawRadarChart3(graphics, bounds, flag);
+                clsRadarDrawer.DrawRadarChart3(graphics, bounds, isScalesNeedNoUpdate);
                 mainChartPlotting.Image = chartBitmap;
             }
             
@@ -1082,7 +1083,8 @@ namespace WindowsFormsApplication2
         /// </summary>
         public void ReadExcelFile(string filePath)
         {
-            frmMainForm.flag = false;
+            isExcelFileImported = true;
+            frmMainForm.isScalesNeedNoUpdate = false;
             //clsRadarDrawer.maxAl = 0; clsRadarDrawer.maxCo = 0; clsRadarDrawer.maxCu = 0; clsRadarDrawer.maxMn = 0; clsRadarDrawer.maxNi = 0; clsRadarDrawer.maxZn = 0; clsRadarDrawer.maxPb = 0; clsRadarDrawer.maxFe = 0; clsRadarDrawer.maxCd = 0; clsRadarDrawer.maxCr = 0; clsRadarDrawer.maxTl = 0; clsRadarDrawer.maxBe = 0; clsRadarDrawer.maxSe = 0; clsRadarDrawer.maxLi = 0; clsRadarDrawer.maxB = 0;
             //clsRadarDrawer.maxNaCl = 0; clsRadarDrawer.maxClCa = 0; clsRadarDrawer.maxHCO3Cl = 0; clsRadarDrawer.maxClSr = 0; clsRadarDrawer.maxNaCa = 0; clsRadarDrawer.maxKNa = 0; clsRadarDrawer.maxSrMg = 0; clsRadarDrawer.maxMgCl = 0; clsRadarDrawer.maxSrCl = 0; clsRadarDrawer.maxSrK = 0; clsRadarDrawer.maxMgK = 0; clsRadarDrawer.maxCaK = 0; clsRadarDrawer.maxtK = 0; clsRadarDrawer.maxBCl = 0; clsRadarDrawer.maxBNa = 0; clsRadarDrawer.maxBMg = 0;
             //clsRadarDrawer.maxCl = 0; clsRadarDrawer.maxNa1 = 0; clsRadarDrawer.maxK1 = 0; clsRadarDrawer.maxCa1 = 0; clsRadarDrawer.maxMg1 = 0; clsRadarDrawer.maxBa1 = 0; clsRadarDrawer.maxSr1 = 0;
@@ -1118,7 +1120,7 @@ namespace WindowsFormsApplication2
                 }
 
                 frmImportSamples.WaterData.Clear();
-
+                int ID = 1;
                 for (int row = headerRow + 1; row <= lastRow; row++)
                 {
                     // Skip empty rows
@@ -1128,7 +1130,10 @@ namespace WindowsFormsApplication2
                     var waterSample = new clsWater();
 
                     // Read data using column names
+                    waterSample.ID = ID.ToString();
                     waterSample.ClientID = worksheet.Cells[row, columnIndices["Client ID"]].Text;
+                    waterSample.sampleType = worksheet.Cells[row, columnIndices["Sample Type"]].Text;
+                    waterSample.Label = worksheet.Cells[row, columnIndices["Label"]].Text;
                     waterSample.K = ParseDouble(worksheet.Cells[row, columnIndices["K"]].Text);
                     waterSample.Na = ParseDouble(worksheet.Cells[row, columnIndices["Na"]].Text);
                     waterSample.Mg = ParseDouble(worksheet.Cells[row, columnIndices["Mg"]].Text);
@@ -1152,10 +1157,13 @@ namespace WindowsFormsApplication2
                     waterSample.Li = ParseDouble(worksheet.Cells[row, columnIndices["Li"]].Text);
                     waterSample.color = frmImportSamples.GetRandomColor(false);
                     frmImportSamples.WaterData.Add(waterSample);
+                    ID++;
                 }
 
                 workbook.Close(false);
                 UpdateRadarDiagram();
+                UpdatePiperDiagram();
+                UpdateSchoellerDiagram();
             }
             catch (Exception ex)
             {

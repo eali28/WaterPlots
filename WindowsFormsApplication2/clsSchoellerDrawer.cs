@@ -276,7 +276,7 @@ namespace WindowsFormsApplication2
 
             // X-axis labels
             string[] XaxisItems = { "K", "Mg", "Ca", "Na", "Cl", "HCO3", "SO4" };
-            double[] YaxisItems = { 1, 10, 100, 1000, 10000 };
+            double[] YaxisItems = { 0.1,1, 10, 100, 1000, 10000 };
 
             // Draw X and Y axes
             slide.Shapes.AddLine(chartX, chartY + chartHeight, chartX + chartWidth, chartY + chartHeight) // X axis
@@ -288,7 +288,7 @@ namespace WindowsFormsApplication2
             for (int i = 0; i < YaxisItems.Length; i++)
             {
                 // Logarithmic Y-axis position calculation
-                float yPos = chartY + chartHeight - (float)(Math.Log10(YaxisItems[i]) * (chartHeight / Math.Log10(10000)));
+                float yPos = chartY +chartHeight - (int)((Math.Log10(YaxisItems[i])-Math.Log10(YaxisItems[0]))/Math.Log10(10000/YaxisItems[0])*chartHeight);
                 // Y-axis labels
                 slide.Shapes.AddLine(chartX, yPos, chartX - 10, yPos)
                     .Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
@@ -307,11 +307,12 @@ namespace WindowsFormsApplication2
                 labelY.TextFrame.MarginTop = 0;
                 labelY.TextFrame.MarginBottom = 0;
             }
-
+            List<PointF> Positions = new List<PointF>();
             for (int j = 1; j <= XaxisItems.Length; j++)
             {
                 // Logarithmic scale Y position
                 float xPos = chartX + (j * (chartWidth / XaxisItems.Length));
+                Positions.Add(new PointF(xPos, chartY + chartHeight));
                 slide.Shapes.AddLine(xPos, chartY + chartHeight, xPos, chartY + chartHeight + 10).Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                 PowerPoint.Shape labelX = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, xPos - 5, chartY + chartHeight + 20, 100, 50);
                 labelX.TextFrame.TextRange.Text = XaxisItems[j - 1];
@@ -345,13 +346,12 @@ namespace WindowsFormsApplication2
 
                 double[] values = { K, Mg, Ca, Na, Cl, HCO3 + CO3, SO4 };
                 PointF[] points = new PointF[values.Length];
-
                 // Create a new series for each sample
                 for (int j = 1; j <= XaxisItems.Length; j++)
                 {
                     // Logarithmic scale Y position
                     float xPos = chartX + (j * (chartWidth / XaxisItems.Length));
-                    float yPos = chartY + chartHeight - (float)(Math.Log10(values[j - 1]) * (chartHeight / Math.Log10(10000)));
+                    float yPos = chartY + chartHeight - (int)((Math.Log10(values[j - 1]) - Math.Log10(YaxisItems[0])) / Math.Log10(10000 / YaxisItems[0]) * chartHeight);
 
                     points[j - 1] = new PointF(xPos - 7.5f, yPos - 7.5f);
                 }
@@ -362,6 +362,12 @@ namespace WindowsFormsApplication2
                 {
                     polylinePoints[j * 2] = points[j].X;
                     polylinePoints[j * 2 + 1] = points[j].Y;
+                    
+                    string str = points[j].Y.ToString();
+                    if (float.IsInfinity(polylinePoints[j*2+1]) || str.Contains("E"))
+                    {
+                        polylinePoints[j * 2 + 1] = chartY+chartHeight;
+                    }
                 }
 
                 // Add the polyline to the slide

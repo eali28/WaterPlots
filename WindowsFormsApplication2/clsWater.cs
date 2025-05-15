@@ -34,6 +34,9 @@ namespace WindowsFormsApplication2
         public string Well_Name;
         public string Depth; 
         public string ClientID;
+        public string sampleType;
+        public string Label;
+        public string ID;
         public Color color;
         public DashStyle selectedStyle = DashStyle.Solid;
         public float lineWidth = 2; // Default line width
