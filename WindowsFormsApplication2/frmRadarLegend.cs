@@ -36,8 +36,29 @@ namespace WindowsFormsApplication2
 
             selectedStyle = DashStyle.Solid;
             lineWidth = 2;
+            dgvJobsInDetails.ColumnHeaderMouseClick += DgvJobsInDetails_ColumnHeaderMouseClick;
         }
-        
+
+        private void DgvJobsInDetails_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.RowIndex == -1) // Only handle header clicks
+            {
+                string headerText = dgvJobsInDetails.Columns[e.ColumnIndex].HeaderText;
+
+                // Check if header is already in the list
+                if (!clsConstants.clickedHeaders.Contains(headerText))
+                {
+                    clsConstants.clickedHeaders.Add(headerText);
+                    MessageBox.Show($"Header '{headerText}' has been added to the legend.", "Header Clicked");
+                }
+                else
+                {
+                    clsConstants.clickedHeaders.Remove(headerText);
+                    MessageBox.Show($"Header '{headerText}' has been removed from the legend.", "Header Clicked");
+                }
+            }
+        }
+
 
         private void LoadTypesIntoComboBox()
         {

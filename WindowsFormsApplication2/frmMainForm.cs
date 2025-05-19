@@ -27,6 +27,8 @@ namespace WindowsFormsApplication2
         public static Bitmap bmbpic;
         public static Panel legendPanel;
         public static Panel metaPanel;
+        public static bool bubble = false;
+        public static bool pipper = false;
 
         public frmMainForm()
         {
@@ -241,10 +243,6 @@ namespace WindowsFormsApplication2
             mainChartPlotting.Width = this.ClientSize.Width;
             mainChartPlotting.Height = this.ClientSize.Height;
         }
-
-
-
-
         /// <summary>
         /// Handles the select all checkbox functionality for chart selection
         /// </summary>
@@ -284,6 +282,7 @@ namespace WindowsFormsApplication2
                 legendPictureBox.MouseDoubleClick -= pictureBoxCollins_Click;
                 mainChartPlotting.MouseDoubleClick -= legendPictureBoxRadar;
                 mainChartPlotting.MouseDoubleClick -= PictureBoxRadarScales;
+                mainChartPlotting.MouseDoubleClick -= pictureBoxBubble_Click;
                 mainChartPlotting.Controls.Remove(legendPanel);
                 mainChartPlotting.Controls.Remove(metaPanel);
                 legendPanel = new Panel();
@@ -825,6 +824,7 @@ namespace WindowsFormsApplication2
                 UpdateRadarDiagram();
             }
         }
+        
         /// <summary>
         /// Handles the drawing of radar plot scales
         /// </summary>
@@ -871,14 +871,27 @@ namespace WindowsFormsApplication2
         /// </summary>
         public static void pictureBoxPiper_Click(object sender, EventArgs e)
         {
-            frmPiperLegend itemDetails = new frmPiperLegend();
+            frmBubblePiperLegend itemDetails = new frmBubblePiperLegend("Piper Legend");
             itemDetails.ShowDialog();
             itemDetails.BringToFront();
             itemDetails.Activate();
-            
+            pipper = true;
             UpdatePiperDiagram();
         }
-
+        /// <summary>
+        /// Opens bubble diagram legend form
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public static void pictureBoxBubble_Click(object sender, EventArgs e)
+        {
+            frmBubblePiperLegend itemDetails = new frmBubblePiperLegend("Bubble Legend");
+            itemDetails.ShowDialog();
+            itemDetails.BringToFront();
+            itemDetails.Activate();
+            bubble = true;
+            UpdateBubbleDiagram();
+        }
         /// <summary>
         /// Opens the Collins diagram legend form
         /// </summary>
@@ -891,7 +904,29 @@ namespace WindowsFormsApplication2
 
             UpdateCollinsDiagram();
         }
+        /// <summary>
+        /// Opens the Pie diagram meta legend
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public static void pictureBoxPieMeta_Click(object sender, EventArgs e)
+        {
+            frmPieMeta itemDetails = new frmPieMeta();
+            itemDetails.ShowDialog();
+            itemDetails.BringToFront();
+            itemDetails.Activate();
 
+            UpdatePieDiagram();
+        }
+        public static void pictureBoxCollinsMeta_Click(object sender, EventArgs e)
+        {
+            frmCollinsMeta itemDetails = new frmCollinsMeta();
+            itemDetails.ShowDialog();
+            itemDetails.BringToFront();
+            itemDetails.Activate();
+
+            UpdateCollinsDiagram();
+        }
         /// <summary>
         /// Updates the radar diagram with current data
         /// </summary>

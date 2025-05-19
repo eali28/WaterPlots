@@ -361,9 +361,9 @@ namespace WindowsFormsApplication2
                 return; // Click outside grid
             int symbolIndex = row * cols + col;
             
-            if (frmPiperLegend.dgvJobsInDetails.SelectedRows.Count > 0)
+            if (frmBubblePiperLegend.dgvJobsInDetails.SelectedRows.Count > 0)
             {
-                foreach (DataGridViewRow selectedRow in frmPiperLegend.dgvJobsInDetails.SelectedRows)
+                foreach (DataGridViewRow selectedRow in frmBubblePiperLegend.dgvJobsInDetails.SelectedRows)
                 {
                     if (selectedRow.Cells[1].Value != null)
                     {

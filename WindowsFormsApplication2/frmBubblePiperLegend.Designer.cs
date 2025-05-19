@@ -1,6 +1,6 @@
 ﻿namespace WindowsFormsApplication2
 {
-    partial class frmPiperLegend
+    partial class frmBubblePiperLegend
     {
         /// <summary>
         /// Required designer variable.
@@ -168,7 +168,7 @@
             this.Controls.Add(this.colorLabel);
             this.Controls.Add(this.colorPanel);
             this.Name = "frmPiperLegend";
-            this.Text = "Piper Legend";
+            
             this.Load += new System.EventHandler(this.PiperDetails_Load);
             ((System.ComponentModel.ISupportInitialize)(dgvJobsInDetails)).EndInit();
             this.ResumeLayout(false);

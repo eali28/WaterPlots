@@ -9,7 +9,7 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>WindowsFormsApplication2</RootNamespace>
-    <AssemblyName>WindowsFormsApplication2</AssemblyName>
+    <AssemblyName>WaterPlots</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -32,6 +32,9 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>goutte_eau_etang_unsplash_GxU_icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -59,6 +62,12 @@
       <DependentUpon>frmCollinsLegend.cs</DependentUpon>
     </Compile>
     <Compile Include="clsCollinsDrawer.cs" />
+    <Compile Include="frmCollinsMeta.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmCollinsMeta.Designer.cs">
+      <DependentUpon>frmCollinsMeta.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmMainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -70,6 +79,12 @@
     </Compile>
     <Compile Include="frmImportSamples.Designer.cs">
       <DependentUpon>frmImportSamples.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmPieMeta.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmPieMeta.Designer.cs">
+      <DependentUpon>frmPieMeta.cs</DependentUpon>
     </Compile>
     <Compile Include="frmRadarLegend.cs">
       <SubType>Form</SubType>
@@ -86,11 +101,11 @@
       <DependentUpon>frmPieLegend.cs</DependentUpon>
     </Compile>
     <Compile Include="clsPieDrawer.cs" />
-    <Compile Include="frmPiperLegend.cs">
+    <Compile Include="frmBubblePiperLegend.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="frmPiperLegend.Designer.cs">
-      <DependentUpon>frmPiperLegend.cs</DependentUpon>
+    <Compile Include="frmBubblePiperLegend.Designer.cs">
+      <DependentUpon>frmBubblePiperLegend.cs</DependentUpon>
     </Compile>
     <Compile Include="clsPiperDrawer.cs" />
     <Compile Include="frmRadarScales.cs">
@@ -132,11 +147,17 @@
     <EmbeddedResource Include="frmCollinsLegend.resx">
       <DependentUpon>frmCollinsLegend.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="frmCollinsMeta.resx">
+      <DependentUpon>frmCollinsMeta.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="frmMainForm.resx">
       <DependentUpon>frmMainForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmImportSamples.resx">
       <DependentUpon>frmImportSamples.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmPieMeta.resx">
+      <DependentUpon>frmPieMeta.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmRadarLegend.resx">
       <DependentUpon>frmRadarLegend.cs</DependentUpon>
@@ -144,8 +165,8 @@
     <EmbeddedResource Include="frmPieLegend.resx">
       <DependentUpon>frmPieLegend.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="frmPiperLegend.resx">
-      <DependentUpon>frmPiperLegend.cs</DependentUpon>
+    <EmbeddedResource Include="frmBubblePiperLegend.resx">
+      <DependentUpon>frmBubblePiperLegend.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmRadarScales.resx">
       <DependentUpon>frmRadarScales.cs</DependentUpon>
@@ -262,6 +283,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\circle.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\goutte_eau_etang_unsplash_GxU_icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="goutte_eau_etang_unsplash_GxU_icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

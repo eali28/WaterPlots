@@ -19,6 +19,7 @@ namespace WindowsFormsApplication2
         public static string JOBID = "";
         public static string connectionString = "Server=SQL-STRATOCHEM;Database=BRI;Integrated Security=True;";
         public static List<clsSampleData> samplesData = new List<clsSampleData>();
+        public static List<clsSampleData> selectedSamples = new List<clsSampleData>();
         public static List<clsWater> WaterData = new List<clsWater>();
         private static frmImportSamples instance;
         private BackgroundWorker backgroundWorker;
@@ -493,6 +494,8 @@ namespace WindowsFormsApplication2
                         {
                             dgvSamples.Rows.Add(sampleID, clientID, wellName, lat, longitude, sampleType, FormName, depth, Prep, age, "", api != string.Empty ? "C" : "", G02A != string.Empty ? G02A : "", smpl != string.Empty ? "C" : "", water != string.Empty ? "C" : "");
                         }
+                        //WaterData[i].latitude = lat;
+                        //WaterData[i].longtude = longitude;
 
                     }
                    
@@ -542,12 +545,13 @@ namespace WindowsFormsApplication2
         {
             if (dgvSamples.SelectedRows.Count > 0)
             {
-                copyOfJobs.Clear();
-                dgvJobs.Rows.Clear();
-
+                //copyOfJobs.Clear();
+                //dgvJobs.Rows.Clear();
+                
                 for (int j = dgvSamples.SelectedRows.Count - 1; j >= 0; j--)
                 {
                     DataGridViewRow selectedRow = dgvSamples.SelectedRows[j];
+                    
                     DataGridViewRow newRow = new DataGridViewRow();
 
                     // Clone cell structure
@@ -582,12 +586,6 @@ namespace WindowsFormsApplication2
                         };
                         copyOfJobs.Add(newJob);
                     }
-
-                    
-                    
-                    
-                    
-
                 }
             }
             else
@@ -625,10 +623,6 @@ namespace WindowsFormsApplication2
                     getWaterData();
                     progressBar.Value = 100;
                     frmMainForm.isScalesNeedNoUpdate = false;
-                    //clsRadarDrawer.maxAl = 0; clsRadarDrawer.maxCo = 0; clsRadarDrawer.maxCu = 0; clsRadarDrawer.maxMn = 0; clsRadarDrawer.maxNi = 0; clsRadarDrawer.maxZn = 0; clsRadarDrawer.maxPb = 0; clsRadarDrawer.maxFe = 0; clsRadarDrawer.maxCd = 0; clsRadarDrawer.maxCr = 0; clsRadarDrawer.maxTl = 0; clsRadarDrawer.maxBe = 0; clsRadarDrawer.maxSe = 0; clsRadarDrawer.maxLi = 0; clsRadarDrawer.maxB = 0;
-                    //clsRadarDrawer.maxNaCl = 0; clsRadarDrawer.maxClCa = 0; clsRadarDrawer.maxHCO3Cl = 0; clsRadarDrawer.maxClSr = 0; clsRadarDrawer.maxNaCa = 0; clsRadarDrawer.maxKNa = 0; clsRadarDrawer.maxSrMg = 0; clsRadarDrawer.maxMgCl = 0; clsRadarDrawer.maxSrCl = 0; clsRadarDrawer.maxSrK = 0; clsRadarDrawer.maxMgK = 0; clsRadarDrawer.maxCaK = 0; clsRadarDrawer.maxtK = 0; clsRadarDrawer.maxBCl = 0; clsRadarDrawer.maxBNa = 0; clsRadarDrawer.maxBMg = 0;
-                    //clsRadarDrawer.maxCl = 0; clsRadarDrawer.maxNa1 = 0; clsRadarDrawer.maxK1 = 0; clsRadarDrawer.maxCa1 = 0; clsRadarDrawer.maxMg1 = 0; clsRadarDrawer.maxBa1 = 0; clsRadarDrawer.maxSr1 = 0;
-                    //clsRadarDrawer.maxNa3 = 0; clsRadarDrawer.maxK3 = 0; clsRadarDrawer.maxCa3 = 0; clsRadarDrawer.maxMg3 = 0; clsRadarDrawer.maxBa3 = 0; clsRadarDrawer.maxSr3 = 0;
                     frmMainForm.UpdateRadarDiagram();
                     frmMainForm.UpdateCollinsDiagram();
                     frmMainForm.UpdatePieDiagram();
@@ -910,7 +904,7 @@ namespace WindowsFormsApplication2
                                 {
                                     BValue = 0;
                                 }
-                                
+
 
 
                                 // Add the parsed values to the WaterData list
@@ -933,21 +927,25 @@ namespace WindowsFormsApplication2
                                     Depth = "",
                                     ClientID = "",
                                     color = Color.Blue,
-                                    Al=ALValue,
-                                    Co=CoValue,
-                                    Cu=CuValue,
-                                    Mn=MnValue,
-                                    Ni=NiValue,
-                                    Zn=ZnValue,
-                                    Pb=PbValue,
-                                    Fe=FeValue,
-                                    Cd=CdValue,
-                                    Cr=CrValue,
-                                    Tl=TlValue,
-                                    Be=BeValue,
-                                    Se=SeValue,
-                                    Li=LiValue
-                               
+                                    Al = ALValue,
+                                    Co = CoValue,
+                                    Cu = CuValue,
+                                    Mn = MnValue,
+                                    Ni = NiValue,
+                                    Zn = ZnValue,
+                                    Pb = PbValue,
+                                    Fe = FeValue,
+                                    Cd = CdValue,
+                                    Cr = CrValue,
+                                    Tl = TlValue,
+                                    Be = BeValue,
+                                    Se = SeValue,
+                                    Li = LiValue,
+                                    jobID = JOBID,
+                                    latitude = dgvJobs.Rows[i].Cells[4].Value.ToString(),
+                                    longtude=dgvJobs.Rows[i].Cells[5].Value.ToString(),
+                                    formName=dgvJobs.Rows[i].Cells[7].Value.ToString(),
+                                    prep=dgvJobs.Rows[i].Cells[9].Value.ToString()
                                 };
 
                                 WaterData.Add(existingWaterData);

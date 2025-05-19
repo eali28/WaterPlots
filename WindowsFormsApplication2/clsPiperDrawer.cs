@@ -36,6 +36,7 @@ namespace WindowsFormsApplication2
             frmMainForm.legendPictureBox.MouseDoubleClick -= frmMainForm.pictureBoxPie_Click;
             frmMainForm.legendPictureBox.MouseDoubleClick -= frmMainForm.pictureBoxSchoeller_Click;
             frmMainForm.legendPictureBox.MouseDoubleClick -= frmMainForm.pictureBoxCollins_Click;
+            
             //frmMainForm.mainChartPlotting.Invalidate();
 
             cationVertices.Clear();
@@ -159,7 +160,7 @@ namespace WindowsFormsApplication2
             if (frmImportSamples.WaterData.Count > 0)
             {
                 int xsample = (int)(0.69f * frmMainForm.mainChartPlotting.Width);
-                int legendY = (int)(0.13f * frmMainForm.mainChartPlotting.Height);
+                int legendY = clsConstants.metaY;
                 int legendX = xsample;
 
                 int legendBoxHeight = 0;
@@ -168,12 +169,70 @@ namespace WindowsFormsApplication2
 
                 using (Font fontStyle = new Font("Times New Roman", legendtextSize, FontStyle.Bold))
                 {
+
                     foreach (var data in frmImportSamples.WaterData)
                     {
-                        string fullText = data.Well_Name + ", " + data.ClientID + ", " + data.Depth;
+                        string fullText = "";
+                        if (clsConstants.clickedHeaders.Count>0)
+                        {
+                            int c = 0;
+                            
+                            foreach(var header in clsConstants.clickedHeaders)
+                            {
+                                if(header=="Job ID")
+                                {
+                                    fullText += data.jobID;
+                                }
+                                else if(header=="Sample ID")
+                                {
+                                    fullText += data.sampleID;
+                                }
+                                else if(header=="Client ID")
+                                {
+                                    fullText += data.ClientID;
+                                }
+                                else if(header=="Well Name")
+                                {
+                                    fullText += data.Well_Name;
+                                }
+                                else if(header=="Lat")
+                                {
+                                    fullText += data.latitude;
+                                }
+                                else if(header=="Long")
+                                {
+                                    fullText += data.longtude;
+                                }
+                                else if(header=="Sample Type")
+                                {
+                                    fullText += data.sampleType;
+                                }
+                                else if(header=="Formation Name")
+                                {
+                                    fullText += data.formName;
+                                }
+                                else if(header=="Depth")
+                                {
+                                    fullText += data.Depth;
+                                }
+                                else if(header=="Prep")
+                                {
+                                    fullText += data.prep;
+                                }
+                                if(c!=clsConstants.clickedHeaders.Count-1)
+                                {
+                                    fullText += ", ";
+                                }
+                                c++;
+                            }
+                        }
+                        else
+                        {
+                            fullText += data.Well_Name + ", " + data.ClientID + ", " + data.Depth;
+                        }
                         SizeF textSize = g.MeasureString(fullText, fontStyle, legendBoxWidth - 30); // limit width for wrapping
                         legendBoxWidth = (int)Math.Max(legendBoxWidth, textSize.Width);
-                        legendBoxHeight += (int)Math.Ceiling(textSize.Height + 10); // add spacing between lines
+                        legendBoxHeight += (int)Math.Ceiling(textSize.Height); // add spacing between lines
                     }
                 }
 
@@ -210,7 +269,28 @@ namespace WindowsFormsApplication2
 
                     // Draw text beside the shape
                     var data = frmImportSamples.WaterData[i];
-                    string fullText = data.Well_Name + ", " + data.ClientID + ", " + data.Depth;
+                    string fullText = "";
+                    if (clsConstants.clickedHeaders.Count > 0)
+                    {
+                        foreach (var header in clsConstants.clickedHeaders)
+                        {
+                            if (header == "Job ID") fullText += data.jobID;
+                            else if (header == "Sample ID") fullText += data.sampleID;
+                            else if (header == "Client ID") fullText += data.ClientID;
+                            else if (header == "Well Name") fullText += data.Well_Name;
+                            else if (header == "Lat") fullText += data.latitude;
+                            else if (header == "Long") fullText += data.longtude;
+                            else if (header == "Sample Type") fullText += data.sampleType;
+                            else if (header == "Formation Name") fullText += data.formName;
+                            else if (header == "Depth") fullText += data.Depth;
+                            else if (header == "Prep") fullText += data.prep;
+                            fullText += ", ";
+                        }
+                    }
+                    else
+                    {
+                        fullText = data.Well_Name + ", " + data.ClientID + ", " + data.Depth;
+                    }
                     RectangleF textRect = new RectangleF(30, ysample, legendBoxWidth - 35, legendBoxHeight); // large height to wrap
 
                     Font fontStyle = new Font("Times New Roman", legendtextSize, FontStyle.Bold);
@@ -223,7 +303,7 @@ namespace WindowsFormsApplication2
                         textRect
                     );
 
-                    ysample += (int)Math.Ceiling(textSize.Height + 10); // Move down based on wrapped height
+                    ysample += (int)Math.Ceiling(textSize.Height); // Move down based on wrapped height
                 }
                 
                 //Form1.legendPanel.BackColor = Color.Transparent;
@@ -405,9 +485,7 @@ namespace WindowsFormsApplication2
                 Color brush = frmImportSamples.WaterData[i].color;
                 if (label == "Cations")
                 {
-
                     PlotPointInTriangle(g, bounds, frmImportSamples.WaterData[i].Mg, frmImportSamples.WaterData[i].Na + frmImportSamples.WaterData[i].K, frmImportSamples.WaterData[i].Ca, brush, label,frmImportSamples.WaterData[i].shape);
-
                 }
                 else
                 {
@@ -421,8 +499,8 @@ namespace WindowsFormsApplication2
             float labelSize = Math.Min((int)(availableWidth * 0.7), (int)(availableHeight * 0.7)) / 40;  // Adjust the divisor for your desired text size scale
             Font labelStyle = new Font("Times New Roman", labelSize, FontStyle.Bold);
             StringFormat format = new StringFormat();
-            format.Alignment = StringAlignment.Near;      // Horizontal center
-            //format.LineAlignment = StringAlignment.Center;  // Vertical center (optional)
+            format.Alignment = StringAlignment.Near;
+
             if (label == "Cations")
             {
                 PointF[] magnesiumVertices = new PointF[]

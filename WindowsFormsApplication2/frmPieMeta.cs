@@ -1,28 +1,22 @@
 ﻿using System;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Windows.Forms;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.IO;
+using System.Windows.Forms;
 
 namespace WindowsFormsApplication2
 {
-    public partial class SchoellerDetails : Form
+    public partial class frmPieMeta : Form
     {
-        public static Color selectedColor;
-        public static bool IsUpdateClicked;
-        public static DashStyle selectedStyle;
-        public static float lineWidth; // Default line width
-        public SchoellerDetails()
+        public static bool isUpdateClicked;
+        public frmPieMeta()
         {
             InitializeComponent();
             Loaddgv();
-            LoadTypesIntoComboBox();
-            selectedColor = Color.Transparent;
-            selectedStyle = DashStyle.Solid;
-            lineWidth = 2;
+            isUpdateClicked = false;
             dgvJobsInDetails.ColumnHeaderMouseClick += DgvJobsInDetails_ColumnHeaderMouseClick;
         }
 
@@ -45,19 +39,7 @@ namespace WindowsFormsApplication2
                 }
             }
         }
-        private void LoadTypesIntoComboBox()
-        {
-            // Clear previous items
-            typeCombobox.Items.Clear();
 
-            // Add DashStyles
-            typeCombobox.Items.Add(DashStyle.Solid);
-            typeCombobox.Items.Add(DashStyle.Dash);
-            typeCombobox.Items.Add(DashStyle.Dot);
-            typeCombobox.Items.Add(DashStyle.DashDot);
-            typeCombobox.Items.Add(DashStyle.DashDotDot);
-
-        }
         private void Loaddgv()
         {
             if (!frmMainForm.isExcelFileImported)
@@ -157,127 +139,12 @@ namespace WindowsFormsApplication2
                 }
             }
         }
-        private void colorPanel_Click(object sender, EventArgs e)
-        {
-            using (ColorDialog colorDialog = new ColorDialog())
-            {
-                // Ensure the form is activated and brought to the front
-                this.Activate();
-                this.BringToFront();
 
-                // Show the color dialog
-
-                if (colorDialog.ShowDialog() == DialogResult.OK)
-                {
-
-                    // Update the selected color and the panel's background color
-                    selectedColor = colorDialog.Color;
-                    colorPanel.BackColor = selectedColor;
-
-                    // Redraw the form to update the line
-                    this.Invalidate();
-                }
-                if (dgvJobsInDetails.SelectedRows.Count > 0)
-                {
-                    foreach (DataGridViewRow row in dgvJobsInDetails.SelectedRows) // Change 'DataGridView' to 'DataGridViewRow'
-                    {
-                        if (row.Cells[1].Value != null) // Ensure the cell is not null
-                        {
-                            for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
-                            {
-                                if (frmImportSamples.WaterData[i].sampleID == row.Cells[1].Value.ToString() || frmImportSamples.WaterData[i].ID == row.Cells[0].Value.ToString())
-                                {
-                                    frmImportSamples.WaterData[i].color = selectedColor != Color.Transparent ? selectedColor : frmImportSamples.WaterData[i].color;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
         private void updateButton_Click(object sender, EventArgs e)
         {
-            frmMainForm.selectedSamples.Clear();
-            IsUpdateClicked = true;
+            isUpdateClicked = true;
+            
             this.Close();
         }
-
-        private void widthTextBox_TextChanged(object sender, EventArgs e)
-        {
-            float newWidth;
-
-            if (float.TryParse(widthTextBox.Text, out newWidth)) // Correct TryParse usage
-            {
-                if (newWidth > 0) // Ensure width is positive
-                {
-                    lineWidth = newWidth;
-                    foreach (DataGridViewRow row in dgvJobsInDetails.SelectedRows) // Change 'DataGridView' to 'DataGridViewRow'
-                    {
-                        if (row.Cells[1].Value != null) // Ensure the cell is not null
-                        {
-                            for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
-                            {
-                                if (frmImportSamples.WaterData[i].sampleID == row.Cells[1].Value.ToString() || frmImportSamples.WaterData[i].ID == row.Cells[0].Value.ToString())
-                                {
-                                    frmImportSamples.WaterData[i].lineWidth = lineWidth;
-                                }
-                            }
-                        }
-                    }
-                    this.Invalidate(); // Redraw the line
-                }
-            }
-
-        }
-        private void typeCombobox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (typeCombobox.SelectedItem != null)
-            {
-                selectedStyle = (DashStyle)typeCombobox.SelectedItem;
-                foreach (DataGridViewRow row in dgvJobsInDetails.SelectedRows) // Change 'DataGridView' to 'DataGridViewRow'
-                {
-                    if (row.Cells[1].Value != null) // Ensure the cell is not null
-                    {
-                        for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
-                        {
-                            if (frmImportSamples.WaterData[i].sampleID == row.Cells[1].Value.ToString() || frmImportSamples.WaterData[i].ID == row.Cells[0].Value.ToString())
-                            {
-                                frmImportSamples.WaterData[i].selectedStyle = selectedStyle;
-                            }
-                        }
-                    }
-                }
-                this.Invalidate(); // Redraw the form to update the line style
-            }
-        }
-
-        private void typeCombobox_DrawItem(object sender, DrawItemEventArgs e)
-        {
-            if (e.Index < 0) return;
-
-            e.DrawBackground();
-
-            using (Pen pen = new Pen(Color.Black, 2))
-            {
-                pen.DashStyle = (DashStyle)typeCombobox.Items[e.Index]; // Get style from combobox item
-                if (selectedColor != Color.Transparent)
-                {
-                    pen.Color = selectedColor;
-                }
-                int xStart = e.Bounds.Left + 5;
-                int xEnd = e.Bounds.Right - 5;
-                int y = e.Bounds.Top + (e.Bounds.Height / 2); // Center the line vertically
-
-                e.Graphics.DrawLine(pen, xStart, y, xEnd, y); // Draw line with style
-            }
-
-            e.DrawFocusRectangle();
-        }
-        
-        private void SchoellerDetails_Load(object sender, EventArgs e)
-        {
-
-        }
-
     }
 }

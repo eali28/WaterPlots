@@ -205,7 +205,7 @@ namespace WindowsFormsApplication2
             if (frmImportSamples.WaterData.Count > 0)
             {
                 int metaX = (int)(0.69f * frmMainForm.mainChartPlotting.Width);
-                int metaY = (int)(0.13f * frmMainForm.mainChartPlotting.Height);
+                int metaY = clsConstants.metaY;
 
                 int metaHeight = 0;
                 int legendtextSize = clsConstants.legendTextSize;
@@ -217,10 +217,69 @@ namespace WindowsFormsApplication2
 
                     for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
                     {
-                        string fullText = "W" + (i + 1).ToString() + ", " + frmImportSamples.WaterData[i].Well_Name + ", " + frmImportSamples.WaterData[i].ClientID + ", " + frmImportSamples.WaterData[i].Depth;
+                        var data = frmImportSamples.WaterData[i];
+                        string fullText = "";
+                        if (clsConstants.clickedHeaders.Count > 0)
+                        {
+                            int c = 0;
+                            fullText += "W" + (i + 1).ToString() + ", ";
+
+                            foreach (var header in clsConstants.clickedHeaders)
+                            {
+                                if (header == "Job ID")
+                                {
+                                    fullText += data.jobID;
+                                }
+                                else if (header == "Sample ID")
+                                {
+                                    fullText += data.sampleID;
+                                }
+                                else if (header == "Client ID")
+                                {
+                                    fullText += data.ClientID;
+                                }
+                                else if (header == "Well Name")
+                                {
+                                    fullText += data.Well_Name;
+                                }
+                                else if (header == "Lat")
+                                {
+                                    fullText += data.latitude;
+                                }
+                                else if (header == "Long")
+                                {
+                                    fullText += data.longtude;
+                                }
+                                else if (header == "Sample Type")
+                                {
+                                    fullText += data.sampleType;
+                                }
+                                else if (header == "Formation Name")
+                                {
+                                    fullText += data.formName;
+                                }
+                                else if (header == "Depth")
+                                {
+                                    fullText += data.Depth;
+                                }
+                                else if (header == "Prep")
+                                {
+                                    fullText += data.prep;
+                                }
+                                if (c != clsConstants.clickedHeaders.Count - 1)
+                                {
+                                    fullText += ", ";
+                                }
+                                c++;
+                            }
+                        }
+                        else
+                        {
+                            fullText += "W" + (i + 1).ToString() + ", " + data.Well_Name + ", " + data.ClientID + ", " + data.Depth;
+                        }
                         SizeF textSize = g.MeasureString(fullText, font, metaWidth, stringFormat); // Adjust for wrapping width
                         metaWidth = (int)Math.Max(metaWidth, textSize.Width); // Ensure metaWidth accounts for the largest text
-                        metaHeight += (int)Math.Ceiling(textSize.Height + 10); // Add spacing between lines
+                        metaHeight += (int)Math.Ceiling(textSize.Height); // Add spacing between lines
                     }
                 }
 
@@ -230,7 +289,8 @@ namespace WindowsFormsApplication2
                     Size = new Size(metaWidth, metaHeight),
                     Image = metaBitmap
                 };
-
+                metaPictureBox.MouseDoubleClick += frmMainForm.pictureBoxCollinsMeta_Click;
+                frmMainForm.metaPanel.Controls.Clear();
                 frmMainForm.metaPanel.Controls.Add(metaPictureBox);
                 frmMainForm.metaPanel.Size = new Size(metaWidth, metaHeight);
                 frmMainForm.metaPanel.Visible = true;
@@ -247,22 +307,75 @@ namespace WindowsFormsApplication2
                 for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
                 {
                     var data = frmImportSamples.WaterData[i];
-                    //Brush squareBrush = new SolidBrush(data.color);
-                    //Pen axisPen = new Pen(data.color, data.lineWidth)
-                    //{
-                    //    DashStyle = data.selectedStyle
-                    //};
+                    
 
-                    //g.DrawLine(axisPen, 5, ysample + 10, 25, ysample + 10);
+                    
+                    string fullText = "";
+                    if (clsConstants.clickedHeaders.Count > 0)
+                    {
+                        int c = 0;
+                        fullText += "W" + (i + 1).ToString()+", ";
 
-                    string fullText = "W" + (i + 1).ToString() + ", " + data.Well_Name + ", " + data.ClientID + ", " + data.Depth;
+                        foreach (var header in clsConstants.clickedHeaders)
+                        {
+                            if (header == "Job ID")
+                            {
+                                fullText += data.jobID;
+                            }
+                            else if (header == "Sample ID")
+                            {
+                                fullText += data.sampleID;
+                            }
+                            else if (header == "Client ID")
+                            {
+                                fullText += data.ClientID;
+                            }
+                            else if (header == "Well Name")
+                            {
+                                fullText += data.Well_Name;
+                            }
+                            else if (header == "Lat")
+                            {
+                                fullText += data.latitude;
+                            }
+                            else if (header == "Long")
+                            {
+                                fullText += data.longtude;
+                            }
+                            else if (header == "Sample Type")
+                            {
+                                fullText += data.sampleType;
+                            }
+                            else if (header == "Formation Name")
+                            {
+                                fullText += data.formName;
+                            }
+                            else if (header == "Depth")
+                            {
+                                fullText += data.Depth;
+                            }
+                            else if (header == "Prep")
+                            {
+                                fullText += data.prep;
+                            }
+                            if (c != clsConstants.clickedHeaders.Count - 1)
+                            {
+                                fullText += ", ";
+                            }
+                            c++;
+                        }
+                    }
+                    else
+                    {
+                        fullText += "W" + (i + 1).ToString() + ", " + data.Well_Name + ", " + data.ClientID + ", " + data.Depth;
+                    }
                     RectangleF textRect = new RectangleF(0, ysample, metaWidth, metaHeight);
 
                     Font font = new Font("Times New Roman", legendtextSize, FontStyle.Bold);
                     SizeF textSize = g.MeasureString(fullText, font, metaWidth); // Adjust for wrapping width
 
                     g.DrawString(fullText, font, Brushes.Black, textRect);
-                    ysample += (int)Math.Ceiling(textSize.Height + 10); // Move down based on wrapped height
+                    ysample += (int)Math.Ceiling(textSize.Height); // Move down based on wrapped height
                 }
 
                 frmMainForm.metaPanel.Location = new Point(metaX - 14, metaY - 9);

@@ -42,6 +42,7 @@ namespace WindowsFormsApplication2
         /// </summary>
         private void InitializeComponent()
         {
+            this.Icon = Properties.Resources.goutte_eau_etang_unsplash_GxU_icon;
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.buttonOpenProject = new System.Windows.Forms.ToolStripButton();
             saveIcon = new System.Windows.Forms.ToolStripButton();

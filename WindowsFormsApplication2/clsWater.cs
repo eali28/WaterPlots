@@ -37,6 +37,13 @@ namespace WindowsFormsApplication2
         public string sampleType;
         public string Label;
         public string ID;
+        public string jobID;
+        public string latitude;
+        public string longtude;
+        public string formName;
+        public string prep;
+        public bool bubble = false;
+        public bool piper=false;
         public Color color;
         public DashStyle selectedStyle = DashStyle.Solid;
         public float lineWidth = 2; // Default line width
