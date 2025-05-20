@@ -554,7 +554,7 @@ namespace WindowsFormsApplication2
                     var data = frmImportSamples.WaterData[i];
 
                     // Draw the colored line
-                    var line = slide.Shapes.AddLine(metadataX, ysample + 10, metadataX + 20, ysample + 10);
+                    var line = slide.Shapes.AddLine(metadataX, ysample + 5, metadataX + 20, ysample + 5);
                     line.Line.ForeColor.RGB = ColorTranslator.ToOle(data.color);
                     line.Line.Weight = data.lineWidth;
                     line.Line.DashStyle = clsRadarDrawer.ConvertDashStyle(data.selectedStyle);
@@ -639,8 +639,8 @@ namespace WindowsFormsApplication2
                     // Auto-resize height only
                     metadataText.TextFrame.AutoSize = PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
 
-                    ysample += metadataText.Height + 5;
-                    metaHeight += (int)(metadataText.Height + 5);
+                    ysample += metadataText.Height;
+                    metaHeight += (int)(metadataText.Height);
                 }
 
                 // Draw blue border box after content is drawn

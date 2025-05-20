@@ -73,6 +73,16 @@ namespace WindowsFormsApplication2.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap pngtree_sand_watch_illustration_vector_on_white_background_png_image_2053746 {
+            get {
+                object obj = ResourceManager.GetObject("pngtree-sand-watch-illustration-vector-on-white-background-png-image_2053746", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap saveActivated {
             get {
                 object obj = ResourceManager.GetObject("saveActivated", resourceCulture);

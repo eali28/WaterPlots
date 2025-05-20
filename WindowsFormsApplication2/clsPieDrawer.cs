@@ -422,6 +422,7 @@ namespace WindowsFormsApplication2
             title.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
             title.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
             title.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+            title.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoTrue;
 
             // Pie chart parameters - maintain same proportions as in the application
             int pieDiameter = diagramWidth;

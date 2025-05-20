@@ -124,4 +124,7 @@
   <data name="saveActivated" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\saveActivated.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="pngtree-sand-watch-illustration-vector-on-white-background-png-image_2053746" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\pngtree-sand-watch-illustration-vector-on-white-background-png-image_2053746.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

@@ -76,6 +76,7 @@ namespace WindowsFormsApplication2
             this.btnCancel = new System.Windows.Forms.Button();
             this.AddButton = new System.Windows.Forms.PictureBox();
             this.DeleteButton = new System.Windows.Forms.PictureBox();
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)(dgvSamples)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(dgvJobs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AddButton)).BeginInit();
@@ -345,6 +346,7 @@ namespace WindowsFormsApplication2
             this.DeleteButton.TabIndex = 0;
             this.DeleteButton.TabStop = false;
             this.DeleteButton.Click += new System.EventHandler(this.DeleteButton_Click);
+
             // 
             // frmImportSamples
             // 
@@ -412,6 +414,7 @@ namespace WindowsFormsApplication2
         public ComboBox cbCompanyName;
         public ComboBox cbJobNumber;
         public PictureBox AddButton;
+        private BackgroundWorker backgroundWorker1;
         public static Label JobTitletext;
         public static DataGridView dgvSamples;
         public static DataGridView dgvJobs;

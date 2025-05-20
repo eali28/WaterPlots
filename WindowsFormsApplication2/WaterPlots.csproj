@@ -280,6 +280,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="goutte_eau_etang_unsplash_GxU_icon.ico" />
+    <None Include="Resources\pngtree-sand-watch-illustration-vector-on-white-background-png-image_2053746.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

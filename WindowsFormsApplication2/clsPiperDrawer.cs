@@ -15,6 +15,7 @@ namespace WindowsFormsApplication2
 {
     public class clsPiperDrawer
     {
+        public static int shapeSize = 8;
         public static List<PointF> cationVertices = new List<PointF>();
         public static List<PointF> anionVertices = new List<PointF>();
         public static Rectangle chartBounds = frmMainForm.mainChartPlotting.ClientRectangle;
@@ -921,14 +922,17 @@ namespace WindowsFormsApplication2
                 Office.MsoTextOrientation.msoTextOrientationHorizontal,
                 presentation.PageSetup.SlideWidth / 2 - 300, yOrigin - 100, 600, 50);
             titletextbox.TextFrame.TextRange.Text = title;
-            titletextbox.TextFrame.TextRange.Font.Size = 40;
+            titletextbox.TextFrame.TextRange.Font.Size = 25;
             titletextbox.TextFrame.TextRange.Font.Bold = Office.MsoTriState.msoTrue;
             titletextbox.TextFrame.TextRange.ParagraphFormat.Alignment = PowerPoint.PpParagraphAlignment.ppAlignCenter;
+            titletextbox.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
+            titletextbox.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+            titletextbox.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
 
 
             var text = slide.Shapes.AddTextbox(
                                         Microsoft.Office.Core.MsoTextOrientation.msoTextOrientationHorizontal,
-                                        0, 30, (int)(3.13*72), 100 // Adjust the position and size as needed
+                                        (int)(0.38*72), (int)(0.41*72), (int)(3.13*72), 100 // Adjust the position and size as needed
                                     );
 
             //text.Select();
@@ -988,14 +992,7 @@ namespace WindowsFormsApplication2
             string[] anions = { "SO4", "HCO3+CO3", "CL" };
             cationVertices.Clear();
             anionVertices.Clear();
-            #region Text Positioning for Cations and Anions Triangles
-            // Cations Labels (Magnesium, Calcium, Sodium/Potassium) - Place near triangle edges
             
-            
-
-            
-            #endregion
-
             ExportTriangleToPowerpoint(slide, cationTriangleBounds, "Cations", cations);
             ExportTriangleToPowerpoint(slide, anionTriangleBounds, "Anions", anions);
             ExportDiamondToPowerpoint(slide, diamondBounds, cationTriangleBounds, anionTriangleBounds);
@@ -1068,22 +1065,24 @@ namespace WindowsFormsApplication2
                             break;
                         case "Trapezoid (up)":
                             var trapezoidUpPoints = new float[,] {
-                                { metadataX, ysample + 12 },
-                                { metadataX + 15, ysample + 12 },
-                                { metadataX + 12, ysample - 2 },
-                                { metadataX + 3, ysample - 2 }
+                                { metadataX,       ysample + 6 },   // was +12 → now +6
+                                { metadataX + 7.5f, ysample + 6 },   // was +15 → now +7.5 (half width)
+                                { metadataX + 6,   ysample - 1 },   // was +12 → now +6
+                                { metadataX + 1.5f, ysample - 1 }   // was +3 → now +1.5
                             };
+
                             var trapezoidUp = slide.Shapes.AddPolyline(trapezoidUpPoints);
                             trapezoidUp.Fill.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color);
                             trapezoidUp.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                             trapezoidUp.Line.Weight = 1;
                             break;
+
                         case "Trapezoid (left)":
                             var trapezoidRightPoints = new float[,] {
-                                { metadataX, ysample + 5 },
-                                { metadataX + 15, ysample + 2 },
-                                { metadataX + 15, ysample + 12 },
-                                { metadataX, ysample + 9 }
+                                { metadataX, ysample + 2.5f },
+                                { metadataX + 7.5f, ysample + 1 },
+                                { metadataX + 7.5f, ysample + 6 },
+                                { metadataX, ysample + 4.5f }
                             };
                             var trapezoidRight = slide.Shapes.AddPolyline(trapezoidRightPoints);
                             trapezoidRight.Fill.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color);
@@ -1093,10 +1092,10 @@ namespace WindowsFormsApplication2
                         case "Trapezoid (down)":
 
                             var trapezoidDownPoints = new float[,] {
-                                { metadataX + 3, ysample+4+7 },
-                                { metadataX + 12, ysample +4+7 },
-                                { metadataX + 15, ysample - 12+7 },
-                                { metadataX, ysample - 12+7 }
+                                { metadataX + 1.5f, ysample+5.5f },
+                                { metadataX + 6, ysample +5.5f },
+                                { metadataX + 7.5f, ysample - 3 },
+                                { metadataX, ysample - 3 }
                             };
                             var trapezoidDown = slide.Shapes.AddPolyline(trapezoidDownPoints);
                             trapezoidDown.Fill.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color);
@@ -1105,10 +1104,10 @@ namespace WindowsFormsApplication2
                             break;
                         case "Trapezoid (right)":
                             var trapezoidLeftPoints = new float[,] {
-                                { metadataX, ysample - 2 },
-                                { metadataX + 15, ysample + 5 },
-                                { metadataX + 15, ysample + 9 },
-                                { metadataX, ysample + 12 }
+                                { metadataX, ysample - 1 },
+                                { metadataX + 7.5f, ysample + 2.5f },
+                                { metadataX + 7.5f, ysample + 4.5f },
+                                { metadataX, ysample + 6 }
                             };
                             var trapezoidLeft = slide.Shapes.AddPolyline(trapezoidLeftPoints);
                             trapezoidLeft.Fill.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color);
@@ -1116,23 +1115,23 @@ namespace WindowsFormsApplication2
                             trapezoidLeft.Line.Weight = 1;
                             break;
                         case "Vertical rectangle":
-                            var vRect = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, metadataX + 2, ysample - 2, 12, 15);
+                            var vRect = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, metadataX + 2, ysample, 3, 7);
                             vRect.Fill.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color);
                             vRect.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                             vRect.Line.Weight = 1;
                             break;
                         case "X":
                             var xPoints1 = new float[,] {
-                                { metadataX, ysample - 2 },
-                                { metadataX + 4, ysample - 2 },
-                                { metadataX + 15, ysample + 12 },
-                                { metadataX + 11, ysample + 12 }
+                                { metadataX, ysample - 1 },
+                                { metadataX + 2, ysample - 1 },
+                                { metadataX + 7.5f, ysample + 6 },
+                                { metadataX + 5.5f, ysample + 6 }
                             };
                             var xPoints2 = new float[,] {
-                                { metadataX + 15, ysample - 2 },
-                                { metadataX + 11, ysample - 2 },
-                                { metadataX, ysample + 12 },
-                                { metadataX + 4, ysample + 12 }
+                                { metadataX + 7.5f, ysample - 1 },
+                                { metadataX + 5.5f, ysample - 1 },
+                                { metadataX, ysample + 6 },
+                                { metadataX + 2, ysample + 6 }
                             };
                             var xShape1 = slide.Shapes.AddPolyline(xPoints1);
                             xShape1.Fill.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color);
@@ -1144,17 +1143,17 @@ namespace WindowsFormsApplication2
                             xShape2.Line.Weight = 1;
                             break;
                         case "Horizontal bar":
-                            var hBar = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, metadataX, ysample + 2, 15, 12);
+                            var hBar = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, metadataX, ysample + 2, 7.5f, 6);
                             hBar.Fill.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color);
                             hBar.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                             hBar.Line.Weight = 1;
                             break;
                         case "Up arrow":
                             var upArrowPoints = new float[,] {
-                                { metadataX + 7, ysample - 2 },
-                                { metadataX + 15, ysample + 12 },
-                                { metadataX + 7, ysample + 8 },
-                                { metadataX, ysample + 12 }
+                                { metadataX + 3.5f, ysample - 1 },
+                                { metadataX + 7.5f, ysample + 6 },
+                                { metadataX + 3.5f, ysample + 4 },
+                                { metadataX, ysample + 6 }
                             };
                             var upArrow = slide.Shapes.AddPolyline(upArrowPoints);
                             upArrow.Fill.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color);
@@ -1163,10 +1162,10 @@ namespace WindowsFormsApplication2
                             break;
                         case "Right arrow":
                             var rightArrowPoints = new float[,] {
-                                { metadataX + 15, ysample + 5 },
-                                { metadataX, ysample - 2 },
-                                { metadataX + 4, ysample + 5 },
-                                { metadataX, ysample + 12 }
+                                { metadataX + 7.5f, ysample + 2.5f },
+                                { metadataX, ysample - 1 },
+                                { metadataX + 2, ysample + 2.5f },
+                                { metadataX, ysample + 6 }
                             };
                             var rightArrow = slide.Shapes.AddPolyline(rightArrowPoints);
                             rightArrow.Fill.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color);
@@ -1176,10 +1175,10 @@ namespace WindowsFormsApplication2
                         case "Down arrow":
                             
                             var downArrowPoints = new float[,] {
-                                { metadataX + 7, ysample + 12 },
-                                { metadataX, ysample - 2 },
-                                { metadataX + 7, ysample + 6 },
-                                { metadataX + 15, ysample - 2 }
+                                { metadataX + 3.5f, ysample + 6 },
+                                { metadataX, ysample - 1 },
+                                { metadataX + 3.5f, ysample + 3 },
+                                { metadataX + 7.5f, ysample - 1 }
                             };
                             var downArrow = slide.Shapes.AddPolyline(downArrowPoints);
                             downArrow.Fill.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color);
@@ -1188,10 +1187,10 @@ namespace WindowsFormsApplication2
                             break;
                         case "Left arrow":
                             var leftArrowPoints = new float[,] {
-                                { metadataX, ysample + 5 },
-                                { metadataX + 15, ysample + 12 },
-                                { metadataX + 11, ysample + 5 },
-                                { metadataX + 15, ysample - 2 }
+                                { metadataX, ysample + 2.5f },
+                                { metadataX + 7.5f, ysample + 6 },
+                                { metadataX + 5.5f, ysample + 2.5f },
+                                { metadataX + 7.5f, ysample - 1 }
                             };
                             var leftArrow = slide.Shapes.AddPolyline(leftArrowPoints);
                             leftArrow.Fill.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color);
@@ -1200,10 +1199,10 @@ namespace WindowsFormsApplication2
                             break;
                         case "Arrow with tail (up)":
                             var upArrowTailPoints = new float[,] {
-                                { metadataX + 7, ysample - 2 },
-                                { metadataX + 15, ysample + 12 },
-                                { metadataX + 7, ysample + 8 },
-                                { metadataX, ysample + 12 }
+                                { metadataX + 3.5f, ysample - 1 },
+                                { metadataX + 7.5f, ysample + 3 },
+                                { metadataX + 3.5f, ysample + 4 },
+                                { metadataX, ysample + 6 }
                             };
                             var upArrowTail = slide.Shapes.AddPolyline(upArrowTailPoints);
                             upArrowTail.Fill.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color);
@@ -1216,61 +1215,61 @@ namespace WindowsFormsApplication2
                             break;
                         case "Arrow with tail (right)":
                             var rightArrowTailPoints = new float[,] {
-                                { metadataX + 15, ysample + 5 },
-                                { metadataX, ysample - 2 },
-                                { metadataX + 4, ysample + 5 },
-                                { metadataX, ysample + 12 }
+                                { metadataX + 7.5f, ysample + 2.5f },
+                                { metadataX, ysample - 1 },
+                                { metadataX + 2, ysample + 2.5f },
+                                { metadataX, ysample + 6 }
                             };
                             var rightArrowTail = slide.Shapes.AddPolyline(rightArrowTailPoints);
                             rightArrowTail.Fill.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color);
                             rightArrowTail.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                             rightArrowTail.Line.Weight = 1;
-                            var rightTail = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, metadataX + 4, ysample + 2, 7, 10);
+                            var rightTail = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, metadataX + 4, ysample + 2, 3.5f, 5);
                             rightTail.Fill.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color);
                             rightTail.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                             rightTail.Line.Weight = 1;
                             break;
                         case "Arrow with tail (down)":
                             var downArrowTailPoints = new float[,] {
-                                { metadataX + 7, ysample + 12 },
-                                { metadataX, ysample - 2 },
-                                { metadataX + 7, ysample + 6 },
-                                { metadataX + 15, ysample - 2 }
+                                { metadataX + 3.5f, ysample + 6 },
+                                { metadataX, ysample - 1 },
+                                { metadataX + 3.5f, ysample + 3 },
+                                { metadataX + 7.5f, ysample - 1 }
                             };
                             var downArrowTail = slide.Shapes.AddPolyline(downArrowTailPoints);
                             downArrowTail.Fill.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color);
                             downArrowTail.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                             downArrowTail.Line.Weight = 1;
-                            var downTail = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, metadataX + 2, ysample - 2, 10, 7);
+                            var downTail = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, metadataX + 2, ysample - 2, 5, 3.5f);
                             downTail.Fill.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color);
                             downTail.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                             downTail.Line.Weight = 1;
                             break;
                         case "Arrow with tail (left)":
                             var leftArrowTailPoints = new float[,] {
-                                { metadataX, ysample + 5 },
-                                { metadataX + 15, ysample + 12 },
-                                { metadataX + 11, ysample + 5 },
-                                { metadataX + 15, ysample - 2 }
+                                { metadataX, ysample + 2.5f },
+                                { metadataX + 7.5f, ysample + 6 },
+                                { metadataX + 5.5f, ysample + 2.5f },
+                                { metadataX + 7.5f, ysample - 1 }
                             };
                             var leftArrowTail = slide.Shapes.AddPolyline(leftArrowTailPoints);
                             leftArrowTail.Fill.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color);
                             leftArrowTail.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                             leftArrowTail.Line.Weight = 1;
-                            var leftTail = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, metadataX + 11, ysample + 2, 7, 10);
+                            var leftTail = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, metadataX + 11, ysample + 2, 3.5f, 5);
                             leftTail.Fill.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color);
                             leftTail.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                             leftTail.Line.Weight = 1;
                             break;
                         case "Upward fat arrow":
                             var fatArrowPoints = new float[,] {
-                                { metadataX + 7, ysample - 2 },
-                                { metadataX + 15, ysample + 3 },
-                                { metadataX + 12, ysample + 3 },
-                                { metadataX + 12, ysample + 12 },
-                                { metadataX + 2, ysample + 12 },
-                                { metadataX + 2, ysample + 3 },
-                                { metadataX, ysample + 3 }
+                                { metadataX + 3.5f, ysample - 1 },
+                                { metadataX + 7.5f, ysample + 1.5f },
+                                { metadataX + 6, ysample + 1.5f },
+                                { metadataX + 6, ysample + 6 },
+                                { metadataX + 2, ysample + 6 },
+                                { metadataX + 2, ysample + 1.5f },
+                                { metadataX, ysample + 1.5f }
                             };
                             var fatArrow = slide.Shapes.AddPolyline(fatArrowPoints);
                             fatArrow.Fill.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color);
@@ -1280,9 +1279,9 @@ namespace WindowsFormsApplication2
                         
                         case "Up triangle":
                             var triangleUpPoints = new float[,] {
-                                { metadataX + 7.5f, ysample - 2 },
-                                { metadataX + 15, ysample + 12 },
-                                { metadataX, ysample + 12 }
+                                { metadataX + 3.25f, ysample - 1 },
+                                { metadataX + 7.5f, ysample + 6 },
+                                { metadataX, ysample + 6 }
                             };
                             var triangleUp = slide.Shapes.AddPolyline(triangleUpPoints);
                             triangleUp.Fill.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color);
@@ -1291,9 +1290,9 @@ namespace WindowsFormsApplication2
                             break;
                         case "Down triangle":
                             var triangleDownPoints = new float[,] {
-                                { metadataX + 7.5f, ysample + 12 },
-                                { metadataX + 15, ysample - 2 },
-                                { metadataX, ysample - 2 }
+                                { metadataX + 3.25f, ysample + 6 },
+                                { metadataX + 7.5f, ysample - 1 },
+                                { metadataX, ysample - 1 }
                             };
                             var triangleDown = slide.Shapes.AddPolyline(triangleDownPoints);
                             triangleDown.Fill.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color);
@@ -1302,9 +1301,9 @@ namespace WindowsFormsApplication2
                             break;
                         case "Left triangle":
                             var triangleLeftPoints = new float[,] {
-                                { metadataX - 2, ysample + 5 },
-                                { metadataX + 12, ysample + 12 },
-                                { metadataX + 12, ysample - 2 }
+                                { metadataX - 1, ysample + 2.5f },
+                                { metadataX + 6, ysample + 6 },
+                                { metadataX + 6, ysample - 1 }
                             };
                             var triangleLeft = slide.Shapes.AddPolyline(triangleLeftPoints);
                             triangleLeft.Fill.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color);
@@ -1314,9 +1313,9 @@ namespace WindowsFormsApplication2
                         case "Right triangle":
                             float x = metadataX+5;
                             var triangleRightPoints = new float[,] {
-                                { x + 12, ysample + 5 },
-                                { x - 2, ysample + 12 },
-                                { x - 2, ysample - 2 }
+                                { x + 6, ysample + 2.5f },
+                                { x - 1, ysample + 6 },
+                                { x - 1, ysample - 1 }
                             };
                             var triangleRight = slide.Shapes.AddPolyline(triangleRightPoints);
                             triangleRight.Fill.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color);
@@ -1325,31 +1324,24 @@ namespace WindowsFormsApplication2
                             break;
                         default:
                             // For any other shape, use a plus sign as default
-                            var hRect = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, metadataX, ysample + 5, 15, 7);
+                            var hRect = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, metadataX, ysample + 2, 7.5f, 3.5f);
                             hRect.Fill.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color);
                             hRect.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                             hRect.Line.Weight = 1;
 
-                            var vRectangle = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, metadataX + 4, ysample, 7, 15);
+                            var vRectangle = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, metadataX+2, ysample, 3.5f, 7.5f);
                             vRectangle.Fill.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color);
                             vRectangle.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                             vRectangle.Line.Weight = 1;
                             break;
                     }
-
+                    
                     // Create the shape with the determined type
-                    if(frmImportSamples.WaterData[i].shape!=null && frmImportSamples.WaterData[i].shape!="Plus" && 
-                       !frmImportSamples.WaterData[i].shape.StartsWith("Trapezoid") && 
-                       !frmImportSamples.WaterData[i].shape.StartsWith("Arrow") && 
-                       frmImportSamples.WaterData[i].shape != "X" && 
-                       frmImportSamples.WaterData[i].shape != "Vertical rectangle" && 
-                       frmImportSamples.WaterData[i].shape != "Horizontal bar" && 
-                       frmImportSamples.WaterData[i].shape != "Up triangle" &&
-                       frmImportSamples.WaterData[i].shape != "Right triangle" && 
-                       frmImportSamples.WaterData[i].shape != "Left triangle" &&
-                       frmImportSamples.WaterData[i].shape != "Down triangle")
+                    if(data.shape== "Circle" || data.shape== "Diamond" || data.shape== "Pentagon" || data.shape=="Hexagon" || data.shape=="Octagon" || data.shape== "Star (5-point)" || data.shape== "Star (6-point)" || data.shape== "Star (8-point)" || data.shape=="Rectangle")
+                            
+
                     {
-                        var shapeObj = slide.Shapes.AddShape(bubbleType, metadataX, ysample+5, 15, 15);
+                        var shapeObj = slide.Shapes.AddShape(bubbleType, metadataX, ysample+5, shapeSize, shapeSize);
                         shapeObj.Fill.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color);
                         shapeObj.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                         shapeObj.Line.Weight = 1;
@@ -1441,8 +1433,8 @@ namespace WindowsFormsApplication2
                     // Auto-resize height only
                     metadataText.TextFrame.AutoSize = PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
 
-                    ysample += metadataText.Height+5;
-                    metaHeight += (int)(metadataText.Height+5);
+                    ysample += metadataText.Height;
+                    metaHeight += (int)(metadataText.Height);
                 }
 
                 // Draw blue border box after content is drawn
@@ -1868,22 +1860,22 @@ namespace WindowsFormsApplication2
                     break;
                 case "Plus":
                     // For plus sign, we'll create two rectangles
-                    var horizontalRectangle = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 7, y - 3, 15, 7);
+                    var horizontalRectangle = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 3.25f, y - 1.25f, 7.5f, 3.5f);
                     horizontalRectangle.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
                     horizontalRectangle.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                     horizontalRectangle.Line.Weight = 1;
 
-                    var verticalRectangle = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 3, y - 7, 7, 15);
+                    var verticalRectangle = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 1.25f, y - 3.25f, 3.5f, 7.5f);
                     verticalRectangle.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
                     verticalRectangle.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                     verticalRectangle.Line.Weight = 1;
                     return; // Exit since we've already created the plus sign
                 case "Trapezoid (up)":
                     var trapezoidUpPoints = new float[,] {
-                        { x - 7, y + 7 },
-                        { x + 7, y + 7 },
-                        { x + 5, y - 7 },
-                        { x - 5, y - 7 }
+                        { x - 3.5f, y + 3.5f },
+                        { x + 3.5f, y + 3.5f },
+                        { x + 2.5f, y - 3.5f },
+                        { x - 2.5f, y - 3.5f }
                     };
                     var trapezoidUp = slide.Shapes.AddPolyline(trapezoidUpPoints);
                     trapezoidUp.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
@@ -1892,10 +1884,10 @@ namespace WindowsFormsApplication2
                     return;
                 case "Trapezoid (right)":
                     var trapezoidRightPoints = new float[,] {
-                        { x + 7, y - 5 },
-                        { x - 7, y - 7 },
-                        { x - 7, y + 7 },
-                        { x + 7, y + 5 }
+                        { x + 3.5f, y - 2.5f },
+                        { x - 3.5f, y - 3.5f },
+                        { x - 3.5f, y + 3.5f },
+                        { x + 3.5f, y + 2.5f }
                     };
                     var trapezoidRight = slide.Shapes.AddPolyline(trapezoidRightPoints);
                     trapezoidRight.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
@@ -1904,10 +1896,10 @@ namespace WindowsFormsApplication2
                     return;
                 case "Trapezoid (down)":
                     var trapezoidDownPoints = new float[,] {
-                        { x - 5, y + 7 },
-                        { x + 5, y + 7 },
-                        { x + 7, y - 7 },
-                        { x - 7, y - 7 }
+                        { x - 2.5f, y + 3.5f },
+                        { x + 2.5f, y + 3.5f },
+                        { x + 3.5f, y - 3.5f },
+                        { x - 3.5f, y - 3.5f }
                     };
                     var trapezoidDown = slide.Shapes.AddPolyline(trapezoidDownPoints);
                     trapezoidDown.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
@@ -1916,10 +1908,10 @@ namespace WindowsFormsApplication2
                     return;
                 case "Trapezoid (left)":
                     var trapezoidLeftPoints = new float[,] {
-                        { x + 7, y - 7 },
-                        { x - 7, y - 5 },
-                        { x - 7, y + 5 },
-                        { x + 7, y + 7 }
+                        { x + 3.5f, y - 3.5f },
+                        { x - 3.5f, y - 2.5f },
+                        { x - 3.5f, y + 2.5f },
+                        { x + 3.5f, y + 3.5f }
                     };
                     var trapezoidLeft = slide.Shapes.AddPolyline(trapezoidLeftPoints);
                     trapezoidLeft.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
@@ -1927,23 +1919,23 @@ namespace WindowsFormsApplication2
                     trapezoidLeft.Line.Weight = 1;
                     return;
                 case "Vertical rectangle":
-                    var vRect = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 6, y - 7, 12, 15);
+                    var vRect = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 3, y - 3.5f, 6, 7.5f);
                     vRect.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
                     vRect.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                     vRect.Line.Weight = 1;
                     return;
                 case "X":
                     var xPoints1 = new float[,] {
-                        { x - 7, y - 7 },
-                        { x - 3, y - 7 },
-                        { x + 7, y + 7 },
-                        { x + 3, y + 7 }
+                        { x - 3.5f, y - 3.5f },
+                        { x - 1.5f, y - 3.5f },
+                        { x + 3.5f, y + 3.5f },
+                        { x + 1.5f, y + 3.5f }
                     };
                     var xPoints2 = new float[,] {
-                        { x + 7, y - 7 },
-                        { x + 3, y - 7 },
-                        { x - 7, y + 7 },
-                        { x - 3, y + 7 }
+                        { x + 3.5f, y - 3.5f },
+                        { x + 1.5f, y - 3.5f },
+                        { x - 3.5f, y + 3.5f },
+                        { x - 1.5f, y + 3.5f }
                     };
                     var xShape1 = slide.Shapes.AddPolyline(xPoints1);
                     xShape1.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
@@ -1955,17 +1947,17 @@ namespace WindowsFormsApplication2
                     xShape2.Line.Weight = 1;
                     return;
                 case "Horizontal bar":
-                    var hBar = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 7, y - 6, 15, 12);
+                    var hBar = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 3.5f, y - 3, 7.5f, 6);
                     hBar.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
                     hBar.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                     hBar.Line.Weight = 1;
                     return;
                 case "Up arrow":
                     var upArrowPoints = new float[,] {
-                        { x, y - 7 },
-                        { x + 7, y + 7 },
-                        { x, y + 3 },
-                        { x - 7, y + 7 }
+                        { x, y - 3.5f },
+                        { x + 3.5f, y + 3.5f },
+                        { x, y + 1.5f },
+                        { x - 3.5f, y + 3.5f }
                     };
                     var upArrow = slide.Shapes.AddPolyline(upArrowPoints);
                     upArrow.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
@@ -1974,10 +1966,10 @@ namespace WindowsFormsApplication2
                     return;
                 case "Right arrow":
                     var rightArrowPoints = new float[,] {
-                        { x + 7, y },
-                        { x - 7, y - 7 },
-                        { x - 3, y },
-                        { x - 7, y + 7 }
+                        { x + 3.5f, y },
+                        { x - 3.5f, y - 3.5f },
+                        { x - 1.5f, y },
+                        { x - 3.5f, y + 3.5f }
                     };
                     var rightArrow = slide.Shapes.AddPolyline(rightArrowPoints);
                     rightArrow.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
@@ -1986,10 +1978,10 @@ namespace WindowsFormsApplication2
                     return;
                 case "Down arrow":
                     var downArrowPoints = new float[,] {
-                        { x, y + 7 },
-                        { x - 7, y - 7 },
-                        { x, y - 3 },
-                        { x + 7, y - 7 }
+                        { x, y + 3.5f },
+                        { x - 3.5f, y - 3.5f },
+                        { x, y - 1.5f },
+                        { x + 3.5f, y - 3.5f }
                     };
                     var downArrow = slide.Shapes.AddPolyline(downArrowPoints);
                     downArrow.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
@@ -1998,10 +1990,10 @@ namespace WindowsFormsApplication2
                     return;
                 case "Left arrow":
                     var leftArrowPoints = new float[,] {
-                        { x - 7, y },
-                        { x + 7, y + 7 },
-                        { x + 3, y },
-                        { x + 7, y - 7 }
+                        { x - 3.5f, y },
+                        { x + 3.5f, y + 3.5f },
+                        { x + 1.5f, y },
+                        { x + 3.5f, y - 3.5f }
                     };
                     var leftArrow = slide.Shapes.AddPolyline(leftArrowPoints);
                     leftArrow.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
@@ -2010,77 +2002,77 @@ namespace WindowsFormsApplication2
                     return;
                 case "Arrow with tail (up)":
                     var upArrowTailPoints = new float[,] {
-                        { x, y - 7 },
-                        { x + 7, y + 7 },
-                        { x, y + 3 },
-                        { x - 7, y + 7 }
+                        { x, y - 3.5f },
+                        { x + 3.5f, y + 3.5f },
+                        { x, y + 1.5f },
+                        { x - 3.5f, y + 3.5f }
                     };
                     var upArrowTail = slide.Shapes.AddPolyline(upArrowTailPoints);
                     upArrowTail.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
                     upArrowTail.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                     upArrowTail.Line.Weight = 1;
-                    var upTail = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 5, y + 3, 10, 7);
+                    var upTail = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 2.5f, y + 1.5f, 5, 3.5f);
                     upTail.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
                     upTail.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                     upTail.Line.Weight = 1;
                     return;
                 case "Arrow with tail (right)":
                     var rightArrowTailPoints = new float[,] {
-                        { x + 7, y },
-                        { x - 7, y - 7 },
-                        { x - 3, y },
-                        { x - 7, y + 7 }
+                        { x + 3.5f, y },
+                        { x - 3.5f, y - 3.5f },
+                        { x - 1.5f, y },
+                        { x - 7, y + 3.5f }
                     };
                     var rightArrowTail = slide.Shapes.AddPolyline(rightArrowTailPoints);
                     rightArrowTail.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
                     rightArrowTail.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                     rightArrowTail.Line.Weight = 1;
-                    var rightTail = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 3, y - 5, 7, 10);
+                    var rightTail = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 1.5f, y - 2.5f, 3.5f, 5);
                     rightTail.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
                     rightTail.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                     rightTail.Line.Weight = 1;
                     return;
                 case "Arrow with tail (down)":
                     var downArrowTailPoints = new float[,] {
-                        { x, y + 7 },
-                        { x - 7, y - 7 },
-                        { x, y - 3 },
-                        { x + 7, y - 7 }
+                        { x, y + 3.5f },
+                        { x - 3.5f, y - 3.5f },
+                        { x, y - 1.5f },
+                        { x + 3.5f, y - 3.5f }
                     };
                     var downArrowTail = slide.Shapes.AddPolyline(downArrowTailPoints);
                     downArrowTail.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
                     downArrowTail.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                     downArrowTail.Line.Weight = 1;
-                    var downTail = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 5, y - 7, 10, 7);
+                    var downTail = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 2.5f, y - 3.5f, 5, 3.5f);
                     downTail.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
                     downTail.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                     downTail.Line.Weight = 1;
                     return;
                 case "Arrow with tail (left)":
                     var leftArrowTailPoints = new float[,] {
-                        { x - 7, y },
-                        { x + 7, y + 7 },
-                        { x + 3, y },
-                        { x + 7, y - 7 }
+                        { x - 3.5f, y },
+                        { x + 3.5f, y + 3.5f },
+                        { x + 1.5f, y },
+                        { x + 3.5f, y - 3.5f }
                     };
                     var leftArrowTail = slide.Shapes.AddPolyline(leftArrowTailPoints);
                     leftArrowTail.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
                     leftArrowTail.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                     leftArrowTail.Line.Weight = 1;
-                    var leftTail = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x + 3, y - 5, 7, 10);
+                    var leftTail = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x + 1.5f, y - 2.5f, 3.5f, 5);
                     leftTail.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
                     leftTail.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                     leftTail.Line.Weight = 1;
                     return;
                 case "Upward fat arrow":
                     var fatArrowPoints = new float[,] {
-                        { x, y - 7 },
-                        { x + 7, y - 2 },
-                        { x + 5, y - 2 },
-                        { x + 5, y + 7 },
-                        { x - 5, y + 7 },
-                        { x - 5, y - 2 },
-                        { x - 7, y - 2 }
+                        { x, y - 3.5f },
+                        { x + 3.5f, y - 1 },
+                        { x + 2.5f, y - 1 },
+                        { x + 2.5f, y + 3.5f },
+                        { x - 2.5f, y + 3.5f },
+                        { x - 2.5f, y - 1 },
+                        { x - 3.5f, y - 1 }
                     };
                     var fatArrow = slide.Shapes.AddPolyline(fatArrowPoints);
                     fatArrow.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
@@ -2092,8 +2084,8 @@ namespace WindowsFormsApplication2
                     y -= 7;
                     var triangleUpPoints = new float[,] {
                                 { x, y },
-                                { x-8, y + 15 },
-                                { x+8, y + 15 }
+                                { x-4, y + 7.5f },
+                                { x+4, y + 7.5f }
                             };
                     var triangleUp = slide.Shapes.AddPolyline(triangleUpPoints);
                     triangleUp.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
@@ -2104,8 +2096,8 @@ namespace WindowsFormsApplication2
                     y += 7;
                     var triangleDownPoints = new float[,] {
                                 { x, y },
-                                { x + 8, y - 15 },
-                                { x-8, y - 15 }
+                                { x + 4, y - 7.5f },
+                                { x-4, y - 7.5f }
                             };
                     var triangleDown = slide.Shapes.AddPolyline(triangleDownPoints);
                     triangleDown.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
@@ -2116,8 +2108,8 @@ namespace WindowsFormsApplication2
                     x += 7;
                     var triangleRightPoints = new float[,] {
                                 { x, y },
-                                { x - 15, y - 8 },
-                                { x - 15, y +8 }
+                                { x - 7.5f, y - 4 },
+                                { x - 7.5f, y +4 }
                             };
                     var triangleRight = slide.Shapes.AddPolyline(triangleRightPoints);
                     triangleRight.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
@@ -2128,8 +2120,8 @@ namespace WindowsFormsApplication2
                     x -= 7;
                     var triangleLeftPoints = new float[,] {
                                 { x, y },
-                                { x + 15, y - 8 },
-                                { x + 15, y + 8 }
+                                { x + 7.5f, y - 4 },
+                                { x + 7.5f, y + 4 }
                             };
                     var triangleLeft = slide.Shapes.AddPolyline(triangleLeftPoints);
                     triangleLeft.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
@@ -2138,26 +2130,35 @@ namespace WindowsFormsApplication2
                     return;
                 default:
                     // For any other shape, use a plus sign as default
-                    var hRect = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 7, y - 3, 15, 7);
+                    var hRect = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 3.5f, y - 1.5f, 7.5f, 3.5f);
                     hRect.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
                     hRect.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                     hRect.Line.Weight = 1;
 
-                    var vRectangle = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 3, y - 7, 7, 15);
+                    var vRectangle = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 1.5f, y - 3.5f, 3.5f, 7.5f);
                     vRectangle.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
                     vRectangle.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                     vRectangle.Line.Weight = 1;
                     return; // Exit since we've already created the plus sign
             }
-
-            // Create the shape with the determined type
-            var shapeObj = slide.Shapes.AddShape(bubbleType, x - 7, y - 7, 15, 15);
-            shapeObj.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
-            shapeObj.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
-            shapeObj.Line.Weight = 1;
-            if (shape == "Pentagon")
+            if (shape == "Circle" || 
+                shape == "Diamond" ||
+                shape == "Pentagon" ||
+                shape == "Hexagon" ||
+                shape == "Octagon" ||
+                shape == "Star (5-point)" ||
+                shape == "Star (6-point)" ||
+                shape == "Star (8-point)" ||
+                shape == "Rectangle")
             {
-                shapeObj.Rotation = -90;
+                var shapeObj = slide.Shapes.AddShape(bubbleType, x - shapeSize/2, y - shapeSize/2, shapeSize, shapeSize);
+                shapeObj.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
+                shapeObj.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
+                shapeObj.Line.Weight = 1;
+                if (shape == "Pentagon")
+                {
+                    shapeObj.Rotation = -90;
+                }
             }
         }
 
@@ -2232,22 +2233,22 @@ namespace WindowsFormsApplication2
                     break;
                 case "Plus":
                     // For plus sign, we'll create two rectangles
-                    var horizontalRectangle = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 7, y - 3, 15, 7);
+                    var horizontalRectangle = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 3.25f, y - 1.25f, 7.5f, 3.5f);
                     horizontalRectangle.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
                     horizontalRectangle.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                     horizontalRectangle.Line.Weight = 1;
 
-                    var verticalRectangle = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 3, y - 7, 7, 15);
+                    var verticalRectangle = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 1.25f, y - 3.25f, 3.5f, 7.5f);
                     verticalRectangle.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
                     verticalRectangle.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                     verticalRectangle.Line.Weight = 1;
                     return; // Exit since we've already created the plus sign
                 case "Trapezoid (up)":
                     var trapezoidUpPoints = new float[,] {
-                        { x - 7, y + 7 },
-                        { x + 7, y + 7 },
-                        { x + 5, y - 7 },
-                        { x - 5, y - 7 }
+                        { x - 3.5f, y + 3.5f },
+                        { x + 3.5f, y + 3.5f },
+                        { x + 2.5f, y - 3.5f },
+                        { x - 2.5f, y - 3.5f }
                     };
                     var trapezoidUp = slide.Shapes.AddPolyline(trapezoidUpPoints);
                     trapezoidUp.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
@@ -2256,10 +2257,10 @@ namespace WindowsFormsApplication2
                     return;
                 case "Trapezoid (right)":
                     var trapezoidRightPoints = new float[,] {
-                        { x + 7, y - 5 },
-                        { x - 7, y - 7 },
-                        { x - 7, y + 7 },
-                        { x + 7, y + 5 }
+                        { x + 3.5f, y - 2.5f },
+                        { x - 3.5f, y - 3.5f },
+                        { x - 3.5f, y + 3.5f },
+                        { x + 3.5f, y + 2.5f }
                     };
                     var trapezoidRight = slide.Shapes.AddPolyline(trapezoidRightPoints);
                     trapezoidRight.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
@@ -2268,10 +2269,10 @@ namespace WindowsFormsApplication2
                     return;
                 case "Trapezoid (down)":
                     var trapezoidDownPoints = new float[,] {
-                        { x - 5, y + 7 },
-                        { x + 5, y + 7 },
-                        { x + 7, y - 7 },
-                        { x - 7, y - 7 }
+                        { x - 2.5f, y + 3.5f },
+                        { x + 2.5f, y + 3.5f },
+                        { x + 3.5f, y - 3.5f },
+                        { x - 3.5f, y - 3.5f }
                     };
                     var trapezoidDown = slide.Shapes.AddPolyline(trapezoidDownPoints);
                     trapezoidDown.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
@@ -2280,10 +2281,10 @@ namespace WindowsFormsApplication2
                     return;
                 case "Trapezoid (left)":
                     var trapezoidLeftPoints = new float[,] {
-                        { x + 7, y - 7 },
-                        { x - 7, y - 5 },
-                        { x - 7, y + 5 },
-                        { x + 7, y + 7 }
+                        { x + 3.5f, y - 3.5f },
+                        { x - 3.5f, y - 2.5f },
+                        { x - 3.5f, y + 2.5f },
+                        { x + 3.5f, y + 3.5f }
                     };
                     var trapezoidLeft = slide.Shapes.AddPolyline(trapezoidLeftPoints);
                     trapezoidLeft.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
@@ -2291,23 +2292,23 @@ namespace WindowsFormsApplication2
                     trapezoidLeft.Line.Weight = 1;
                     return;
                 case "Vertical rectangle":
-                    var vRect = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 6, y - 7, 12, 15);
+                    var vRect = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 3, y - 3.5f, 6, 7.5f);
                     vRect.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
                     vRect.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                     vRect.Line.Weight = 1;
                     return;
                 case "X":
                     var xPoints1 = new float[,] {
-                        { x - 7, y - 7 },
-                        { x - 3, y - 7 },
-                        { x + 7, y + 7 },
-                        { x + 3, y + 7 }
+                        { x - 3.5f, y - 3.5f },
+                        { x - 1.5f, y - 3.5f },
+                        { x + 3.5f, y + 3.5f },
+                        { x + 1.5f, y + 3.5f }
                     };
                     var xPoints2 = new float[,] {
-                        { x + 7, y - 7 },
-                        { x + 3, y - 7 },
-                        { x - 7, y + 7 },
-                        { x - 3, y + 7 }
+                        { x + 3.5f, y - 3.5f },
+                        { x + 1.5f, y - 3.5f },
+                        { x - 3.5f, y + 3.5f },
+                        { x - 1.5f, y + 3.5f }
                     };
                     var xShape1 = slide.Shapes.AddPolyline(xPoints1);
                     xShape1.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
@@ -2319,17 +2320,17 @@ namespace WindowsFormsApplication2
                     xShape2.Line.Weight = 1;
                     return;
                 case "Horizontal bar":
-                    var hBar = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 7, y - 6, 15, 12);
+                    var hBar = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 3.5f, y - 3, 7.5f, 6);
                     hBar.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
                     hBar.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                     hBar.Line.Weight = 1;
                     return;
                 case "Up arrow":
                     var upArrowPoints = new float[,] {
-                        { x, y - 7 },
-                        { x + 7, y + 7 },
-                        { x, y + 3 },
-                        { x - 7, y + 7 }
+                        { x, y - 3.5f },
+                        { x + 3.5f, y + 3.5f },
+                        { x, y + 1.5f },
+                        { x - 3.5f, y + 3.5f }
                     };
                     var upArrow = slide.Shapes.AddPolyline(upArrowPoints);
                     upArrow.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
@@ -2338,10 +2339,10 @@ namespace WindowsFormsApplication2
                     return;
                 case "Right arrow":
                     var rightArrowPoints = new float[,] {
-                        { x + 7, y },
-                        { x - 7, y - 7 },
-                        { x - 3, y },
-                        { x - 7, y + 7 }
+                        { x + 3.5f, y },
+                        { x - 3.5f, y - 3.5f },
+                        { x - 1.5f, y },
+                        { x - 3.5f, y + 3.5f }
                     };
                     var rightArrow = slide.Shapes.AddPolyline(rightArrowPoints);
                     rightArrow.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
@@ -2350,10 +2351,10 @@ namespace WindowsFormsApplication2
                     return;
                 case "Down arrow":
                     var downArrowPoints = new float[,] {
-                        { x, y + 7 },
-                        { x - 7, y - 7 },
-                        { x, y - 3 },
-                        { x + 7, y - 7 }
+                        { x, y + 3.5f },
+                        { x - 3.5f, y - 3.5f },
+                        { x, y - 1.5f },
+                        { x + 3.5f, y - 3.5f }
                     };
                     var downArrow = slide.Shapes.AddPolyline(downArrowPoints);
                     downArrow.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
@@ -2362,10 +2363,10 @@ namespace WindowsFormsApplication2
                     return;
                 case "Left arrow":
                     var leftArrowPoints = new float[,] {
-                        { x - 7, y },
-                        { x + 7, y + 7 },
-                        { x + 3, y },
-                        { x + 7, y - 7 }
+                        { x - 3.5f, y },
+                        { x + 3.5f, y + 3.5f },
+                        { x + 1.5f, y },
+                        { x + 3.5f, y - 3.5f }
                     };
                     var leftArrow = slide.Shapes.AddPolyline(leftArrowPoints);
                     leftArrow.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
@@ -2374,77 +2375,77 @@ namespace WindowsFormsApplication2
                     return;
                 case "Arrow with tail (up)":
                     var upArrowTailPoints = new float[,] {
-                        { x, y - 7 },
-                        { x + 7, y + 7 },
-                        { x, y + 3 },
-                        { x - 7, y + 7 }
+                        { x, y - 3.5f },
+                        { x + 3.5f, y + 3.5f },
+                        { x, y + 1.5f },
+                        { x - 3.5f, y + 3.5f }
                     };
                     var upArrowTail = slide.Shapes.AddPolyline(upArrowTailPoints);
                     upArrowTail.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
                     upArrowTail.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                     upArrowTail.Line.Weight = 1;
-                    var upTail = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 5, y + 3, 10, 7);
+                    var upTail = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 2.5f, y + 1.5f, 5, 3.5f);
                     upTail.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
                     upTail.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                     upTail.Line.Weight = 1;
                     return;
                 case "Arrow with tail (right)":
                     var rightArrowTailPoints = new float[,] {
-                        { x + 7, y },
-                        { x - 7, y - 7 },
-                        { x - 3, y },
-                        { x - 7, y + 7 }
+                        { x + 3.5f, y },
+                        { x - 3.5f, y - 3.5f },
+                        { x - 1.5f, y },
+                        { x - 7, y + 3.5f }
                     };
                     var rightArrowTail = slide.Shapes.AddPolyline(rightArrowTailPoints);
                     rightArrowTail.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
                     rightArrowTail.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                     rightArrowTail.Line.Weight = 1;
-                    var rightTail = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 3, y - 5, 7, 10);
+                    var rightTail = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 1.5f, y - 2.5f, 3.5f, 5);
                     rightTail.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
                     rightTail.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                     rightTail.Line.Weight = 1;
                     return;
                 case "Arrow with tail (down)":
                     var downArrowTailPoints = new float[,] {
-                        { x, y + 7 },
-                        { x - 7, y - 7 },
-                        { x, y - 3 },
-                        { x + 7, y - 7 }
+                        { x, y + 3.5f },
+                        { x - 3.5f, y - 3.5f },
+                        { x, y - 1.5f },
+                        { x + 3.5f, y - 3.5f }
                     };
                     var downArrowTail = slide.Shapes.AddPolyline(downArrowTailPoints);
                     downArrowTail.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
                     downArrowTail.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                     downArrowTail.Line.Weight = 1;
-                    var downTail = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 5, y - 7, 10, 7);
+                    var downTail = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 2.5f, y - 3.5f, 5, 3.5f);
                     downTail.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
                     downTail.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                     downTail.Line.Weight = 1;
                     return;
                 case "Arrow with tail (left)":
                     var leftArrowTailPoints = new float[,] {
-                        { x - 7, y },
-                        { x + 7, y + 7 },
-                        { x + 3, y },
-                        { x + 7, y - 7 }
+                        { x - 3.5f, y },
+                        { x + 3.5f, y + 3.5f },
+                        { x + 1.5f, y },
+                        { x + 3.5f, y - 3.5f }
                     };
                     var leftArrowTail = slide.Shapes.AddPolyline(leftArrowTailPoints);
                     leftArrowTail.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
                     leftArrowTail.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                     leftArrowTail.Line.Weight = 1;
-                    var leftTail = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x + 3, y - 5, 7, 10);
+                    var leftTail = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x + 1.5f, y - 2.5f, 3.5f, 5);
                     leftTail.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
                     leftTail.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                     leftTail.Line.Weight = 1;
                     return;
                 case "Upward fat arrow":
                     var fatArrowPoints = new float[,] {
-                        { x, y - 7 },
-                        { x + 7, y - 2 },
-                        { x + 5, y - 2 },
-                        { x + 5, y + 7 },
-                        { x - 5, y + 7 },
-                        { x - 5, y - 2 },
-                        { x - 7, y - 2 }
+                        { x, y - 3.5f },
+                        { x + 3.5f, y - 1 },
+                        { x + 2.5f, y - 1 },
+                        { x + 2.5f, y + 3.5f },
+                        { x - 2.5f, y + 3.5f },
+                        { x - 2.5f, y - 1 },
+                        { x - 3.5f, y - 1 }
                     };
                     var fatArrow = slide.Shapes.AddPolyline(fatArrowPoints);
                     fatArrow.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
@@ -2456,8 +2457,8 @@ namespace WindowsFormsApplication2
                     y -= 7;
                     var triangleUpPoints = new float[,] {
                                 { x, y },
-                                { x-8, y + 15 },
-                                { x+8, y + 15 }
+                                { x-4, y + 7.5f },
+                                { x+4, y + 7.5f }
                             };
                     var triangleUp = slide.Shapes.AddPolyline(triangleUpPoints);
                     triangleUp.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
@@ -2468,8 +2469,8 @@ namespace WindowsFormsApplication2
                     y += 7;
                     var triangleDownPoints = new float[,] {
                                 { x, y },
-                                { x + 8, y - 15 },
-                                { x-8, y - 15 }
+                                { x + 4, y - 7.5f },
+                                { x-4, y - 7.5f }
                             };
                     var triangleDown = slide.Shapes.AddPolyline(triangleDownPoints);
                     triangleDown.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
@@ -2480,8 +2481,8 @@ namespace WindowsFormsApplication2
                     x += 7;
                     var triangleRightPoints = new float[,] {
                                 { x, y },
-                                { x - 15, y - 8 },
-                                { x - 15, y +8 }
+                                { x - 7.5f, y - 4 },
+                                { x - 7.5f, y +4 }
                             };
                     var triangleRight = slide.Shapes.AddPolyline(triangleRightPoints);
                     triangleRight.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
@@ -2492,8 +2493,8 @@ namespace WindowsFormsApplication2
                     x -= 7;
                     var triangleLeftPoints = new float[,] {
                                 { x, y },
-                                { x + 15, y - 8 },
-                                { x + 15, y + 8 }
+                                { x + 7.5f, y - 4 },
+                                { x + 7.5f, y + 4 }
                             };
                     var triangleLeft = slide.Shapes.AddPolyline(triangleLeftPoints);
                     triangleLeft.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
@@ -2502,26 +2503,35 @@ namespace WindowsFormsApplication2
                     return;
                 default:
                     // For any other shape, use a plus sign as default
-                    var hRect = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 7, y - 3, 15, 7);
+                    var hRect = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 3.5f, y - 1.5f, 7.5f, 3.5f);
                     hRect.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
                     hRect.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                     hRect.Line.Weight = 1;
 
-                    var vRectangle = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 3, y - 7, 7, 15);
+                    var vRectangle = slide.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, x - 1.5f, y - 3.5f, 3.5f, 7.5f);
                     vRectangle.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
                     vRectangle.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                     vRectangle.Line.Weight = 1;
                     return; // Exit since we've already created the plus sign
             }
-
-            // Create the shape with the determined type
-            var shapeObj = slide.Shapes.AddShape(bubbleType, x - 7, y - 7, 15, 15);
-            shapeObj.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
-            shapeObj.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
-            shapeObj.Line.Weight = 1;
-            if (shape == "Pentagon")
+            if (shape == "Circle" ||
+                shape == "Diamond" ||
+                shape == "Pentagon" ||
+                shape == "Hexagon" ||
+                shape == "Octagon" ||
+                shape == "Star (5-point)" ||
+                shape == "Star (6-point)" ||
+                shape == "Star (8-point)" ||
+                shape == "Rectangle")
             {
-                shapeObj.Rotation = -90;
+                var shapeObj = slide.Shapes.AddShape(bubbleType, x - shapeSize / 2, y - shapeSize / 2, shapeSize, shapeSize);
+                shapeObj.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
+                shapeObj.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
+                shapeObj.Line.Weight = 1;
+                if (shape == "Pentagon")
+                {
+                    shapeObj.Rotation = -90;
+                }
             }
         }
         /// <summary>

@@ -586,6 +586,9 @@ namespace WindowsFormsApplication2
                         brush = data.color;
                     }
 
+                    // Reduce the size of the bubbles
+                    float size = (float)(Math.Sqrt(data.TDS) * 0.7); // Reduce bubble size by 30%
+
                     switch (data.shape)
                     {
                         case "Circle":

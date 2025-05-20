@@ -27,6 +27,7 @@ namespace WindowsFormsApplication2
         public static string selectedCompany;
         public static string selectedJob;
         public static List<clsJobs> copyOfJobs = new List<clsJobs>();
+        
         public static frmImportSamples Instance
         {
             get
@@ -48,8 +49,7 @@ namespace WindowsFormsApplication2
             cbJobNumber.SelectedIndexChanged += cbJobNumber_SelectedIndexChanged;
             // Initialize BackgroundWorker
             backgroundWorker = new BackgroundWorker();
-            backgroundWorker.DoWork += backgroundWorker_DoWork;
-            backgroundWorker.RunWorkerCompleted += backgroundWorker_RunWorkerCompleted;
+            //backgroundWorker.DoWork += backgroundWorker_DoWork;
             isCalculateAndPlotClicked = false;
             for (int i = 0; i < clsConstants.oldData.Count; i++)
             {
@@ -632,8 +632,9 @@ namespace WindowsFormsApplication2
 
                 try
                 {
-                    
 
+                    
+                    backgroundWorker.RunWorkerAsync();
                     // Reset and show the existing progress bar
                     progressBar.Value = 0;
                     progressBar.Visible = true;
@@ -1045,25 +1046,9 @@ namespace WindowsFormsApplication2
             }
             
         }
-        private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            getWaterData();
-        }
-        private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            // This will run after getWaterData() completes
-            progressBar.Value = 100;  // Update the progress bar
-            if (WaterData.Count > 0)
-            {
-                this.Close(); // Close the form if data is retrieved
-            }
-            else
-            {
-                MessageBox.Show("No Data to calculate.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-
-
+        //private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        //{
+        //    getWaterData();
+        //}
     }
 }
