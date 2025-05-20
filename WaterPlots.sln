@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WaterPlots", "WindowsFormsApplication2\WaterPlots.csproj", "{F99FCE32-B387-44F6-903D-AB08342755A4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WaterPlots", "WaterPlots\WaterPlots.csproj", "{F99FCE32-B387-44F6-903D-AB08342755A4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
