@@ -157,7 +157,6 @@ namespace WindowsFormsApplication2
             string subtitle = "STIFF diagram displaying concentration ratios (meq/L) for individual samples.";
             g.DrawString(subtitle, labelFont, Brushes.Black, 0.2f * frmMainForm.mainChartPlotting.Width, 0.9f * frmMainForm.mainChartPlotting.Height);
             #region Draw Legend
-
             if (frmImportSamples.WaterData.Count > 0)
             {
                 int metaX = (int)(0.69f * frmMainForm.mainChartPlotting.Width);
@@ -178,7 +177,7 @@ namespace WindowsFormsApplication2
                         if (clsConstants.clickedHeaders.Count > 0)
                         {
                             int c = 0;
-                            fullText += "W" + (i + 1).ToString() + ", ";
+                            //fullText += "W" + (i + 1).ToString() + ", ";
 
                             foreach (var header in clsConstants.clickedHeaders)
                             {
@@ -231,11 +230,12 @@ namespace WindowsFormsApplication2
                         }
                         else
                         {
-                            fullText += "W" + (i + 1).ToString() + ", " + data.Well_Name + ", " + data.ClientID + ", " + data.Depth;
+                            fullText +=  data.Well_Name + ", " + data.ClientID + ", " + data.Depth;
                         }
-                        SizeF textSize = g.MeasureString(fullText, font, metaWidth, stringFormat); // Adjust for wrapping width
+                        SizeF textSize = g.MeasureString(fullText, font, metaWidth - 30); // Adjust for wrapping width
                         metaWidth = (int)Math.Max(metaWidth, textSize.Width); // Ensure metaWidth accounts for the largest text
                         metaHeight += (int)Math.Ceiling(textSize.Height); // Add spacing between lines
+                        
                     }
                 }
 
@@ -245,7 +245,9 @@ namespace WindowsFormsApplication2
                     Size = new Size(metaWidth, metaHeight),
                     Image = metaBitmap
                 };
-
+                metaPictureBox.MouseDoubleClick += (_sender, e) =>
+                    frmMainForm.pictureBoxCollinsPieStiffMeta_Click(_sender, e, "Stiff Legend");
+                frmMainForm.metaPanel.Controls.Clear();
                 frmMainForm.metaPanel.Controls.Add(metaPictureBox);
                 frmMainForm.metaPanel.Size = new Size(metaWidth, metaHeight);
                 frmMainForm.metaPanel.Visible = true;
@@ -262,19 +264,12 @@ namespace WindowsFormsApplication2
                 for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
                 {
                     var data = frmImportSamples.WaterData[i];
-                    //Brush squareBrush = new SolidBrush(data.color);
-                    //Pen axisPen = new Pen(data.color, data.lineWidth)
-                    //{
-                    //    DashStyle = data.selectedStyle
-                    //};
-
-                    //g.DrawLine(axisPen, 5, ysample + 10, 25, ysample + 10);
-
+                    
                     string fullText = "";
                     if (clsConstants.clickedHeaders.Count > 0)
                     {
                         int c = 0;
-                        fullText += "W" + (i + 1).ToString() + ", ";
+                        //fullText += "W" + (i + 1).ToString() + ", ";
                         foreach (var header in clsConstants.clickedHeaders)
                         {
                             if (header == "Job ID")
@@ -326,14 +321,17 @@ namespace WindowsFormsApplication2
                     }
                     else
                     {
-                        fullText += "W" + (i + 1).ToString() + ", " + data.Well_Name + ", " + data.ClientID + ", " + data.Depth;
+                        fullText += data.Well_Name + ", " + data.ClientID + ", " + data.Depth;
                     }
-                    RectangleF textRect = new RectangleF(0, ysample, metaWidth, metaHeight);
+                    RectangleF textRect = new RectangleF(30, ysample, metaWidth-35, metaHeight);
 
                     Font font = new Font("Times New Roman", legendtextSize, FontStyle.Bold);
-                    SizeF textSize = g.MeasureString(fullText, font, metaWidth); // Adjust for wrapping width
-
-                    g.DrawString(fullText, font, Brushes.Black, textRect);
+                    SizeF textSize = g.MeasureString(fullText, font, (int)textRect.Width); // Adjust for wrapping width
+                    g.DrawString("W" + (i + 1).ToString()+", ", font, Brushes.Black, 0, ysample);
+                    g.DrawString(fullText,
+                            font,
+                            Brushes.Black,
+                            textRect);
                     ysample += (int)Math.Ceiling(textSize.Height); // Move down based on wrapped height
                 }
 
@@ -546,6 +544,9 @@ namespace WindowsFormsApplication2
 
                 PowerPoint.Shape line6 = slide.Shapes.AddLine(rightX[1], rightY[1], rightX[0], rightY[0]);
                 line6.Line.ForeColor.RGB = ColorTranslator.ToOle(Color.Black);
+                maxX = Math.Max(maxX, rightX[0] - 15);
+                
+
 
 
 
@@ -560,11 +561,26 @@ namespace WindowsFormsApplication2
                 maxX = Math.Max(maxX, rightX[0]);
                 offsetY -= sampleSpacing; // Move Down for Next Sample
             }
+            offsetY = yOrigin + diagramHeight - 10;
+            for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
+            {
+                float[] rightY = { offsetY - 10, offsetY, offsetY + 10 };
+
+                var temp = slide.Shapes.AddTextbox(
+                    Office.MsoTextOrientation.msoTextOrientationHorizontal,
+                    maxX, rightY[0] - 10, 100, 20);
+                temp.TextFrame.TextRange.Text = "W" + (i + 1).ToString();
+                temp.TextFrame.TextRange.Font.Size = 10;
+                temp.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
+                temp.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
+                temp.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+                temp.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
+                offsetY -= sampleSpacing; // Move Down for Next Sample
+            }
 
 
-
-            #region Draw Legend
-            int legendX = (int)(0.1f * presentation.PageSetup.SlideWidth);
+                #region Draw Legend
+                int legendX = (int)(0.1f * presentation.PageSetup.SlideWidth);
             int legendY = 50;
             int xSample = legendX + 5;
             int fontSize = clsConstants.legendTextSize;
@@ -646,12 +662,70 @@ namespace WindowsFormsApplication2
                 var data = frmImportSamples.WaterData[i];
 
                 // Prepare wrapped text
-                string fullText = "W" + (i + 1).ToString() + ", " + data.Well_Name + ", " + data.ClientID + ", " + data.Depth;
+                string fullText = "";
+                if (clsConstants.clickedHeaders.Count > 0)
+                {
+                    int c = 0;
+                    //fullText += "W" + (i + 1).ToString() + ", ";
+                    foreach (var header in clsConstants.clickedHeaders)
+                    {
+                        
+                        if (header == "Job ID")
+                        {
+                            fullText += data.jobID;
+                        }
+                        else if (header == "Sample ID")
+                        {
+                            fullText += data.sampleID;
+                        }
+                        else if (header == "Client ID")
+                        {
+                            fullText += data.ClientID;
+                        }
+                        else if (header == "Well Name")
+                        {
+                            fullText += data.Well_Name;
+                        }
+                        else if (header == "Lat")
+                        {
+                            fullText += data.latitude;
+                        }
+                        else if (header == "Long")
+                        {
+                            fullText += data.longtude;
+                        }
+                        else if (header == "Sample Type")
+                        {
+                            fullText += data.sampleType;
+                        }
+                        else if (header == "Formation Name")
+                        {
+                            fullText += data.formName;
+                        }
+                        else if (header == "Depth")
+                        {
+                            fullText += data.Depth;
+                        }
+                        else if (header == "Prep")
+                        {
+                            fullText += data.prep;
+                        }
+                        if (c != clsConstants.clickedHeaders.Count - 1)
+                        {
+                            fullText += ", ";
+                        }
+                        c++;
+                    }
+                }
+                else
+                {
+                    fullText += data.Well_Name + ", " + data.ClientID + ", " + data.Depth;
+                }
 
                 // Add textbox with wrapping and fixed width
                 PowerPoint.Shape metadataText = slide.Shapes.AddTextbox(
                     Office.MsoTextOrientation.msoTextOrientationHorizontal,
-                    metadataX + 5, ysample, metaWidth, 20); // initial height, PowerPoint will auto-expand
+                    metadataX + 25, ysample, metaWidth, 20); // initial height, PowerPoint will auto-expand
 
                 metadataText.TextFrame.TextRange.Text = fullText;
                 metadataText.TextFrame.TextRange.Font.Size = clsConstants.legendTextSize;
@@ -667,9 +741,17 @@ namespace WindowsFormsApplication2
 
                 // Auto-resize height only
                 metadataText.TextFrame.AutoSize = PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
-
-                ysample += metadataText.Height + 5;
-                metaHeight += (int)(metadataText.Height + 5);
+                var temp = slide.Shapes.AddTextbox(
+                    Office.MsoTextOrientation.msoTextOrientationHorizontal,
+                    metadataX-40, ysample-5, 100, 20);
+                temp.TextFrame.TextRange.Text = "W" + (i + 1).ToString()+", ";
+                temp.TextFrame.TextRange.Font.Size = 10;
+                temp.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
+                temp.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
+                temp.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+                temp.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
+                ysample += metadataText.Height;
+                metaHeight += (int)(metadataText.Height);
             }
 
             // Draw blue border box after content is drawn
@@ -690,6 +772,7 @@ namespace WindowsFormsApplication2
             cationShape.TextFrame.TextRange.Font.Name = "Times New Roman";
             cationShape.TextFrame.TextRange.Font.Color.RGB = ColorTranslator.ToOle(Color.Black); // Black text
             cationShape.TextFrame.TextRange.Font.Bold = Microsoft.Office.Core.MsoTriState.msoTrue;
+            cationShape.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
             string meqL = "meq/L";
             PowerPoint.Shape meqLShape = slide.Shapes.AddTextbox(
                 Microsoft.Office.Core.MsoTextOrientation.msoTextOrientationHorizontal,
@@ -700,6 +783,7 @@ namespace WindowsFormsApplication2
             meqLShape.TextFrame.TextRange.Font.Name = "Times New Roman";
             meqLShape.TextFrame.TextRange.Font.Color.RGB = ColorTranslator.ToOle(Color.Black); // Black text
             meqLShape.TextFrame.TextRange.Font.Bold = Microsoft.Office.Core.MsoTriState.msoTrue;
+            meqLShape.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
             string anions = "Anions";
             PowerPoint.Shape anionsShape = slide.Shapes.AddTextbox(
                 Microsoft.Office.Core.MsoTextOrientation.msoTextOrientationHorizontal,
@@ -710,6 +794,7 @@ namespace WindowsFormsApplication2
             anionsShape.TextFrame.TextRange.Font.Name = "Times New Roman";
             anionsShape.TextFrame.TextRange.Font.Color.RGB = ColorTranslator.ToOle(Color.Black); // Black text
             anionsShape.TextFrame.TextRange.Font.Bold = Microsoft.Office.Core.MsoTriState.msoTrue;
+            anionsShape.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
             // Add Subtitle at Bottom
             string subtitle = "STIFF diagram displaying concentration ratios (meq/L) for individual samples.";
 

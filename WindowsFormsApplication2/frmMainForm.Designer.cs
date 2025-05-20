@@ -165,7 +165,7 @@ namespace WindowsFormsApplication2
             // 
             this.printPowerpoint.Name = "printPowerpoint";
             this.printPowerpoint.Size = new System.Drawing.Size(163, 22);
-            this.printPowerpoint.Text = "Print Powerpoint";
+            this.printPowerpoint.Text = "Export Powerpoint";
             this.printPowerpoint.Click += new System.EventHandler(this.printPowerpoint_Click);
             // 
             // fileMenu

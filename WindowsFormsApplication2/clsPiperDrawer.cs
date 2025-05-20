@@ -254,7 +254,8 @@ namespace WindowsFormsApplication2
                         {
                             if (frmImportSamples.WaterData[i].shape == frmSymbolPicker.symbolNames.ElementAt(j))
                             {
-                                frmSymbolPicker.DrawSymbol(g, j, 2, ysample-3, 25, squareBrush);
+                                int size = (int)(0.014 * frmMainForm.mainChartPlotting.Width);
+                                frmSymbolPicker.DrawSymbol(g, j, 2, ysample-3, size, squareBrush);
                                 break;
                             }
 
@@ -828,7 +829,8 @@ namespace WindowsFormsApplication2
                 {
                     if (shape == frmSymbolPicker.symbolNames.ElementAt(i))
                     {
-                        frmSymbolPicker.DrawSymbol(g, i, (int)x-12, (int)y-12, 25, squareBrush);
+                        int size = (int)(0.014 * frmMainForm.mainChartPlotting.Width);
+                        frmSymbolPicker.DrawSymbol(g, i, (int)x-size/2, (int)y-size/2, size, squareBrush);
                         break;
                     }
                 }
@@ -870,7 +872,8 @@ namespace WindowsFormsApplication2
                 {
                     if (shape == frmSymbolPicker.symbolNames.ElementAt(i))
                     {
-                        frmSymbolPicker.DrawSymbol(g, i, (int)x - 12, (int)y - 12, 25, squareBrush);
+                        int size = (int)(0.014 * frmMainForm.mainChartPlotting.Width);
+                        frmSymbolPicker.DrawSymbol(g, i, (int)x - size / 2, (int)y - size / 2, size, squareBrush);
                         break;
                     }
                 }
@@ -1309,10 +1312,11 @@ namespace WindowsFormsApplication2
                             triangleLeft.Line.Weight = 1;
                             break;
                         case "Right triangle":
+                            float x = metadataX+5;
                             var triangleRightPoints = new float[,] {
-                                { metadataX + 12, ysample + 5 },
-                                { metadataX - 2, ysample + 12 },
-                                { metadataX - 2, ysample - 2 }
+                                { x + 12, ysample + 5 },
+                                { x - 2, ysample + 12 },
+                                { x - 2, ysample - 2 }
                             };
                             var triangleRight = slide.Shapes.AddPolyline(triangleRightPoints);
                             triangleRight.Fill.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color);
@@ -1349,12 +1353,73 @@ namespace WindowsFormsApplication2
                         shapeObj.Fill.ForeColor.RGB = ColorTranslator.ToOle(frmImportSamples.WaterData[i].color);
                         shapeObj.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
                         shapeObj.Line.Weight = 1;
+                        if(frmImportSamples.WaterData[i].shape=="Pentagon")
+                        {
+                            shapeObj.Rotation = -90;
+                        }
                     }
-                    
-                    
+
+
 
                     // Prepare wrapped text
-                    string fullText = data.Well_Name + ", " + data.ClientID + ", " + data.Depth;
+                    string fullText = "";
+                    if (clsConstants.clickedHeaders.Count > 0)
+                    {
+                        int c = 0;
+
+                        foreach (var header in clsConstants.clickedHeaders)
+                        {
+                            if (header == "Job ID")
+                            {
+                                fullText += data.jobID;
+                            }
+                            else if (header == "Sample ID")
+                            {
+                                fullText += data.sampleID;
+                            }
+                            else if (header == "Client ID")
+                            {
+                                fullText += data.ClientID;
+                            }
+                            else if (header == "Well Name")
+                            {
+                                fullText += data.Well_Name;
+                            }
+                            else if (header == "Lat")
+                            {
+                                fullText += data.latitude;
+                            }
+                            else if (header == "Long")
+                            {
+                                fullText += data.longtude;
+                            }
+                            else if (header == "Sample Type")
+                            {
+                                fullText += data.sampleType;
+                            }
+                            else if (header == "Formation Name")
+                            {
+                                fullText += data.formName;
+                            }
+                            else if (header == "Depth")
+                            {
+                                fullText += data.Depth;
+                            }
+                            else if (header == "Prep")
+                            {
+                                fullText += data.prep;
+                            }
+                            if (c != clsConstants.clickedHeaders.Count - 1)
+                            {
+                                fullText += ", ";
+                            }
+                            c++;
+                        }
+                    }
+                    else
+                    {
+                        fullText += data.Well_Name + ", " + data.ClientID + ", " + data.Depth;
+                    }
 
                     // Add textbox with wrapping and fixed width
                     PowerPoint.Shape metadataText = slide.Shapes.AddTextbox(
@@ -1376,8 +1441,8 @@ namespace WindowsFormsApplication2
                     // Auto-resize height only
                     metadataText.TextFrame.AutoSize = PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
 
-                    ysample += metadataText.Height + 5;
-                    metaHeight += (int)(metadataText.Height + 5);
+                    ysample += metadataText.Height+5;
+                    metaHeight += (int)(metadataText.Height+5);
                 }
 
                 // Draw blue border box after content is drawn
@@ -2090,6 +2155,10 @@ namespace WindowsFormsApplication2
             shapeObj.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
             shapeObj.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
             shapeObj.Line.Weight = 1;
+            if (shape == "Pentagon")
+            {
+                shapeObj.Rotation = -90;
+            }
         }
 
         public static void PlotPointInTrianglePowerpoint(PowerPoint.Slide slide, Rectangle bounds, double A, double B, double C, Color brush, string label, string shape)
@@ -2450,6 +2519,10 @@ namespace WindowsFormsApplication2
             shapeObj.Fill.ForeColor.RGB = ColorTranslator.ToOle(brush);
             shapeObj.Line.ForeColor.RGB = System.Drawing.Color.Black.ToArgb();
             shapeObj.Line.Weight = 1;
+            if (shape == "Pentagon")
+            {
+                shapeObj.Rotation = -90;
+            }
         }
         /// <summary>
         /// Formats a keyword in a PowerPoint text range with color and style.

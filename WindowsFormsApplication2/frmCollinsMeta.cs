@@ -12,8 +12,9 @@ namespace WindowsFormsApplication2
     public partial class frmCollinsMeta : Form
     {
         public static bool isUpdateClicked;
-        public frmCollinsMeta()
+        public frmCollinsMeta(string diagramName)
         {
+            this.Text = diagramName;
             InitializeComponent();
             Loaddgv();
             isUpdateClicked = false;

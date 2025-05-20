@@ -233,7 +233,7 @@ namespace WindowsFormsApplication2
                         if (clsConstants.clickedHeaders.Count > 0)
                         {
                             int c = 0;
-                            fullText += "W" + (i + 1).ToString() + ", ";
+                            //fullText += "W" + (i + 1).ToString() + ", ";
 
                             foreach (var header in clsConstants.clickedHeaders)
                             {
@@ -286,11 +286,12 @@ namespace WindowsFormsApplication2
                         }
                         else
                         {
-                            fullText +="W"+(i+1).ToString()+", "+ data.Well_Name + ", " + data.ClientID + ", " + data.Depth;
+                            fullText += data.Well_Name + ", " + data.ClientID + ", " + data.Depth;
                         }
-                        SizeF textSize = g.MeasureString(fullText, font, metaWidth, stringFormat); // Adjust for wrapping width
+                        SizeF textSize = g.MeasureString(fullText, font, metaWidth - 30); // Adjust for wrapping width
                         metaWidth = (int)Math.Max(metaWidth, textSize.Width); // Ensure metaWidth accounts for the largest text
                         metaHeight += (int)Math.Ceiling(textSize.Height); // Add spacing between lines
+
                     }
                 }
 
@@ -300,9 +301,8 @@ namespace WindowsFormsApplication2
                     Size = new Size(metaWidth, metaHeight),
                     Image = metaBitmap
                 };
-                metaPictureBox.MouseDoubleClick += frmMainForm.pictureBoxBubble_Click;
-                
-                // Clear existing controls before adding new ones
+                metaPictureBox.MouseDoubleClick += (_sender, e) =>
+                    frmMainForm.pictureBoxCollinsPieStiffMeta_Click(_sender, e, "Stiff Legend");
                 frmMainForm.metaPanel.Controls.Clear();
                 frmMainForm.metaPanel.Controls.Add(metaPictureBox);
                 frmMainForm.metaPanel.Size = new Size(metaWidth, metaHeight);
@@ -311,7 +311,7 @@ namespace WindowsFormsApplication2
 
                 g = Graphics.FromImage(metaBitmap);
                 g.Clear(Color.White);
-                g.DrawRectangle(new Pen(Color.Blue), 0, 0, metaWidth - 1, metaHeight - 1);
+                g.DrawRectangle(new Pen(Color.Blue), metaX - 15.0f, metaY - 10.0f, metaWidth + 15.0f, metaHeight + 30.0f);
 
                 int ysample = 0;
                 g.FillRectangle(Brushes.White, 0, 0, metaWidth, metaHeight);
@@ -320,11 +320,12 @@ namespace WindowsFormsApplication2
                 for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
                 {
                     var data = frmImportSamples.WaterData[i];
+
                     string fullText = "";
                     if (clsConstants.clickedHeaders.Count > 0)
                     {
                         int c = 0;
-                        fullText += "W" + (i + 1).ToString() + ", ";
+                        //fullText += "W" + (i + 1).ToString() + ", ";
                         foreach (var header in clsConstants.clickedHeaders)
                         {
                             if (header == "Job ID")
@@ -376,20 +377,19 @@ namespace WindowsFormsApplication2
                     }
                     else
                     {
-                        fullText += "W" + (i + 1).ToString() + ", " + data.Well_Name + ", " + data.ClientID + ", " + data.Depth;
+                        fullText += data.Well_Name + ", " + data.ClientID + ", " + data.Depth;
                     }
+                    RectangleF textRect = new RectangleF(30, ysample, metaWidth - 35, metaHeight);
 
                     Font font = new Font("Times New Roman", legendtextSize, FontStyle.Bold);
-                    SizeF textSize = g.MeasureString(fullText, font, metaWidth);
-                    RectangleF textRect = new RectangleF(0, ysample, metaWidth, textSize.Height);
-
-                    g.DrawString(fullText, font, Brushes.Black, textRect);
-                    ysample += (int)Math.Ceiling(textSize.Height);
+                    SizeF textSize = g.MeasureString(fullText, font, (int)textRect.Width); // Adjust for wrapping width
+                    g.DrawString("W" + (i + 1).ToString() + ", ", font, Brushes.Black, 0, ysample);
+                    g.DrawString(fullText,
+                            font,
+                            Brushes.Black,
+                            textRect);
+                    ysample += (int)Math.Ceiling(textSize.Height); // Move down based on wrapped height
                 }
-
-                // Update the metaPictureBox with the new bitmap
-                metaPictureBox.Image = metaBitmap;
-                metaPictureBox.Invalidate();
 
                 frmMainForm.metaPanel.Location = new Point(metaX - 14, metaY - 9);
                 frmMainForm.mainChartPlotting.Controls.Add(frmMainForm.metaPanel);
@@ -1012,13 +1012,16 @@ namespace WindowsFormsApplication2
                 for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
                 {
                     var data = frmImportSamples.WaterData[i];
+
+                    // Prepare wrapped text
                     string fullText = "";
                     if (clsConstants.clickedHeaders.Count > 0)
                     {
                         int c = 0;
-                        fullText += "W" + (i + 1).ToString() + ", ";
+                        //fullText += "W" + (i + 1).ToString() + ", ";
                         foreach (var header in clsConstants.clickedHeaders)
                         {
+
                             if (header == "Job ID")
                             {
                                 fullText += data.jobID;
@@ -1068,13 +1071,13 @@ namespace WindowsFormsApplication2
                     }
                     else
                     {
-                        fullText += "W" + (i + 1).ToString() + ", " + data.Well_Name + ", " + data.ClientID + ", " + data.Depth;
+                        fullText += data.Well_Name + ", " + data.ClientID + ", " + data.Depth;
                     }
 
                     // Add textbox with wrapping and fixed width
                     PowerPoint.Shape metadataText = slide.Shapes.AddTextbox(
                         Office.MsoTextOrientation.msoTextOrientationHorizontal,
-                        metadataX + 5, ysample, metaWidth, 20); // initial height, PowerPoint will auto-expand
+                        metadataX + 25, ysample, metaWidth, 20); // initial height, PowerPoint will auto-expand
 
                     metadataText.TextFrame.TextRange.Text = fullText;
                     metadataText.TextFrame.TextRange.Font.Size = clsConstants.legendTextSize;
@@ -1090,7 +1093,15 @@ namespace WindowsFormsApplication2
 
                     // Auto-resize height only
                     metadataText.TextFrame.AutoSize = PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
-
+                    var temp = slide.Shapes.AddTextbox(
+                        Office.MsoTextOrientation.msoTextOrientationHorizontal,
+                        metadataX - 40, ysample - 5, 100, 20);
+                    temp.TextFrame.TextRange.Text = "W" + (i + 1).ToString() + ", ";
+                    temp.TextFrame.TextRange.Font.Size = 10;
+                    temp.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
+                    temp.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
+                    temp.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+                    temp.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
                     ysample += metadataText.Height;
                     metaHeight += (int)(metadataText.Height);
                 }

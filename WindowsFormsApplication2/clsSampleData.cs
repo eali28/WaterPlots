@@ -16,5 +16,6 @@
         public string latitude;
         public string longtude;
         public string age;
+        public string jobID;
     }
 }

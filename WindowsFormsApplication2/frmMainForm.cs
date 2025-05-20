@@ -489,100 +489,108 @@ namespace WindowsFormsApplication2
         /// </summary>
         private void printPowerpoint_Click(object sender, EventArgs e)
         {
-            string userName = Environment.UserName;
-            string pptPath = string.Format(@"C:\Users\{0}\Documents\Diagrams.pptx", userName);
-            PowerPoint.Application pptApplication = new PowerPoint.Application();
-            PowerPoint.Presentation presentation;
-
-            // Open existing PowerPoint if available, otherwise create a new one
-            if (File.Exists(pptPath))
+            if(frmImportSamples.WaterData.Count>0)
             {
-                presentation = pptApplication.Presentations.Open(pptPath, Office.MsoTriState.msoFalse, Office.MsoTriState.msoFalse, Office.MsoTriState.msoTrue);
+                string userName = Environment.UserName;
+                string pptPath = string.Format(@"C:\Users\{0}\Documents\Diagrams.pptx", userName);
+                PowerPoint.Application pptApplication = new PowerPoint.Application();
+                PowerPoint.Presentation presentation;
+
+                // Open existing PowerPoint if available, otherwise create a new one
+                if (File.Exists(pptPath))
+                {
+                    presentation = pptApplication.Presentations.Open(pptPath, Office.MsoTriState.msoFalse, Office.MsoTriState.msoFalse, Office.MsoTriState.msoTrue);
+                }
+                else
+                {
+                    presentation = pptApplication.Presentations.Add(Office.MsoTriState.msoTrue);
+                }
+                presentation.PageSetup.SlideWidth = (float)(10.84) * 72f;
+                presentation.PageSetup.SlideHeight = (float)(7.5) * 72f;
+                for (int i = 0; i < listBoxSelected.Items.Count; i++)
+                {
+                    string selectedChart = listBoxSelected.Items[i].ToString();
+
+                    // Add a new slide
+                    int newSlideIndex = presentation.Slides.Count + 1;
+                    PowerPoint.Slide slide = presentation.Slides.Add(newSlideIndex, PowerPoint.PpSlideLayout.ppLayoutBlank);
+                    // Calculate proper dimensions and positions for three charts
+                    float slideWidth = presentation.PageSetup.SlideWidth;
+                    float slideHeight = presentation.PageSetup.SlideHeight;
+                    if (listBoxSelected.Items[i].ToString() == "Collins Diagram")
+                    {
+                        clsCollinsDrawer.ExportCollinsToPowerPoint(slide, presentation);
+                    }
+                    else if (listBoxSelected.Items[i].ToString() == "Pie Chart")
+                    {
+                        clsPieDrawer.ExportPieChartToPowerPoint(slide, presentation);
+                    }
+                    else if (listBoxSelected.Items[i].ToString() == "Stiff Diagram")
+                    {
+                        clsStiffDrawer.ExportStiffDiagramToPowerPoint(slide, presentation);
+                    }
+                    else if (listBoxSelected.Items[i].ToString() == "Bubble Diagram")
+                    {
+                        clsBubbleDrawer.ExportBubbleDiagramToPowerPoint(slide, presentation);
+                    }
+                    else if (listBoxSelected.Items[i].ToString() == "log Na Vs log Cl")
+                    {
+                        clsLogsDrawer.ExportLogNaVsLogClChartToPowerPoint(slide, (int)((presentation.PageSetup.SlideWidth / 2) - 100), clsConstants.chartYPowerpoint, presentation, 420, 378, (int)(0.1f * slideWidth), 100);
+                    }
+                    else if (listBoxSelected.Items[i].ToString() == "log Mg Vs log Cl")
+                    {
+                        clsLogsDrawer.ExportlogMgVslogCltoPowerpoint(slide, (int)((presentation.PageSetup.SlideWidth / 2) - 100), clsConstants.chartYPowerpoint, presentation, 420, 378, (int)(0.1f * slideWidth), 100);
+                    }
+                    else if (listBoxSelected.Items[i].ToString() == "log Ca Vs log Cl")
+                    {
+                        clsLogsDrawer.ExportlogCaVslogCltoPowerPoint(slide, (int)((presentation.PageSetup.SlideWidth / 2) - 100), clsConstants.chartYPowerpoint, presentation, 420, 378, (int)(0.1f * slideWidth), 100);
+                    }
+                    else if (listBoxSelected.Items[i].ToString() == "Schoeller Diagram")
+                    {
+
+                        clsSchoellerDrawer.ExportSchoellerDiagramToPowerPoint(slide, presentation);
+                    }
+                    else if (listBoxSelected.Items[i].ToString() == "Elements Molar Concentration")
+                    {
+                        Rectangle bounds = new Rectangle((int)(0.5f * slideWidth), (int)(0.08f * slideHeight), (int)(0.6 * slideWidth), (int)(0.9 * slideHeight));
+                        clsRadarDrawer.ExportRadar1ToPowerpoint(bounds, slide, presentation, isScalesNeedNoUpdate);
+                    }
+                    else if (listBoxSelected.Items[i].ToString() == "Genetic Origin and Alteration Plot")
+                    {
+                        Rectangle bounds = new Rectangle((int)(0.5f * slideWidth), (int)(0.08f * slideHeight), (int)(0.6 * slideWidth), (int)(0.9 * slideHeight));
+                        clsRadarDrawer.ExportRadar2ToPowerpoint(bounds, slide, presentation, isScalesNeedNoUpdate);
+                    }
+                    else if (listBoxSelected.Items[i].ToString() == "Piper Diagram")
+                    {
+                        clsPiperDrawer.ExportPiperDiagramToPowerpoint(slide, presentation);
+                    }
+                    else if (listBoxSelected.Items[i].ToString() == "Major Element Logs")
+                    {
+
+                        int diagramWidth = 250, diagramHeight = 150;
+                        // First chart (Log Na vs Log Cl) - Top left
+                        clsLogsDrawer.ExportLogNaVsLogClChartToPowerPoint(slide, 50 + diagramWidth / 4, 10, presentation, diagramWidth, diagramHeight, 100, 60);
+
+                        // Second chart (Log Mg vs Log Cl) - Top right
+                        clsLogsDrawer.ExportlogMgVslogCltoPowerpoint(slide, 400 + diagramWidth / 4, 10, presentation, diagramWidth, diagramHeight, 450, 60);
+
+                        // Third chart (Log Ca vs Log Cl) - Bottom right
+                        clsLogsDrawer.ExportlogCaVslogCltoPowerPoint(slide, 170 + diagramWidth / 4, (int)(slideHeight * 0.5f), presentation, diagramWidth, diagramHeight, 220, (int)(slideHeight * 0.6f));
+                    }
+                    else if (listBoxSelected.Items[i].ToString() == "ICP Reproducibility")
+                    {
+                        Rectangle bounds = new Rectangle((int)(0.5f * slideWidth), (int)(0.08f * slideHeight), (int)(0.6 * slideWidth), (int)(0.9 * slideHeight));
+                        clsRadarDrawer.ExportRadar3ToPowerpoint(bounds, slide, presentation, isScalesNeedNoUpdate);
+                    }
+                }
+                listBoxCharts.Refresh();
+                listBoxSelected.Refresh();
             }
             else
             {
-                presentation = pptApplication.Presentations.Add(Office.MsoTriState.msoTrue);
+                MessageBox.Show("There's no selected diagrams", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            presentation.PageSetup.SlideWidth = (float)(10.84) * 72f;
-            presentation.PageSetup.SlideHeight = (float)(7.5)*72f;
-            for (int i = 0; i < listBoxSelected.Items.Count; i++)
-            {
-                string selectedChart = listBoxSelected.Items[i].ToString();
-
-                // Add a new slide
-                int newSlideIndex = presentation.Slides.Count + 1;
-                PowerPoint.Slide slide = presentation.Slides.Add(newSlideIndex, PowerPoint.PpSlideLayout.ppLayoutBlank);
-                // Calculate proper dimensions and positions for three charts
-                float slideWidth = presentation.PageSetup.SlideWidth;
-                float slideHeight = presentation.PageSetup.SlideHeight;
-                if (listBoxSelected.Items[i].ToString() == "Collins Diagram")
-                {
-                    clsCollinsDrawer.ExportCollinsToPowerPoint(slide, presentation);
-                }
-                else if (listBoxSelected.Items[i].ToString() == "Pie Chart")
-                {
-                    clsPieDrawer.ExportPieChartToPowerPoint(slide, presentation);
-                }
-                else if (listBoxSelected.Items[i].ToString() == "Stiff Diagram")
-                {
-                    clsStiffDrawer.ExportStiffDiagramToPowerPoint(slide, presentation);
-                }
-                else if (listBoxSelected.Items[i].ToString() == "Bubble Diagram")
-                {
-                    clsBubbleDrawer.ExportBubbleDiagramToPowerPoint(slide, presentation);
-                }
-                else if (listBoxSelected.Items[i].ToString() == "log Na Vs log Cl")
-                {
-                    clsLogsDrawer.ExportLogNaVsLogClChartToPowerPoint(slide, (int)((presentation.PageSetup.SlideWidth / 2) - 100),clsConstants.chartYPowerpoint, presentation, 420, 378,(int)(0.1f*slideWidth),100);
-                }
-                else if (listBoxSelected.Items[i].ToString() == "log Mg Vs log Cl")
-                {
-                    clsLogsDrawer.ExportlogMgVslogCltoPowerpoint(slide, (int)((presentation.PageSetup.SlideWidth / 2) - 100), clsConstants.chartYPowerpoint, presentation, 420, 378, (int)(0.1f * slideWidth), 100);
-                }
-                else if (listBoxSelected.Items[i].ToString() == "log Ca Vs log Cl")
-                {
-                    clsLogsDrawer.ExportlogCaVslogCltoPowerPoint(slide, (int)((presentation.PageSetup.SlideWidth / 2) - 100), clsConstants.chartYPowerpoint, presentation, 420, 378, (int)(0.1f * slideWidth), 100);
-                }
-                else if (listBoxSelected.Items[i].ToString() == "Schoeller Diagram")
-                {
-
-                    clsSchoellerDrawer.ExportSchoellerDiagramToPowerPoint(slide, presentation);
-                }
-                else if (listBoxSelected.Items[i].ToString() == "Elements Molar Concentration")
-                {
-                    Rectangle bounds = new Rectangle((int)(0.5f * slideWidth), (int)(0.08f * slideHeight), (int)(0.6 * slideWidth), (int)(0.9 * slideHeight));
-                    clsRadarDrawer.ExportRadar1ToPowerpoint(bounds, slide, presentation,isScalesNeedNoUpdate);
-                }
-                else if (listBoxSelected.Items[i].ToString() == "Genetic Origin and Alteration Plot")
-                {
-                    Rectangle bounds = new Rectangle((int)(0.5f * slideWidth), (int)(0.08f * slideHeight), (int)(0.6 * slideWidth), (int)(0.9 * slideHeight));
-                    clsRadarDrawer.ExportRadar2ToPowerpoint(bounds, slide, presentation,isScalesNeedNoUpdate);
-                }
-                else if (listBoxSelected.Items[i].ToString() == "Piper Diagram")
-                {
-                    clsPiperDrawer.ExportPiperDiagramToPowerpoint(slide, presentation);
-                }
-                else if (listBoxSelected.Items[i].ToString() == "Major Element Logs")
-                {
-
-                    int diagramWidth = 250, diagramHeight = 150;
-                    // First chart (Log Na vs Log Cl) - Top left
-                    clsLogsDrawer.ExportLogNaVsLogClChartToPowerPoint(slide,50+ diagramWidth/4,10,presentation, diagramWidth, diagramHeight, 100, 60);
-
-                    // Second chart (Log Mg vs Log Cl) - Top right
-                    clsLogsDrawer.ExportlogMgVslogCltoPowerpoint(slide,400+ diagramWidth / 4,10, presentation, diagramWidth, diagramHeight, 450, 60);
-
-                    // Third chart (Log Ca vs Log Cl) - Bottom right
-                    clsLogsDrawer.ExportlogCaVslogCltoPowerPoint(slide,170+ diagramWidth / 4, (int)(slideHeight * 0.5f), presentation, diagramWidth, diagramHeight, 220, (int)(slideHeight * 0.6f));
-                }
-                else if(listBoxSelected.Items[i].ToString()== "ICP Reproducibility")
-                {
-                    Rectangle bounds = new Rectangle((int)(0.5f * slideWidth), (int)(0.08f * slideHeight), (int)(0.6 * slideWidth), (int)(0.9 * slideHeight));
-                    clsRadarDrawer.ExportRadar3ToPowerpoint(bounds, slide, presentation, isScalesNeedNoUpdate);
-                }
-            }
-            listBoxCharts.Refresh();
-            listBoxSelected.Refresh();
+            
         }
         /// <summary>
         /// Updates the scales for radar plots based on the selected name
@@ -905,28 +913,32 @@ namespace WindowsFormsApplication2
             UpdateCollinsDiagram();
         }
         /// <summary>
-        /// Opens the Pie diagram meta legend
+        /// Opens the Collins,Pie,Stiff diagram meta legend
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public static void pictureBoxPieMeta_Click(object sender, EventArgs e)
+        
+        public static void pictureBoxCollinsPieStiffMeta_Click(object sender, EventArgs e, string metaTitle)
         {
-            frmPieMeta itemDetails = new frmPieMeta();
+            frmCollinsMeta itemDetails = new frmCollinsMeta(metaTitle); // Pass it to the form
             itemDetails.ShowDialog();
             itemDetails.BringToFront();
             itemDetails.Activate();
-
-            UpdatePieDiagram();
+            if(listBoxCharts.SelectedItem.ToString()=="Collins Diagram")
+            {
+                UpdateCollinsDiagram();
+            }
+            else if(listBoxCharts.SelectedItem.ToString() == "Pie Chart")
+            {
+                UpdatePieDiagram();
+            }
+            else if(listBoxCharts.SelectedItem.ToString() == "Stiff Diagram")
+            {
+                UpdateStiffDiagram();
+            }
+            
         }
-        public static void pictureBoxCollinsMeta_Click(object sender, EventArgs e)
-        {
-            frmCollinsMeta itemDetails = new frmCollinsMeta();
-            itemDetails.ShowDialog();
-            itemDetails.BringToFront();
-            itemDetails.Activate();
 
-            UpdateCollinsDiagram();
-        }
         /// <summary>
         /// Updates the radar diagram with current data
         /// </summary>

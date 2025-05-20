@@ -51,7 +51,23 @@ namespace WindowsFormsApplication2
             backgroundWorker.DoWork += backgroundWorker_DoWork;
             backgroundWorker.RunWorkerCompleted += backgroundWorker_RunWorkerCompleted;
             isCalculateAndPlotClicked = false;
-
+            for (int i = 0; i < clsConstants.oldData.Count; i++)
+            {
+                var data = clsConstants.oldData[i];
+                DataGridViewRow newRow = new DataGridViewRow();
+                newRow.CreateCells(dgvJobs);
+                newRow.Cells[0].Value = data.jobID;
+                newRow.Cells[1].Value = data.sampleID;
+                newRow.Cells[2].Value = data.clientID;
+                newRow.Cells[3].Value = data.wellName;
+                newRow.Cells[4].Value = data.lat;
+                newRow.Cells[5].Value = data.Long;
+                newRow.Cells[6].Value = data.sampleType;
+                newRow.Cells[7].Value = data.formationName;
+                newRow.Cells[8].Value = data.depth;
+                newRow.Cells[9].Value = data.prep;
+                dgvJobs.Rows.Add(newRow);
+            }
 
         }
         public static void InitializeDataGridView()
@@ -548,8 +564,10 @@ namespace WindowsFormsApplication2
                 //copyOfJobs.Clear();
                 //dgvJobs.Rows.Clear();
                 
+                
                 for (int j = dgvSamples.SelectedRows.Count - 1; j >= 0; j--)
                 {
+
                     DataGridViewRow selectedRow = dgvSamples.SelectedRows[j];
                     
                     DataGridViewRow newRow = new DataGridViewRow();
@@ -584,6 +602,7 @@ namespace WindowsFormsApplication2
                             depth = (string)newRow.Cells[8].Value,
                             prep = (string)newRow.Cells[9].Value
                         };
+                        clsConstants.oldData.Add(newJob);
                         copyOfJobs.Add(newJob);
                     }
                 }
@@ -690,7 +709,7 @@ namespace WindowsFormsApplication2
                     {
                         using (SqlCommand cmdWater = new SqlCommand(waterDataQuery, connection))
                         {
-                            cmdWater.Parameters.AddWithValue("@JobID", JOBID);
+                            cmdWater.Parameters.AddWithValue("@JobID", dgvJobs.Rows[i].Cells[0].Value??DBNull.Value);
                             cmdWater.Parameters.AddWithValue("@SAMPLE_ID", dgvJobs.Rows[i].Cells[1].Value ?? DBNull.Value);
                             SqlDataReader reader = cmdWater.ExecuteReader();
                             int idx = 0;
@@ -960,28 +979,32 @@ namespace WindowsFormsApplication2
 
                         }
                     }
-
-                    using (SqlCommand cmdsamplewell = new SqlCommand(querysamplewell, connection))
+                    for(int j=0;j<dgvJobs.RowCount;j++)
                     {
-                        cmdsamplewell.Parameters.AddWithValue("@JOBID", JOBID);
-                        SqlDataReader reader = cmdsamplewell.ExecuteReader();
-                        while (reader.Read())
+                        using (SqlCommand cmdsamplewell = new SqlCommand(querysamplewell, connection))
                         {
-                            for (int i = 0; i < WaterData.Count; i++)
+                            cmdsamplewell.Parameters.AddWithValue("@JOBID", dgvJobs.Rows[j].Cells[0].Value ?? DBNull.Value);
+                            SqlDataReader reader = cmdsamplewell.ExecuteReader();
+                            while (reader.Read())
                             {
-                                if (reader["SAMPLE_ID"].ToString() == WaterData[i].sampleID)
+                                for (int i = 0; i < WaterData.Count; i++)
                                 {
-                                    var existingTuple = WaterData[i];
-                                    WaterData[i].Well_Name = reader["Well_Name"].ToString();
-                                    WaterData[i].Depth = reader["Base_depth"].ToString() + " FT";
-                                    WaterData[i].ClientID = reader["ClientID"].ToString();
+                                    if (reader["SAMPLE_ID"].ToString() == WaterData[i].sampleID)
+                                    {
+                                        var existingTuple = WaterData[i];
+                                        WaterData[i].Well_Name = reader["Well_Name"].ToString();
+                                        WaterData[i].Depth = reader["Base_depth"].ToString() + " FT";
+                                        WaterData[i].ClientID = reader["ClientID"].ToString();
 
-                                    WaterData[i].color = GetRandomColor(false);
+                                        WaterData[i].color = GetRandomColor(false);
 
+                                    }
                                 }
                             }
+                            reader.Close();
                         }
                     }
+                    
 
                     progressBar.Invoke((Action)(() => progressBar.Value = 100));
 

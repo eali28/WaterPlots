@@ -55,11 +55,11 @@ namespace WindowsFormsApplication2
 
                 int legendBoxHeight = 0;
                 int legendtextSize = clsConstants.legendTextSize;
-                int legendBoxWidth = (int)(0.2*frmMainForm.mainChartPlotting.Width); // Set fixed width for wrapping area
+                int legendBoxWidth = (int)(0.2 * frmMainForm.mainChartPlotting.Width); // Set fixed width for wrapping area
 
                 using (Font font = new Font("Times New Roman", legendtextSize, FontStyle.Bold))
                 {
-                    for (int i=0;i<frmImportSamples.WaterData.Count;i++)
+                    for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
                     {
                         var data = frmImportSamples.WaterData[i];
                         string fullText = "";
@@ -118,7 +118,7 @@ namespace WindowsFormsApplication2
                         }
                         else
                         {
-                            fullText +=data.Well_Name + ", " + data.ClientID + ", " + data.Depth;
+                            fullText += data.Well_Name + ", " + data.ClientID + ", " + data.Depth;
                         }
                         SizeF textSize = g.MeasureString(fullText, font, legendBoxWidth - 30); // limit width for wrapping
                         legendBoxWidth = (int)Math.Max(legendBoxWidth, textSize.Width);
@@ -149,7 +149,7 @@ namespace WindowsFormsApplication2
 
                         g.DrawLine(axisPen, 5, ysample + 10, 25, ysample + 10);
 
-                        
+
                         string fullText = "";
                         if (clsConstants.clickedHeaders.Count > 0)
                         {
@@ -206,9 +206,9 @@ namespace WindowsFormsApplication2
                         }
                         else
                         {
-                            fullText +=data.Well_Name + ", " + data.ClientID + ", " + data.Depth;
+                            fullText += data.Well_Name + ", " + data.ClientID + ", " + data.Depth;
                         }
-                        RectangleF textRect = new RectangleF(30, ysample, legendBoxWidth-35, legendBoxHeight); // large height to wrap
+                        RectangleF textRect = new RectangleF(30, ysample, legendBoxWidth - 35, legendBoxHeight); // large height to wrap
 
                         Font font = new Font("Times New Roman", legendtextSize, FontStyle.Bold);
                         SizeF textSize = legendGraphics.MeasureString(fullText, font, (int)textRect.Width);
@@ -266,13 +266,70 @@ namespace WindowsFormsApplication2
                     var data = frmImportSamples.WaterData[i];
 
                     // Draw the colored line
-                    var line = slide.Shapes.AddLine(metadataX, ysample + 10, metadataX + 20, ysample + 10);
+                    var line = slide.Shapes.AddLine(metadataX, ysample+5, metadataX + 20, ysample+5);
                     line.Line.ForeColor.RGB = ColorTranslator.ToOle(data.color);
                     line.Line.Weight = data.lineWidth;
                     line.Line.DashStyle = ConvertDashStyle(data.selectedStyle);
 
                     // Prepare wrapped text
-                    string fullText = data.Well_Name + ", " + data.ClientID + ", " + data.Depth;
+                    string fullText = "";
+                    if (clsConstants.clickedHeaders.Count > 0)
+                    {
+                        int c = 0;
+
+                        foreach (var header in clsConstants.clickedHeaders)
+                        {
+                            if (header == "Job ID")
+                            {
+                                fullText += data.jobID;
+                            }
+                            else if (header == "Sample ID")
+                            {
+                                fullText += data.sampleID;
+                            }
+                            else if (header == "Client ID")
+                            {
+                                fullText += data.ClientID;
+                            }
+                            else if (header == "Well Name")
+                            {
+                                fullText += data.Well_Name;
+                            }
+                            else if (header == "Lat")
+                            {
+                                fullText += data.latitude;
+                            }
+                            else if (header == "Long")
+                            {
+                                fullText += data.longtude;
+                            }
+                            else if (header == "Sample Type")
+                            {
+                                fullText += data.sampleType;
+                            }
+                            else if (header == "Formation Name")
+                            {
+                                fullText += data.formName;
+                            }
+                            else if (header == "Depth")
+                            {
+                                fullText += data.Depth;
+                            }
+                            else if (header == "Prep")
+                            {
+                                fullText += data.prep;
+                            }
+                            if (c != clsConstants.clickedHeaders.Count - 1)
+                            {
+                                fullText += ", ";
+                            }
+                            c++;
+                        }
+                    }
+                    else
+                    {
+                        fullText += data.Well_Name + ", " + data.ClientID + ", " + data.Depth;
+                    }
 
                     // Add textbox with wrapping and fixed width
                     PowerPoint.Shape metadataText = slide.Shapes.AddTextbox(
@@ -294,8 +351,8 @@ namespace WindowsFormsApplication2
                     // Auto-resize height only
                     metadataText.TextFrame.AutoSize = PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
 
-                    ysample += metadataText.Height + 5;
-                    metaHeight += (int)(metadataText.Height + 5);
+                    ysample += metadataText.Height;
+                    metaHeight += (int)(metadataText.Height);
                 }
 
                 // Draw blue border box after content is drawn

@@ -131,7 +131,6 @@ namespace WindowsFormsApplication2
             this.Controls.Add(this.updateButton);
             this.Controls.Add(this.dgvJobsInDetails);
             this.Name = "frmCollinsMeta";
-            this.Text = "Collins Legend";
             ((System.ComponentModel.ISupportInitialize)(this.dgvJobsInDetails)).EndInit();
             this.ResumeLayout(false);
 

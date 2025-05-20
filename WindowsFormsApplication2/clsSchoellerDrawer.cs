@@ -560,7 +560,64 @@ namespace WindowsFormsApplication2
                     line.Line.DashStyle = clsRadarDrawer.ConvertDashStyle(data.selectedStyle);
 
                     // Prepare wrapped text
-                    string fullText = data.Well_Name + ", " + data.ClientID + ", " + data.Depth;
+                    string fullText = "";
+                    if (clsConstants.clickedHeaders.Count > 0)
+                    {
+                        int c = 0;
+
+                        foreach (var header in clsConstants.clickedHeaders)
+                        {
+                            if (header == "Job ID")
+                            {
+                                fullText += data.jobID;
+                            }
+                            else if (header == "Sample ID")
+                            {
+                                fullText += data.sampleID;
+                            }
+                            else if (header == "Client ID")
+                            {
+                                fullText += data.ClientID;
+                            }
+                            else if (header == "Well Name")
+                            {
+                                fullText += data.Well_Name;
+                            }
+                            else if (header == "Lat")
+                            {
+                                fullText += data.latitude;
+                            }
+                            else if (header == "Long")
+                            {
+                                fullText += data.longtude;
+                            }
+                            else if (header == "Sample Type")
+                            {
+                                fullText += data.sampleType;
+                            }
+                            else if (header == "Formation Name")
+                            {
+                                fullText += data.formName;
+                            }
+                            else if (header == "Depth")
+                            {
+                                fullText += data.Depth;
+                            }
+                            else if (header == "Prep")
+                            {
+                                fullText += data.prep;
+                            }
+                            if (c != clsConstants.clickedHeaders.Count - 1)
+                            {
+                                fullText += ", ";
+                            }
+                            c++;
+                        }
+                    }
+                    else
+                    {
+                        fullText += data.Well_Name + ", " + data.ClientID + ", " + data.Depth;
+                    }
 
                     // Add textbox with wrapping and fixed width
                     PowerPoint.Shape metadataText = slide.Shapes.AddTextbox(
