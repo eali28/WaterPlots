@@ -46,7 +46,7 @@ namespace WaterPlots
             // Calculate center position
             int leftMargin = (int)(0.1 * chartWidth);
             int topMargin = (int)(0.01 * chartHeight);
-            float diagramWidth = (float)(frmImportSamples.WaterData.Count* 0.03f*chartWidth); // Make width relative
+            float diagramWidth = (int)(0.5f * frmMainForm.mainChartPlotting.Width); // Fixed width like PowerPoint export
             int diagramHeight = (int)(0.7 * chartHeight);
             int xOrigin = leftMargin+(int)(0.03f*chartWidth);
             int yOrigin = topMargin + (chartHeight - diagramHeight) / 2 - (int)(0.02 * chartHeight);
@@ -138,7 +138,7 @@ namespace WaterPlots
             {
                 int z = 0;
                 double NaK = Na[i] + K[i], HCO3CO3 = HCO3[i] + CO3[i];
-                int x = xOrigin + (int)(fx * (i + 1)) - (int)(0.01 * diagramWidth);
+                int x = xOrigin + (int)(fx * (i + 1))-(int)(0.02*diagramWidth);
                 double currentY = yOrigin + diagramHeight;
                 List<double> Items = new List<double>();
                 Items.Add(NaK * fy_F);
@@ -462,15 +462,16 @@ namespace WaterPlots
         {
 
 
-            int chartWidth = (int)presentation.PageSetup.SlideWidth;
-            int chartHeight = (int)presentation.PageSetup.SlideHeight;
+            int slideWidth = (int)presentation.PageSetup.SlideWidth;
+            int slideHeight = (int)presentation.PageSetup.SlideHeight;
 
             // Calculate center position
-            int diagramWidth = 450; // Fixed width for the diagram
-            int diagramHeight = (int)(0.7 * chartHeight); // Fixed height for the diagram
-            int x1 = (int)(0.1f * chartWidth); // Center horizontally
-            int y1 = 100; // Center vertically
-
+            int leftMargin = (int)(0.1 * slideWidth);
+            int topMargin = (int)(0.01 * slideHeight);
+            float diagramWidth = 450; // Fixed width like PowerPoint export
+            int diagramHeight = (int)(0.7 * slideHeight);
+            int xOrigin = (int)(0.1f*slideWidth);
+            int yOrigin = 100;
             // factors
             double Nafac = 22.99, Kfac = 39.0983, Cafac = 20.039, Mgfac = 12.1525, Clfac = 35.453, HCO3fac = 61.01684, CO3fac = 30.004, SO4fac = 48.0313;
             // Dummy data for Collins diagram
@@ -542,11 +543,11 @@ namespace WaterPlots
             // Draw X-axis labels
             for (int i = 0; i < samples.Count; i++)
             {
-                float x = x1 + (float)(fx * (i + 1));
-                var xTick = slide.Shapes.AddLine(x, y1 + (int)diagramHeight, x, y1 + (int)diagramHeight + 10);
+                float x = xOrigin + (float)(fx * (i + 1));
+                var xTick = slide.Shapes.AddLine(x, yOrigin + (int)diagramHeight, x, yOrigin + (int)diagramHeight + 10);
                 xTick.Line.ForeColor.RGB = Color.Black.ToArgb();
                 slide.Shapes.AddTextbox(Microsoft.Office.Core.MsoTextOrientation.msoTextOrientationHorizontal,
-                                        x - 10, y1 + (int)diagramHeight + 15, 50, 15)
+                                        x - 10, yOrigin + (int)diagramHeight + 15, 50, 15)
                             .TextFrame.TextRange.Text = samples[i];
                 slide.Shapes[slide.Shapes.Count].TextFrame.TextRange.Font.Size = clsConstants.legendTextSize;
                 slide.Shapes[slide.Shapes.Count].TextFrame.TextRange.Font.Bold = Office.MsoTriState.msoTrue;
@@ -565,11 +566,11 @@ namespace WaterPlots
             // Draw Y-axis labels
             for (int i = 0; i <= 3000; i += 500)
             {
-                float y = y1 + (int)diagramHeight - (float)(fy * i);
-                var yTick = slide.Shapes.AddLine(x1 - 10, y, x1, y);
+                float y = yOrigin + (int)diagramHeight - (float)(fy * i);
+                var yTick = slide.Shapes.AddLine(xOrigin - 10, y, xOrigin, y);
                 yTick.Line.ForeColor.RGB = Color.Black.ToArgb();
                 slide.Shapes.AddTextbox(Microsoft.Office.Core.MsoTextOrientation.msoTextOrientationHorizontal,
-                                        x1 - 50, y - 10, 60, 15)
+                                        xOrigin - 50, y - 10, 60, 15)
                             .TextFrame.TextRange.Text = i.ToString();
                 slide.Shapes[slide.Shapes.Count].TextFrame.TextRange.Font.Size = clsConstants.legendTextSize;
                 slide.Shapes[slide.Shapes.Count].TextFrame.TextRange.Font.Bold = Office.MsoTriState.msoTrue;
@@ -585,17 +586,17 @@ namespace WaterPlots
                 slide.Shapes[slide.Shapes.Count].TextFrame.MarginBottom = 0;
             }
 
-            var verticalAxis = slide.Shapes.AddLine(x1, y1, x1, y1 + (int)diagramHeight);
+            var verticalAxis = slide.Shapes.AddLine(xOrigin, yOrigin, xOrigin, yOrigin + (int)diagramHeight);
             verticalAxis.Line.ForeColor.RGB = Color.Black.ToArgb();  // Set color to black
             verticalAxis.Line.Weight = 1;
-            var rightAxis = slide.Shapes.AddLine(x1 + (int)diagramWidth, y1, x1 + (int)diagramWidth, y1 + (int)diagramHeight);
+            var rightAxis = slide.Shapes.AddLine(xOrigin + (int)diagramWidth, yOrigin, xOrigin + (int)diagramWidth, yOrigin + (int)diagramHeight);
             rightAxis.Line.ForeColor.RGB = Color.Black.ToArgb();
             rightAxis.Line.Weight = 1;
             // Add horizontal axis (bottom)
-            var horizontalAxis = slide.Shapes.AddLine(x1, y1 + (int)diagramHeight, x1 + diagramWidth, y1 + (int)diagramHeight);
+            var horizontalAxis = slide.Shapes.AddLine(xOrigin, yOrigin + (int)diagramHeight, xOrigin + diagramWidth, yOrigin + (int)diagramHeight);
             horizontalAxis.Line.ForeColor.RGB = Color.Black.ToArgb();  // Set color to black
             horizontalAxis.Line.Weight = 1;
-            var topAxis = slide.Shapes.AddLine(x1, y1, x1 + (int)diagramWidth, y1);
+            var topAxis = slide.Shapes.AddLine(xOrigin, yOrigin, xOrigin + (int)diagramWidth, yOrigin);
             topAxis.Line.ForeColor.RGB = Color.Black.ToArgb();
             topAxis.Line.Weight = 1;
             // Draw stacked bars for each sample
@@ -607,8 +608,8 @@ namespace WaterPlots
                 float width = 10;
 
                 double NaK = Na[i] + K[i], HCO3CO3 = HCO3[i] + CO3[i];
-                int x = x1 + (int)(fx * (i + 1)) - 10;
-                double currentY = y1 + diagramHeight;
+                int x = xOrigin + (int)(fx * (i + 1)) - 10;
+                double currentY = yOrigin + diagramHeight;
                 // First bar: Na+K, Ca, Mg
                 double temp = (double)diagramHeight;
                 double fy_F = (double)(diagramHeight / (double)Max_Value);
@@ -672,7 +673,7 @@ namespace WaterPlots
                 }
                 //temp = (double)diagramHeight;
                 x += 10; // Shift for second bar
-                currentY = y1 + diagramHeight;
+                currentY = yOrigin + diagramHeight;
 
                 heightPart = (Cl[i] * fy_F);
                 rectangle = slide.Shapes.AddShape(
@@ -731,7 +732,7 @@ namespace WaterPlots
             }
             string[] legendItems = { "Na+K", "Ca", "Mg", "Cl", "SO4", "HCO3 + CO3" };
             #region Draw Legend
-            int legendX = x1;
+            int legendX = xOrigin;
             int legendY = 50;
             int xSample = legendX + 5;
             int fontSize = clsConstants.legendTextSize;
@@ -810,7 +811,7 @@ namespace WaterPlots
 
             // Add metadata
             float metadataX = 550;
-            float metadataY = legendY;
+            float metadataY = (float)(clsConstants.metaYPowerPoint);
             int metaWidth = 180; // Set a fixed width for the text box (enables wrapping)
             int metaHeight = 0;
 

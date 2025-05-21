@@ -999,10 +999,9 @@ namespace WaterPlots
             #region Draw Legend
             if (frmImportSamples.WaterData.Count > 0)
             {
-                int legendY = 50;
 
                 float metadataX = 550;
-                float metadataY = legendY;
+                float metadataY = clsConstants.metaYPowerPoint;
                 int metaWidth = 180; // Set a fixed width for the text box (enables wrapping)
                 int metaHeight = 0;
 

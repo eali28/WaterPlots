@@ -576,7 +576,7 @@ namespace WaterPlots
 
             // Add metadata
             float metadataX = 550;
-            float metadataY = legendY;
+            float metadataY = (float)(clsConstants.metaYPowerPoint);
             int metaWidth = 180; // Set a fixed width for the text box (enables wrapping)
             int metaHeight = 0;
 

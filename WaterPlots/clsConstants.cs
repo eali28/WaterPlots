@@ -14,5 +14,6 @@ namespace WaterPlots
         public static int metaY = (int)(0.13f * frmMainForm.mainChartPlotting.Height);
         public static List<string> clickedHeaders = new List<string>(); // List to store clicked headers
         public static List<clsJobs> oldData = new List<clsJobs>();
+        public static int metaYPowerPoint = 10;
     }
 }

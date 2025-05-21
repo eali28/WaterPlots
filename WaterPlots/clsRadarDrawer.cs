@@ -42,7 +42,7 @@ namespace WaterPlots
         /// </summary>
         /// <param name="g">Graphics object used for drawing</param>
         /// <param name="bounds">Bounds of the radar chart area</param>
-        public static void RadarLegend(Graphics g, Rectangle bounds)
+        public static void RadarLegend(Graphics g)
         {
             #region Draw Legend
 
@@ -252,10 +252,9 @@ namespace WaterPlots
             #region Draw Legend
             if (frmImportSamples.WaterData.Count > 0)
             {
-                int legendY = 50;
 
                 float metadataX = 550;
-                float metadataY = legendY;
+                float metadataY = clsConstants.metaYPowerPoint;
                 int metaWidth = 180; // Set a fixed width for the text box (enables wrapping)
                 int metaHeight = 0;
 
@@ -573,7 +572,7 @@ namespace WaterPlots
                     g.DrawPolygon(linePen, points);
                 }
             }
-            RadarLegend(g, bounds);
+            RadarLegend(g);
             #endregion
 
             flag = false;
@@ -1066,7 +1065,7 @@ namespace WaterPlots
 
 
             }
-            RadarLegend(g, bounds);
+            RadarLegend(g);
             #endregion
             flag = false;
         }
@@ -1633,7 +1632,7 @@ namespace WaterPlots
 
             }
             #region Draw Radar legend
-            RadarLegend(g, bounds);
+            RadarLegend(g);
             #endregion
             flag = false;
         }

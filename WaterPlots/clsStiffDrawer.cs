@@ -31,7 +31,7 @@ namespace WaterPlots
 
             // Diagram Dimensions
             int diagramWidth = (int)(0.5f * frmMainForm.mainChartPlotting.Width); // Make width relative
-            float diagramHeight = (float)(frmImportSamples.WaterData.Count * 0.04f * frmMainForm.mainChartPlotting.Height);
+            float diagramHeight = (float)(0.6f * frmMainForm.mainChartPlotting.Height); // Match PowerPoint's 60% height
             
             int yOrigin = (int)(topMargin + (frmMainForm.mainChartPlotting.Height - diagramHeight) / 2 - (int)(0.02 * frmMainForm.mainChartPlotting.Height)+diagramHeight);
             float fontSize = clsConstants.legendTextSize;
@@ -78,8 +78,8 @@ namespace WaterPlots
             List<PointF> Points = new List<PointF>();
             double Nafac = 22.99, Kfac = 39.0983, Cafac = 20.039, Mgfac = 12.1525, Clfac = 35.453, HCO3fac = 61.01684, CO3fac = 30.004, SO4fac = 48.0313;
             int totalSamples = frmImportSamples.WaterData.Count;
-            int sampleSpacing = (int)(totalSamples > 0 ? (diagramHeight) / totalSamples : 0); // Adjusted spacing
-            int offsetY = yOrigin - (int)(0.02f*diagramHeight); // Start from top with some margin
+            int sampleSpacing = totalSamples > 0 ? (int)(diagramHeight / totalSamples) : 0;
+            int offsetY = yOrigin-10;
             // Plot each sample
             int maxPoint=0;
             for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
@@ -651,7 +651,7 @@ namespace WaterPlots
 
             // Add metadata
             float metadataX = 550;
-            float metadataY = legendY;
+            float metadataY = clsConstants.metaYPowerPoint;
             int metaWidth = 180; // Set a fixed width for the text box (enables wrapping)
             int metaHeight = 0;
 
