@@ -39,7 +39,7 @@ namespace WaterPlots.Properties {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("WindowsFormsApplication2.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("WaterPlots.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -73,9 +73,9 @@ namespace WaterPlots.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap pngtree_sand_watch_illustration_vector_on_white_background_png_image_2053746 {
+        public static System.Drawing.Bitmap saveActivated {
             get {
-                object obj = ResourceManager.GetObject("pngtree-sand-watch-illustration-vector-on-white-background-png-image_2053746", resourceCulture);
+                object obj = ResourceManager.GetObject("saveActivated", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -83,9 +83,9 @@ namespace WaterPlots.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap saveActivated {
+        public static System.Drawing.Bitmap spinner {
             get {
-                object obj = ResourceManager.GetObject("saveActivated", resourceCulture);
+                object obj = ResourceManager.GetObject("spinner", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

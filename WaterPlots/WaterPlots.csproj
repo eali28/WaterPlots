@@ -8,7 +8,7 @@
     <ProjectGuid>{F99FCE32-B387-44F6-903D-AB08342755A4}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>WindowsFormsApplication2</RootNamespace>
+    <RootNamespace>WaterPlots</RootNamespace>
     <AssemblyName>WaterPlots</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
@@ -67,6 +67,12 @@
     </Compile>
     <Compile Include="frmCollinsMeta.Designer.cs">
       <DependentUpon>frmCollinsMeta.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmLoading.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmLoading.Designer.cs">
+      <DependentUpon>frmLoading.cs</DependentUpon>
     </Compile>
     <Compile Include="frmMainForm.cs">
       <SubType>Form</SubType>
@@ -243,7 +249,7 @@
     <None Include="Resources\DeleteButton.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\PlusIcon.png" />
+    <EmbeddedResource Include="Resources\PlusIcon.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\saveActivated.png" />

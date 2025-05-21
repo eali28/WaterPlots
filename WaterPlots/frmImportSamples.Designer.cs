@@ -72,14 +72,13 @@ namespace WaterPlots
             this.dataGridViewTextBoxColumn24 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn25 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.btnCalculateAndPlot = new System.Windows.Forms.Button();
-            progressBar = new System.Windows.Forms.ProgressBar();
             this.btnCancel = new System.Windows.Forms.Button();
-            this.AddButton = new System.Windows.Forms.PictureBox();
+            AddButton = new System.Windows.Forms.PictureBox();
             this.DeleteButton = new System.Windows.Forms.PictureBox();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)(dgvSamples)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(dgvJobs)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.AddButton)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(AddButton)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DeleteButton)).BeginInit();
             this.SuspendLayout();
             // 
@@ -310,13 +309,6 @@ namespace WaterPlots
             this.btnCalculateAndPlot.Text = "Calculate and Plot";
             this.btnCalculateAndPlot.Click += new System.EventHandler(this.btnCalculateAndPlot_Click);
             // 
-            // progressBar
-            // 
-            progressBar.Location = new System.Drawing.Point(133, 546);
-            progressBar.Name = "progressBar";
-            progressBar.Size = new System.Drawing.Size(983, 31);
-            progressBar.TabIndex = 10;
-            // 
             // btnCancel
             // 
             this.btnCancel.Location = new System.Drawing.Point(494, 583);
@@ -324,17 +316,18 @@ namespace WaterPlots
             this.btnCancel.Size = new System.Drawing.Size(150, 30);
             this.btnCancel.TabIndex = 11;
             this.btnCancel.Text = "Cancel";
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // AddButton
             // 
-            this.AddButton.Image = global::WaterPlots.Resources.PlusIcon;
-            this.AddButton.Location = new System.Drawing.Point(64, 255);
-            this.AddButton.Name = "AddButton";
-            this.AddButton.Size = new System.Drawing.Size(43, 44);
-            this.AddButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.AddButton.TabIndex = 0;
-            this.AddButton.TabStop = false;
-            this.AddButton.Click += new System.EventHandler(AddButton_Click);
+            AddButton.Image = global::WaterPlots.Resources.PlusIcon;
+            AddButton.Location = new System.Drawing.Point(64, 255);
+            AddButton.Name = "AddButton";
+            AddButton.Size = new System.Drawing.Size(43, 44);
+            AddButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            AddButton.TabIndex = 0;
+            AddButton.TabStop = false;
+            AddButton.Click += new System.EventHandler(AddButton_Click);
             // 
             // DeleteButton
             // 
@@ -346,7 +339,6 @@ namespace WaterPlots
             this.DeleteButton.TabIndex = 0;
             this.DeleteButton.TabStop = false;
             this.DeleteButton.Click += new System.EventHandler(this.DeleteButton_Click);
-
             // 
             // frmImportSamples
             // 
@@ -362,9 +354,8 @@ namespace WaterPlots
             this.Controls.Add(dgvSamples);
             this.Controls.Add(dgvJobs);
             this.Controls.Add(this.btnCalculateAndPlot);
-            this.Controls.Add(progressBar);
             this.Controls.Add(this.btnCancel);
-            this.Controls.Add(this.AddButton);
+            this.Controls.Add(AddButton);
             this.Controls.Add(this.DeleteButton);
             this.Controls.Add(JobTitletext);
             this.Name = "frmImportSamples";
@@ -372,8 +363,8 @@ namespace WaterPlots
             this.Load += new System.EventHandler(this.GetDB_Load);
             ((System.ComponentModel.ISupportInitialize)(dgvSamples)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(dgvJobs)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.AddButton)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.DeleteButton)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(AddButton)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(DeleteButton)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -413,11 +404,10 @@ namespace WaterPlots
         public Label lblCompanyName;
         public ComboBox cbCompanyName;
         public ComboBox cbJobNumber;
-        public PictureBox AddButton;
         private BackgroundWorker backgroundWorker1;
+        public static PictureBox AddButton;
         public static Label JobTitletext;
         public static DataGridView dgvSamples;
         public static DataGridView dgvJobs;
-        public static ProgressBar progressBar;
     }
 }

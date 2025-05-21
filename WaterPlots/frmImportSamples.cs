@@ -9,11 +9,16 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
 using System.IO;
+using System.Threading;
+
 
 namespace WaterPlots
 {
     public partial class frmImportSamples : Form
     {
+        private frmLoading loadingForm;
+        private Thread loadingThread;
+
         private static Random random = new Random();
         public static string title = "";
         public static string JOBID = "";
@@ -626,22 +631,29 @@ namespace WaterPlots
 
         public void btnCalculateAndPlot_Click(object sender, EventArgs e)
         {
-
             if (dgvJobs.Rows.Count > 0)
             {
-
                 try
                 {
+                    // Start loading form on a new thread
+                    loadingThread = new Thread(() =>
+                    {
+                        loadingForm = new frmLoading();
+                        loadingForm.ShowDialog();
+                    });
+                    loadingThread.IsBackground = true;
+                    loadingThread.SetApartmentState(ApartmentState.STA);
+                    loadingThread.Start();
 
-                    
+                    // Allow time for the form to initialize (optional small delay)
+                    Thread.Sleep(300);
+
+                    // Your original logic starts here
                     backgroundWorker.RunWorkerAsync();
-                    // Reset and show the existing progress bar
-                    progressBar.Value = 0;
-                    progressBar.Visible = true;
 
 
                     getWaterData();
-                    progressBar.Value = 100;
+
                     frmMainForm.isScalesNeedNoUpdate = false;
                     frmMainForm.UpdateRadarDiagram();
                     frmMainForm.UpdateCollinsDiagram();
@@ -651,10 +663,18 @@ namespace WaterPlots
                     frmMainForm.UpdateLogsDiagram();
                     frmMainForm.UpdateStiffDiagram();
                     frmMainForm.UpdateBubbleDiagram();
+
                     if (frmMainForm.listBoxCharts.SelectedItem != null)
                     {
                         frmMainForm.UpdateScalesinRadar(frmMainForm.listBoxCharts.SelectedItem.ToString());
                     }
+
+                    // Close loading form safely
+                    if (loadingForm != null && loadingForm.InvokeRequired)
+                    {
+                        loadingForm.Invoke(new MethodInvoker(() => loadingForm.Close()));
+                    }
+
                     if (WaterData.Count > 0)
                     {
                         isCalculateAndPlotClicked = true;
@@ -665,10 +685,16 @@ namespace WaterPlots
                     {
                         MessageBox.Show("No Data to calculate.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
+
                     frmMainForm.mainChartPlotting.Refresh();
                 }
                 catch (Exception ex)
                 {
+                    // Ensure loading form is closed in case of error
+                    if (loadingForm != null && loadingForm.InvokeRequired)
+                    {
+                        loadingForm.Invoke(new MethodInvoker(() => loadingForm.Close()));
+                    }
 
                     MessageBox.Show("An error occurred during calculation: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
@@ -678,6 +704,7 @@ namespace WaterPlots
                 MessageBox.Show("No Data to calculate.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
         public static void getWaterData()
         {
             WaterData = new List<clsWater>();
@@ -971,7 +998,6 @@ namespace WaterPlots
                                 WaterData.Add(existingWaterData);
 
                                 // Update progress bar
-                                progressBar.Invoke((Action)(() => progressBar.Value = (idx + 1) * 100 / samplesData.Count));
                                 idx++;
 
                             }
@@ -1007,7 +1033,6 @@ namespace WaterPlots
                     }
                     
 
-                    progressBar.Invoke((Action)(() => progressBar.Value = 100));
 
                 }
                 catch (Exception ex)
@@ -1046,9 +1071,10 @@ namespace WaterPlots
             }
             
         }
-        //private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
-        //{
-        //    getWaterData();
-        //}
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }
