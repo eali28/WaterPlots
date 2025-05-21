@@ -1489,6 +1489,8 @@ namespace WaterPlots
                 Label.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
                 Label.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
                 Label.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+                Label.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
+
 
             }
             
@@ -1502,6 +1504,7 @@ namespace WaterPlots
                 Label.Rotation = 62;
                 Label.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
                 Label.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
+                Label.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
                 //Label.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
             }
 
@@ -1514,6 +1517,7 @@ namespace WaterPlots
                 Label.TextFrame.TextRange.Font.Size = fontsize;
                 Label.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
                 Label.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
+                Label.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
                 //Label.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
             }
             else if (data[0] == "SO4")
@@ -1525,6 +1529,7 @@ namespace WaterPlots
                 Label.TextFrame.TextRange.Font.Size = fontsize;
                 Label.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
                 Label.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
+                Label.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
                 //Label.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
             }
 
@@ -1579,18 +1584,23 @@ namespace WaterPlots
                     leftToTop.X - 25, leftToTop.Y - 20, 300, 15);
                 leftside.TextFrame.TextRange.Text = (i * 10).ToString("0");
                 leftside.TextFrame.TextRange.Font.Size = fontsize;
-                
+                leftside.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
+                leftside.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
+
                 PowerPoint.Shape rightside = slide.Shapes.AddTextbox(
                     Office.MsoTextOrientation.msoTextOrientationHorizontal,
                     rightToTop.X, rightToTop.Y - 10, 300, 15);
                 rightside.TextFrame.TextRange.Text = ((c) * 10).ToString("0");
                 rightside.TextFrame.TextRange.Font.Size = fontsize;
+                rightside.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
+                rightside.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
                 PowerPoint.Shape bottomside = slide.Shapes.AddTextbox(
                     Office.MsoTextOrientation.msoTextOrientationHorizontal,
                     leftToRight.X - 5, leftToRight.Y + 5, 300, 15);
                 bottomside.TextFrame.TextRange.Text = ((c) * 10).ToString("0");
                 bottomside.TextFrame.TextRange.Font.Size = fontsize;
-
+                bottomside.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
+                bottomside.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
                 c -= 2;
                 if (i != 0)
                 {
@@ -1689,6 +1699,7 @@ namespace WaterPlots
                 magnesiumLabel.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
                 magnesiumLabel.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
                 magnesiumLabel.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+                magnesiumLabel.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
 
                 var calciumLabel = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, ((calciumPoints[0, 0] + calciumPoints[1, 0] + calciumPoints[2, 0]) / 3) - 50, ((calciumPoints[0, 1] + calciumPoints[1, 1] + calciumPoints[2, 1]) / 3) - 20, 100, 30);
                 calciumLabel.TextFrame.TextRange.Text = "Calcium\ntype";
@@ -1696,6 +1707,7 @@ namespace WaterPlots
                 calciumLabel.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
                 calciumLabel.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
                 calciumLabel.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+                calciumLabel.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
 
                 var sodiumPotassiumLabel = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, ((sodiumPotassiumPoints[0, 0] + sodiumPotassiumPoints[1, 0] + sodiumPotassiumPoints[2, 0]) / 3) - 70, ((sodiumPotassiumPoints[0, 1] + sodiumPotassiumPoints[1, 1] + sodiumPotassiumPoints[2, 1]) / 3) - 20, 150, 30);
                 sodiumPotassiumLabel.TextFrame.TextRange.Text = "Sodium\nand\nPotassium";
@@ -1703,6 +1715,7 @@ namespace WaterPlots
                 sodiumPotassiumLabel.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
                 sodiumPotassiumLabel.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
                 sodiumPotassiumLabel.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+                sodiumPotassiumLabel.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
 
                 var noTypeLabel = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, calciumPoints[0, 0] - 15, calciumPoints[0, 1], 100, 30);
                 noTypeLabel.TextFrame.TextRange.Text = "No\nDominant\nType";
@@ -1710,7 +1723,7 @@ namespace WaterPlots
                 noTypeLabel.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
                 noTypeLabel.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
                 noTypeLabel.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
-                
+                noTypeLabel.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
 
 
             }
@@ -1753,12 +1766,13 @@ namespace WaterPlots
                 chlorideShape.Fill.Transparency = 0.5f;
                 chlorideShape.Line.Visible = Office.MsoTriState.msoFalse;
                 // Anions Labels (Sulfate, Bicarbonate, Chloride) - Place near triangle edges
-                var sulfateLabel = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, ((sulphatePoints[0,0]+sulphatePoints[1,0]+sulphatePoints[2,0])/3)-50, ((sulphatePoints[0, 1] + sulphatePoints[1, 1] + sulphatePoints[2, 1]) / 3)-20, 100, 30);
-                sulfateLabel.TextFrame.TextRange.Text = "Sulfate\ntype";
-                sulfateLabel.TextFrame.TextRange.Font.Size = 8;
-                sulfateLabel.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
-                sulfateLabel.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
-                sulfateLabel.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+                var sulphateLabel = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, ((sulphatePoints[0,0]+sulphatePoints[1,0]+sulphatePoints[2,0])/3)-50, ((sulphatePoints[0, 1] + sulphatePoints[1, 1] + sulphatePoints[2, 1]) / 3)-20, 100, 30);
+                sulphateLabel.TextFrame.TextRange.Text = "Sulfate\ntype";
+                sulphateLabel.TextFrame.TextRange.Font.Size = 8;
+                sulphateLabel.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
+                sulphateLabel.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
+                sulphateLabel.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+                sulphateLabel.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
 
                 var bicarbonateLabel = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, ((bicarbonatePoints[0, 0] + bicarbonatePoints[1, 0] + bicarbonatePoints[2, 0]) / 3)-70, ((bicarbonatePoints[0, 1] + bicarbonatePoints[1, 1] + bicarbonatePoints[2, 1]) / 3)-10, 150, 30);
                 bicarbonateLabel.TextFrame.TextRange.Text = "Bicarbonate\ntype";
@@ -1766,6 +1780,7 @@ namespace WaterPlots
                 bicarbonateLabel.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
                 bicarbonateLabel.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
                 bicarbonateLabel.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+                bicarbonateLabel.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
 
                 var chlorideLabel = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, ((chloridePoints[0, 0] + chloridePoints[1, 0] + chloridePoints[2, 0]) / 3)-50, ((chloridePoints[0, 1] + chloridePoints[1, 1] + chloridePoints[2, 1]) / 3)-10, 100, 30);
                 chlorideLabel.TextFrame.TextRange.Text = "Chloride\ntype";
@@ -1773,6 +1788,7 @@ namespace WaterPlots
                 chlorideLabel.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
                 chlorideLabel.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
                 chlorideLabel.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+                chlorideLabel.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
 
                 var noTypeLabel = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, bicarbonatePoints[0,0]-15, bicarbonatePoints[0,1], 100, 30);
                 noTypeLabel.TextFrame.TextRange.Text = "No\nDominant\nType";
@@ -1780,7 +1796,8 @@ namespace WaterPlots
                 noTypeLabel.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
                 noTypeLabel.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
                 noTypeLabel.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
-                
+                noTypeLabel.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
+
             }
 
             PowerPoint.Shape Labeltext = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal,
@@ -1788,6 +1805,10 @@ namespace WaterPlots
             Labeltext.TextFrame.TextRange.Text = label;
             Labeltext.TextFrame.TextRange.Font.Size = 15;
             Labeltext.TextFrame.TextRange.Font.Bold = Office.MsoTriState.msoTrue;
+            Labeltext.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
+            Labeltext.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
+            Labeltext.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+            Labeltext.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
             #region plot the points
 
             for (int i = 0; i < frmImportSamples.WaterData.Count; i++)
@@ -2657,12 +2678,18 @@ namespace WaterPlots
                     PowerPoint.Shape diagonal2 = slide.Shapes.AddLine((float)rightToBottom.X, (float)rightToBottom.Y, (float)leftToTop.X, (float)leftToTop.Y);
                     diagonal2.Line.ForeColor.RGB = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Gray);
                 }
-                var L1 = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, topToRight.X - 5, topToRight.Y - 15, 250, 30);
+                var L1 = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, topToRight.X - 120, topToRight.Y - 15, 250, 30);
                 L1.TextFrame.TextRange.Text = (i * 10).ToString();
                 L1.TextFrame.TextRange.Font.Size = fontsize;
-                var L2 = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, leftToTop.X - 25, leftToTop.Y - 10, 250, 30);
+                L1.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
+                L1.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
+                L1.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
+                var L2 = slide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, leftToTop.X - 140, leftToTop.Y - 10, 250, 30);
                 L2.TextFrame.TextRange.Text = (i * 10).ToString();
                 L2.TextFrame.TextRange.Font.Size = fontsize;
+                L2.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
+                L2.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
+                L2.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
             }
             // Define colors for each region
             Color[] regionColors = new Color[]
@@ -2761,6 +2788,7 @@ namespace WaterPlots
                 label.TextFrame.AutoSize = Microsoft.Office.Interop.PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
                 label.TextFrame.TextRange.ParagraphFormat.Alignment = Microsoft.Office.Interop.PowerPoint.PpParagraphAlignment.ppAlignCenter;
                 label.TextFrame2.VerticalAnchor = Microsoft.Office.Core.MsoVerticalAnchor.msoAnchorMiddle;
+                label.TextFrame2.WordWrap = Microsoft.Office.Core.MsoTriState.msoFalse;
             }
             if (frmImportSamples.WaterData.Count > 0)
             {

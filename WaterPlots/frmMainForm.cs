@@ -489,7 +489,7 @@ namespace WaterPlots
         /// </summary>
         private void printPowerpoint_Click(object sender, EventArgs e)
         {
-            if(frmImportSamples.WaterData.Count>0)
+            if(listBoxSelected.Items.Count>0)
             {
                 string userName = Environment.UserName;
                 string pptPath = string.Format(@"C:\Users\{0}\Documents\Diagrams.pptx", userName);
